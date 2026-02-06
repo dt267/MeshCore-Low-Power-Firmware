@@ -93,4 +93,5 @@ Optimized MeshCore firmware for Heltec V3 & WSL3, engineered for low power consu
 - ***No clock drifted problem on repeater and room server firmware.***
 - LoRa Tx is 22dBm at dummy load.
 - T_hours = 2000 * 0.85 / I_mean
-- [Power Profiles of the Original MeshCore Firmware for Heltec V3](https://github.com/dt267/MeshCore-Low-Power-Firmware-For-Heltec-V3-V4/blob/main/Power%20Profiles%20of%20the%20Original%20MeshCore%20Firmware%20for%20Heltec%20V3.md#power-profiles-of-the-original-meshcore-firmware-for-heltec-v3-111dev)
+- [Power Profiles of the Original MeshCore Firmware for Heltec V3](https://github.com/dt267/MeshCore-Low-Power-Firmware-For-Heltec-V3-V4/blob/main/Power-Profiles-of-the-Original-MeshCore-Firmware-for-Heltec-V3.md)
+- [Bypass External LNA on Heltec V4](https://github.com/dt267/MeshCore-Low-Power-Firmware-For-Heltec-V3-V4/blob/main/Bypass-External-LNA-on-Heltec-V4.md)
