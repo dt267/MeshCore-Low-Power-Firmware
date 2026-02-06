@@ -94,4 +94,17 @@ Optimized MeshCore firmware for Heltec V3 & WSL3, engineered for low power consu
 - LoRa Tx is 22dBm at dummy load.
 - T_hours = 2000 * 0.85 / I_mean
 - [Power Profiles of the Original MeshCore Firmware for Heltec V3](https://github.com/dt267/MeshCore-Low-Power-Firmware-For-Heltec-V3-V4/blob/main/Power-Profiles-of-the-Original-MeshCore-Firmware-for-Heltec-V3.md)
-- [Bypass External LNA on Heltec V4](https://github.com/dt267/MeshCore-Low-Power-Firmware-For-Heltec-V3-V4/blob/main/Bypass-External-LNA-on-Heltec-V4.md)
+
+---
+
+# Bypass External LNA on Heltec V4
+If you encounter poor RX sensitivity or an abnormally high noise floor on the Heltec V4, please perform the following mod to bypass the external LNA as shown in the images below. This modification only affects the RX path, the GC1109 Power Amplifier remains fully functional.
+
+
+<img width="781" height="413" alt="Screenshot 2025-12-11 160253" src="https://github.com/user-attachments/assets/4ecc6acb-9944-4ba5-b756-e156f4be1dd2" />
+
+![IMG_6926](https://github.com/user-attachments/assets/3eb8a0a4-f4c4-4ecd-bb6a-45ec6e796533)
+
+Compare Heltec V3 and Heltec V4 receive sensitivity after the mod:
+
+<img width="522" height="404" alt="bypassed_external_lna" src="https://github.com/user-attachments/assets/a53c0f4d-eea5-416a-a8c9-9d8f50135dbf" />
