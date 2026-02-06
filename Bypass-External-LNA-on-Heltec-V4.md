@@ -1,3 +1,4 @@
+# Bypass External LNA on Heltec V4
 If you encounter poor RX sensitivity or an abnormally high noise floor on the Heltec V4, please perform the following mod to bypass the external LNA as shown in the images below. This modification only affects the RX path, the GC1109 Power Amplifier remains fully functional.
 
 
