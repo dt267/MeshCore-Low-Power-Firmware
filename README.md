@@ -86,8 +86,9 @@ Optimized MeshCore firmware for Heltec V3 & WSL3, engineered for low power consu
 <img width="1276" height="348" alt="xiao-r-l" src="https://github.com/user-attachments/assets/280c8b70-604b-4ea3-b1c4-76f21efc2c24" />
 
 ## Note: 
-- [Updated to MeshCore dev branch 2026-01-31 for Heltec V3 & WSL3](https://github.com/dt267/MeshCore-Low-Power-Firmware-For-Heltec-V3-V4/releases/tag/Heltec-V3-WSL3-low-power-v1.12_0131)
-- [Updated to MeshCore dev branch 2026-01-31 for XIAO S3 Wio](https://github.com/dt267/MeshCore-Low-Power-Firmware-For-Heltec-V3-V4/releases/tag/Seed-Studio-XIAO-S3-Wio-v1.12_0202)
+- [Heltec V3 & WSL3 low power - v1.12_0207](https://github.com/dt267/MeshCore-Low-Power-Firmware-For-Heltec-V3-V4/releases/tag/Heltec-V3-WSL3-low-power-v1.12_0207)
+- [Heltec V4 OLED low power - v1.12_0207](https://github.com/dt267/MeshCore-Low-Power-Firmware-For-Heltec-V3-V4/releases/tag/Heltec-V4-OLED-low-power-v1.12_0207)
+- [XIAO S3 Wio low power - v1.12_0207](https://github.com/dt267/MeshCore-Low-Power-Firmware-For-Heltec-V3-V4/releases/tag/XIAO-S3-Wio-low-power-v1.12_0207)
 - Improved battery measurement and management.
 - Serial port will be deactivated after 30 seconds idle.
 - ***No clock drifted problem on repeater and room server firmware.***
