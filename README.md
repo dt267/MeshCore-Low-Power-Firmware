@@ -23,6 +23,8 @@ Optimized MeshCore firmware for Heltec V3 & WSL3, engineered for low power consu
 
 **Estimated ~77.91 h (3.25 days) with 2000mAh battery.**
 
+[v1.12_0214: Reducing idle current to 10 mA.](https://github.com/dt267/MeshCore-Low-Power-Firmware-For-Heltec-V3-V4/releases/tag/Heltec-V3-WSL3-low-power-v1.12_0214)
+
 <img width="1277" height="348" alt="companion-idle" src="https://github.com/user-attachments/assets/20059c62-a493-4a4f-86d0-9e63a954ddcf" />
 
 
@@ -64,6 +66,8 @@ Optimized MeshCore firmware for Heltec V3 & WSL3, engineered for low power consu
 * Mean: 15.34 mA
 
 **Estimated ~110.8 h (4.62 days) with 2000mAh battery.**
+
+[v1.12_0214: Reducing idle current to 11 mA.](https://github.com/dt267/MeshCore-Low-Power-Firmware-For-Heltec-V3-V4/releases/tag/XIAO-S3-Wio-low-power-v1.12_0214)
 
 <img width="1280" height="348" alt="xiao-c-l" src="https://github.com/user-attachments/assets/291cf991-2cee-47c1-96c1-c55ec0368545" />
 
