@@ -3,7 +3,7 @@ Optimized MeshCore firmware for Heltec V3 & WSL3, engineered for low power consu
 
 ---
 
-## Idle Battery Life Estimation (Based on Data: 2026-02-14)
+## Idle Battery Life Estimation (Based on Data: 2026-02-14, 2000 mAh battery)
 
 | Device | Idle Current (mA) | Estimated Idle Runtime (Hours) | Estimated Idle Runtime (Days) |
 | :--- | :--- | :---: | :---: |
