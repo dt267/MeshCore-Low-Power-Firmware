@@ -1,6 +1,27 @@
 # MeshCore - Low power firmware for Heltec Lora 32 V3 & WSL3, Seed Studio Xiao S3 Wio (esp32s3)
 Optimized MeshCore firmware for Heltec V3 & WSL3, engineered for low power consumption and extended battery life in off-grid scenarios.
 
+---
+
+## Idle Battery Life Estimation (Based on Data: 2026-02-14)
+
+| Device | Idle Current (mA) | Estimated Idle Runtime (Hours) | Estimated Idle Runtime (Days) |
+| :--- | :--- | :---: | :---: |
+| Heltec V3 Companion BLE | 10 | 170.0 | 7.08 |
+| Heltec V3 Repeater | 7.8 | 217.9 | 9.08 |
+| Heltec V3 Room Server | 8.0 | 212.5 | 8.85 |
+| Heltec WSL3 Companion BLE | 10 | 170.0 | 7.08 |
+| Heltec WSL3 Repeater | 7.7 | 220.8 | 9.20 |
+| Heltec WSL3 Room Server | 7.9 | 215.2 | 8.97 | 
+| Heltec V4 Companion BLE | 20 | 85.0 | 3.54 |
+| Heltec V4 Repeater | 13.3 | 127.8 | 5.33 | 
+| Heltec V4 Room Server | 13.4 | 126.9 | 5.29 |
+| XIAO S3 Wio Companion BLE | 11 | 154.5 |6.44 |
+| XIAO S3 Wio Repeater | 8.7 | 195.4 | 8.14 |
+| XIAO S3 Wio Room Server | 8.7 | 195.4 | 8.14 |
+
+---
+
 ## Heltec Lora 32 V3 
 
 <img width="690" height="356" alt="helec-v3" src="https://github.com/user-attachments/assets/2a4b7faf-0420-4d31-bcbe-47b970810f22" />
@@ -46,6 +67,8 @@ Optimized MeshCore firmware for Heltec V3 & WSL3, engineered for low power consu
 **Estimated ~233.84 h (9.74 days) with 2000mAh battery.**
 
 <img width="1277" height="348" alt="repeater-idle" src="https://github.com/user-attachments/assets/9ec41771-8727-4072-ac7b-656502002254" />
+
+---
 
 ## Seed Studio XIAO ESP32S3 & Wio-SX1262
 
