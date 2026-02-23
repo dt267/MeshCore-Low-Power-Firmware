@@ -1,12 +1,12 @@
 # MeshCore - Low power firmware for Heltec Lora 32 V3 & WSL3, Seed Studio Xiao S3 Wio (esp32s3)
-Optimized MeshCore firmware, engineered for low power consumption and extended battery life in off-grid scenarios.
-
+Optimized MeshCore firmware, engineered for low power consumption and extended off-grid battery life for multi-day operation.
 
 
 [![GitHub Release](https://img.shields.io/github/v/release/dt267/MeshCore-Low-Power-Firmware-For-Heltec-V3-V4)](https://github.com/dt267/MeshCore-Low-Power-Firmware-For-Heltec-V3-V4/releases) [![GitHub Release Date](https://img.shields.io/github/release-date/dt267/MeshCore-Low-Power-Firmware-For-Heltec-V3-V4)](https://github.com/dt267/MeshCore-Low-Power-Firmware-For-Heltec-V3-V4/releases) [![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/dt267/MeshCore-Low-Power-Firmware-For-Heltec-V3-V4/total)](https://github.com/dt267/MeshCore-Low-Power-Firmware-For-Heltec-V3-V4/releases)
 
 
-> New Feature: Low-battery protection with automated deep sleep at 3.4V and system recovery at 3.5V, allowing stable re-activation after recharging.
+> - New Feature: Low-battery protection with automated deep sleep at 3.4V and system recovery at 3.5V, allowing stable re-activation after recharging.
+> - Improved battery measurement and management.
 
 
 ## Idle Battery Life Estimation (Based on Data: 2026-02-14, 2000 mAh battery)
@@ -118,11 +118,7 @@ Optimized MeshCore firmware, engineered for low power consumption and extended b
 
 <img width="1276" height="348" alt="xiao-r-l" src="https://github.com/user-attachments/assets/280c8b70-604b-4ea3-b1c4-76f21efc2c24" />
 
-## Note: 
-- [v1.12_0214: Reducing Heltec V3 & WSL3 companion device idle current to 10 mA.](https://github.com/dt267/MeshCore-Low-Power-Firmware-For-Heltec-V3-V4/releases/tag/Heltec-V3-WSL3-low-power-v1.12_0214)
-- [v1.12_0214: Reducing Heltec V4 companion device idle current to 20 mA.](https://github.com/dt267/MeshCore-Low-Power-Firmware-For-Heltec-V3-V4/releases/tag/Heltec-V4-OLED-low-power-v1.12_0214)
-- [v1.12_0214: Reducing XIAO S3 Wio companion device idle current to 11 mA.](https://github.com/dt267/MeshCore-Low-Power-Firmware-For-Heltec-V3-V4/releases/tag/XIAO-S3-Wio-low-power-v1.12_0214)
-- Improved battery measurement and management.
+## Note:
 - Serial port will be deactivated after 30 seconds idle.
 - ***No clock drifted problem on repeater and room server firmware.***
 - LoRa Tx is 22dBm at dummy load.
