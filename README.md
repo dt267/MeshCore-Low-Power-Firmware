@@ -1,7 +1,13 @@
 # MeshCore - Low power firmware for Heltec Lora 32 V3 & WSL3, Seed Studio Xiao S3 Wio (esp32s3)
 Optimized MeshCore firmware, engineered for low power consumption and extended battery life in off-grid scenarios.
 
----
+
+
+[![GitHub Release](https://img.shields.io/github/v/release/dt267/MeshCore-Low-Power-Firmware-For-Heltec-V3-V4)](https://github.com/dt267/MeshCore-Low-Power-Firmware-For-Heltec-V3-V4/releases) [![GitHub Release Date](https://img.shields.io/github/release-date/dt267/MeshCore-Low-Power-Firmware-For-Heltec-V3-V4)](https://github.com/dt267/MeshCore-Low-Power-Firmware-For-Heltec-V3-V4/releases) [![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/dt267/MeshCore-Low-Power-Firmware-For-Heltec-V3-V4/total)](https://github.com/dt267/MeshCore-Low-Power-Firmware-For-Heltec-V3-V4/releases)
+
+
+> New Feature: Low-battery protection with automated deep sleep at 3.4V and system recovery at 3.5V, allowing stable re-activation after recharging.
+
 
 ## Idle Battery Life Estimation (Based on Data: 2026-02-14, 2000 mAh battery)
 
