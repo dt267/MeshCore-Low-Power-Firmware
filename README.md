@@ -7,6 +7,8 @@ Optimized MeshCore firmware, engineered for low power consumption and extended o
 
 > - New Feature: Low-battery protection with automated deep sleep at 3.4V and system recovery at 3.5V, allowing stable re-activation after recharging.
 > - Improved battery measurement and management.
+> - No clock drifted problem on repeater and room server firmware.
+> - Serial port will be deactivated after 30 seconds idle.
 
 
 ## Idle Battery Life Estimation (Based on Data: 2026-02-14, 2000 mAh battery)
@@ -119,8 +121,6 @@ Optimized MeshCore firmware, engineered for low power consumption and extended o
 <img width="1276" height="348" alt="xiao-r-l" src="https://github.com/user-attachments/assets/280c8b70-604b-4ea3-b1c4-76f21efc2c24" />
 
 ## Note:
-- Serial port will be deactivated after 30 seconds idle.
-- ***No clock drifted problem on repeater and room server firmware.***
 - LoRa Tx is 22dBm at dummy load.
 - T_hours = 2000 * 0.85 / I_mean
 - [Power Profiles of the Original MeshCore Firmware for Heltec V3](https://github.com/dt267/MeshCore-Low-Power-Firmware-For-Heltec-V3-V4/blob/main/Power-Profiles-of-the-Original-MeshCore-Firmware-for-Heltec-V3.md)
