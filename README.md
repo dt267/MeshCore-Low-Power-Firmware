@@ -6,6 +6,7 @@ Optimized MeshCore firmware, engineered for low power consumption and extended o
 
 
 > - New Feature: Low-battery protection with automated deep sleep at 3.4V and system recovery at 3.5V, allowing stable re-activation after recharging.
+> - Support battery monitor for Xiao S3 Wio.
 > - Improved battery measurement and management.
 > - No clock drifted problem on repeater and room server firmware.
 > - Serial port will be deactivated after 30 seconds idle.
