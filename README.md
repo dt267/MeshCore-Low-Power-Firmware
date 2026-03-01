@@ -5,6 +5,25 @@ Optimized MeshCore firmware, engineered for low power consumption and extended o
 [![GitHub Release](https://img.shields.io/github/v/release/dt267/MeshCore-Low-Power-Firmware-For-Heltec-V3-V4)](https://github.com/dt267/MeshCore-Low-Power-Firmware-For-Heltec-V3-V4/releases) [![GitHub Release Date](https://img.shields.io/github/release-date/dt267/MeshCore-Low-Power-Firmware-For-Heltec-V3-V4)](https://github.com/dt267/MeshCore-Low-Power-Firmware-For-Heltec-V3-V4/releases) [![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/dt267/MeshCore-Low-Power-Firmware-For-Heltec-V3-V4/total)](https://github.com/dt267/MeshCore-Low-Power-Firmware-For-Heltec-V3-V4/releases)
 
 
+> - New Feature: Read/write SX1262 register cli for repeater and room server.  
+>     Usage:
+> 	```
+> 	reg read <address> : read 1 byte from the register.
+> 	reg write <address> <value> : write 1 byte to the register.
+> 	```
+>     Examples:
+> 	```
+> 	reg read 08AC ; read Whitening Initial Value (0x08AC).
+> 	reg read 0x0740 ; read Sync Word (supports '0x' prefix).
+> 	reg write 0740 1424 ; write 0x14, 0x24 — set private LoRaWAN sync word.
+> 	reg write 08AC 00 ; write 0x00 to 0x08AC.
+> 	```
+>     Example Output:
+> 	```
+> 	reg[0x08AC] = 0xFF (255)
+> 	OK - wrote 0x14 to reg[0x0740]
+> 	```
+> 	Note: Register values will revert to defaults after reboot. Use at your own discretion.
 > - New Feature: Low-battery protection with automated deep sleep at 3.4V and system recovery at 3.5V, allowing stable re-activation after recharging. With a deep sleep current below 0.5mA, a remaining 200mAh battery can provide 400 hours (~16.7 days) of standby time.
 > - Supported battery monitoring for Xiao S3 Wio.
 > - Improved battery measurement and management.
