@@ -15,7 +15,7 @@ Optimized MeshCore firmware, engineered for low power consumption and extended o
 > 	```
 > 	reg read 08AC ; read Whitening Initial Value (0x08AC).
 > 	reg read 0x0740 ; read Sync Word (supports '0x' prefix).
-> 	reg write 0740 1424 ; write 0x14, 0x24 — set private LoRaWAN sync word.
+> 	reg write 0740 1424 ; write 0x14, 0x24 — set private LoRa sync word.
 > 	reg write 08AC 00 ; write 0x00 to 0x08AC.
 > 	```
 >     Example Output:
