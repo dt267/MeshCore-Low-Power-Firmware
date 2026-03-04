@@ -1,4 +1,32 @@
-**_2026-01-23 updated._** 
+# Power Profiles of the Original MeshCore Firmware for Heltec V3 (1.13.dev)
+
+## Heltec V3 BLE companion, 6 LoRa messages in 30 seconds
+* Maximum: 271.85 mA
+* Minimum: 93.5 mA
+* Mean: 128.97 mA
+
+<img width="1280" height="348" alt="v3-113-companion-h" src="https://github.com/user-attachments/assets/5b3ab98e-4218-4ff9-8870-12ea33110899" />
+
+## Heltec V3 BLE companion in idle
+* Maximum: 134.54 mA
+* Minimum: 94.48 mA
+* Mean: 113.7 mA
+
+<img width="1280" height="348" alt="v3-113-companion-l" src="https://github.com/user-attachments/assets/f32d66a1-ac87-4e89-a0bb-fbffe5a9ab4f" />
+
+## Heltec V3 repeater in high LoRa traffic, 6 LoRa messages in 30 seconds
+* Maximum: 179.12 mA
+* Minimum: 8.75 mA
+* Mean: 60.7 mA
+
+<img width="1280" height="348" alt="v3-113-repeater-h" src="https://github.com/user-attachments/assets/e8313532-cc36-4485-959f-5ce3412e44bd" />
+
+## Heltec V3 repeater in idle
+* Maximum: 11.64 mA
+* Minimum: 9.27 mA
+* Mean: 10.49 mA
+
+<img width="1280" height="348" alt="v3-113-repeater-l" src="https://github.com/user-attachments/assets/04288429-d42c-4654-a738-82d4d065485a" />
 
 # Power Profiles of the Original MeshCore Firmware for Heltec V3 (1.11.dev)
 
