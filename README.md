@@ -55,46 +55,42 @@ Optimized MeshCore firmware, engineered for low power consumption and extended o
 <img width="690" height="356" alt="helec-v3" src="https://github.com/user-attachments/assets/2a4b7faf-0420-4d31-bcbe-47b970810f22" />
 
 
-### *Typical power profile of Heltec V3 BLE companion, 5 LoRa messages in 30 seconds:*
-* Maximum: 246.3 mA
-* Minimum: 7.2 mA
-* Mean: 37.84 mA
+### *Typical power profile of Heltec V3 BLE companion 1.13.dev, 5 LoRa messages in 30 seconds (14,400 messages a day):*
+* Maximum: 241.48 mA
+* Minimum: 4.99 mA
+* Mean: 31.37 mA
 
-**Estimated ~44.93 h (1.87 days) with 2000mAh battery.**
+**Estimated ~54.19 h (2.57 days) with 2000mAh battery.**
 
-<img width="1277" height="348" alt="companion-high-lora" src="https://github.com/user-attachments/assets/0b027ad4-7dfe-4d08-a4e0-e1a65cd2aaea" />
-
-
-### *Typical power profile of Heltec V3 BLE companion in idle:*
-* Maximum: 115.9 mA
-* Minimum: 7.7 mA
-* Mean: 21.82 mA
-
-**Estimated ~77.91 h (3.25 days) with 2000mAh battery.**
-
-[v1.12_0214: Reducing idle current to 10 mA.](https://github.com/dt267/MeshCore-Low-Power-Firmware-For-Heltec-V3-V4/releases/tag/Heltec-V3-WSL3-low-power-v1.12_0214)
-
-<img width="1277" height="348" alt="companion-idle" src="https://github.com/user-attachments/assets/20059c62-a493-4a4f-86d0-9e63a954ddcf" />
+<img width="1280" height="348" alt="dt267-v3-113-companion-h" src="https://github.com/user-attachments/assets/3e79cd31-87a9-4366-9576-2013b8ae7469" />
 
 
-### *Typical power profile of Heltec V3 repeater in high LoRa traffic, 6 LoRa messages in 30 seconds*:
-* Maximum: 163.8 mA
-* Minimum: 4.1 mA
-* Mean: 28.60 mA
+### *Typical power profile of Heltec V3 BLE companion 1.13.dev in idle:*
+* Maximum: 102.97 mA
+* Minimum: 5.72 mA
+* Mean: 9.22 mA
+
+**Estimated ~184.38 h (7.68 days) with 2000mAh battery.**
+
+<img width="1280" height="348" alt="dt267-v3-113-companion-l" src="https://github.com/user-attachments/assets/d0c5bb68-4136-481c-80b7-b1adfe515687" />
+
+### *Typical power profile of Heltec V3 repeater 1.13.dev in high LoRa traffic, 6 LoRa messages in 30 seconds (17,280 messages a day):*
+* Maximum: 160.49 mA
+* Minimum: 2.01 mA
+* Mean: 27.74 mA
   
-**Estimated ~59.44 h (2.48 days) with 2000mAh battery.**
+**Estimated ~61.28 h (2.55 days) with 2000mAh battery.**
 
-<img width="1277" height="348" alt="repeater-high-lora" src="https://github.com/user-attachments/assets/d69a26c6-7d97-4162-9823-566d3ed78168" />
+<img width="1280" height="348" alt="dt267-v3-113-repeater-h" src="https://github.com/user-attachments/assets/54f806e7-b197-47fa-a054-19e9d72cad98" />
 
-
-### *Typical power profile of Heltec V3 repeater in idle:*
-* Maximum: 35.5 mA
-* Minimum: 5.2 mA
-* Mean: 7.27 mA
+### *Typical power profile of Heltec V3 repeater 1.13.dev in idle:*
+* Maximum: 44.28 mA
+* Minimum: 5.51 mA
+* Mean: 7.25 mA
   
-**Estimated ~233.84 h (9.74 days) with 2000mAh battery.**
+**Estimated ~234.48 h (9.77 days) with 2000mAh battery.**
 
-<img width="1277" height="348" alt="repeater-idle" src="https://github.com/user-attachments/assets/9ec41771-8727-4072-ac7b-656502002254" />
+<img width="1280" height="348" alt="dt267-v3-113-repeater-l" src="https://github.com/user-attachments/assets/9e8511de-53c9-40e2-89db-eb517d3dcf46" />
 
 ---
 
@@ -102,7 +98,7 @@ Optimized MeshCore firmware, engineered for low power consumption and extended o
 
 ![wio-sx1262-with-xiao-esp32s3](https://github.com/user-attachments/assets/615d1c65-fdb9-4769-acf4-5e9680d1a009)
 
-### *Typical power profile of XIAO S3 Wio companion BLE, 5 LoRa messages in 30 seconds:*
+### *Typical power profile of XIAO S3 Wio companion BLE 1.12.dev, 5 LoRa messages in 30 seconds (14,400 messages a day):*
 * Maximum: 274 mA
 * Minimum: 4.07 mA
 * Mean: 35.53 mA
@@ -111,7 +107,7 @@ Optimized MeshCore firmware, engineered for low power consumption and extended o
 
 <img width="1280" height="348" alt="xiao-c-h" src="https://github.com/user-attachments/assets/da6005c2-1afa-4418-83d2-da65b6d7b371" />
 
-### *Typical power profile of XIAO S3 Wio companion BLE in idle:*
+### *Typical power profile of XIAO S3 Wio companion BLE 1.12.dev in idle:*
 * Maximum: 127.38 mA
 * Minimum: 9.47 mA
 * Mean: 15.34 mA
@@ -122,7 +118,7 @@ Optimized MeshCore firmware, engineered for low power consumption and extended o
 
 <img width="1280" height="348" alt="xiao-c-l" src="https://github.com/user-attachments/assets/291cf991-2cee-47c1-96c1-c55ec0368545" />
 
-### *Typical power profile of XIAO S3 Wio repeater in high LoRa traffic, 6 LoRa messages in 30 seconds*:
+### *Typical power profile of XIAO S3 Wio repeater 1.12.dev in high LoRa traffic, 6 LoRa messages in 30 seconds (17,280 messages a day):*
 * Maximum: 141.1 mA
 * Minimum: 0.51 mA
 * Mean: 24.57 mA
@@ -131,7 +127,7 @@ Optimized MeshCore firmware, engineered for low power consumption and extended o
 
 <img width="1276" height="348" alt="xiao-r-h" src="https://github.com/user-attachments/assets/c859735b-a7ea-4d85-8d42-df7ef25249d9" />
 
-### *Typical power profile of XIAO S3 Wio repeater in idle:*
+### *Typical power profile of XIAO S3 Wio repeater 1.12.dev in idle:*
 * Maximum: 25.59 mA
 * Minimum: 4.53 mA
 * Mean: 7.07 mA
