@@ -21,7 +21,7 @@
 
 <img width="1280" height="348" alt="v3-113-repeater-h" src="https://github.com/user-attachments/assets/e8313532-cc36-4485-959f-5ce3412e44bd" />
 
-## Heltec V3 repeater in idle
+## Heltec V3 repeater in power saving mode
 * Maximum: 11.64 mA
 * Minimum: 9.27 mA
 * Mean: 10.49 mA
@@ -51,7 +51,7 @@
 
 <img width="1278" height="348" alt="origin-repeater-high-lora" src="https://github.com/user-attachments/assets/484434fb-02d8-4ed7-ae42-cb1fd7633b36" />
 
-## Heltec V3 repeater in idle
+## Heltec V3 repeater in power saving mode
 * Maximum: 11.02 mA
 * Minimum: 8.65 mA
 * Mean: 9.93 mA
