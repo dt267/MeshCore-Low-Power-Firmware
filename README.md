@@ -94,6 +94,48 @@ Optimized MeshCore firmware, engineered for low power consumption and extended o
 
 ---
 
+## Heltec Lora 32 V4
+
+<img width="800" height="389" alt="v4001" src="https://github.com/user-attachments/assets/658c4b3a-edca-451f-b4d9-d4a75e927d7c" />
+
+### *Typical power profile of Heltec V4 BLE companion 1.13.dev, 5 LoRa messages in 30 seconds (14,400 messages a day):*
+* Maximum: 734.11 mA
+* Minimum: 14.31 mA
+* Mean: 96.64 mA
+
+**Estimated ~17.59 h (0.73 days) with 2000mAh battery.**
+
+<img width="1279" height="348" alt="dt267-v4-companion-h" src="https://github.com/user-attachments/assets/80f1746f-9cde-4b69-a8db-3dd9056dc87c" />
+
+### *Typical power profile of Heltec V4 BLE companion 1.13.dev in idle:*
+* Maximum: 107.92 mA
+* Minimum: 14.93 mA
+* Mean: 19.85 mA
+
+**Estimated ~85.64 h (3.56 days) with 2000mAh battery.**
+
+<img width="1279" height="348" alt="dt267-v4-companion-l" src="https://github.com/user-attachments/assets/c042c2d9-2940-433f-a51c-0f901fa9ecaa" />
+
+### *Typical power profile of Heltec V4 repeater 1.13.dev in high LoRa traffic, 6 LoRa messages in 30 seconds (17,280 messages a day):*
+* Maximum: 681.08 mA
+* Minimum: 11.07 mA
+* Mean: 108.18 mA
+  
+**Estimated ~15.7 h (0.65 days) with 2000mAh battery.**
+
+<img width="1279" height="348" alt="dt267-v4-repeater-h" src="https://github.com/user-attachments/assets/73b0e1a5-e5fe-451c-ad1f-86396202e040" />
+
+### *Typical power profile of Heltec V4 repeater 1.13.dev in idle:*
+* Maximum: 53.55 mA
+* Minimum: 11.74 mA
+* Mean: 13.57 mA
+  
+**Estimated ~125.27 h (5.2 days) with 2000mAh battery.**
+
+<img width="1279" height="348" alt="dt267-v4-repeater-l" src="https://github.com/user-attachments/assets/3fe07ea7-d733-4df6-aaa0-7132c9307936" />
+
+---
+
 ## Seed Studio XIAO ESP32S3 & Wio-SX1262
 
 ![wio-sx1262-with-xiao-esp32s3](https://github.com/user-attachments/assets/615d1c65-fdb9-4769-acf4-5e9680d1a009)
@@ -137,7 +179,8 @@ Optimized MeshCore firmware, engineered for low power consumption and extended o
 <img width="1276" height="348" alt="xiao-r-l" src="https://github.com/user-attachments/assets/280c8b70-604b-4ea3-b1c4-76f21efc2c24" />
 
 ## Note:
-- LoRa Tx is 22dBm at dummy load.
+- Heltec V3's LoRa Tx is 22dBm into dummy load.
+- Heltec V4's LoRa Tx is 28dBm into dummy load.
 - T_hours = 2000 * 0.85 / I_mean
 - [Power Profiles of the Original MeshCore Firmware for Heltec V3](https://github.com/dt267/MeshCore-Low-Power-Firmware-For-Heltec-V3-V4/blob/main/Power-Profiles-of-the-Original-MeshCore-Firmware-for-Heltec-V3.md)
 
