@@ -5,6 +5,7 @@ Optimized MeshCore firmware, engineered for low power consumption and extended o
 [![GitHub Release](https://img.shields.io/github/v/release/dt267/MeshCore-Low-Power-Firmware-For-Heltec-V3-V4)](https://github.com/dt267/MeshCore-Low-Power-Firmware-For-Heltec-V3-V4/releases) [![GitHub Release Date](https://img.shields.io/github/release-date/dt267/MeshCore-Low-Power-Firmware-For-Heltec-V3-V4)](https://github.com/dt267/MeshCore-Low-Power-Firmware-For-Heltec-V3-V4/releases) [![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/dt267/MeshCore-Low-Power-Firmware-For-Heltec-V3-V4/total)](https://github.com/dt267/MeshCore-Low-Power-Firmware-For-Heltec-V3-V4/releases)
 
 
+> - New Feature: Synchronizing GPS usage with low-power mode on Heltec V4. Power is kept on only as needed for frame acquisition; update intervals scale dynamically (10-30s) based on signal quality.
 > - New Feature: Adaptive Rx Boosted Gain on Heltec V4.  
 >     A new algorithm for acquiring and calculating ambient noise floor that accurately tracks environmental fluctuations. This enables the Heltec V4 to autonomously toggle the Rx Boosted Gain mode based on real-time noise floor conditions.
 > - New Feature: 'poweroff' CLI command for repeater and room server.
@@ -32,6 +33,10 @@ Optimized MeshCore firmware, engineered for low power consumption and extended o
 > - Improved battery measurement and management.
 > - No clock drifted problem on repeater and room server firmware.
 > - Serial port will be deactivated after 30 seconds idle.
+> - The provided firmware in Release is an application-only binary. It does not include the bootloader or partition table (non-merged), designed for seamless integration with existing MeshCore partitions. Please flash to the application partition address 0x10000:
+> 	```
+> 	python -m esptool --chip esp32s3 write-flash 0x10000 <firmware.bin>
+> 	```
 
 
 ## Idle Battery Life Estimation (Based on Data: 2026-02-14, 2000 mAh battery)
