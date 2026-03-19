@@ -5,6 +5,24 @@ Optimized MeshCore firmware, engineered for low power consumption and extended o
 [![GitHub Release](https://img.shields.io/github/v/release/dt267/MeshCore-Low-Power-Firmware-For-Heltec-V3-V4)](https://github.com/dt267/MeshCore-Low-Power-Firmware-For-Heltec-V3-V4/releases) [![GitHub Release Date](https://img.shields.io/github/release-date/dt267/MeshCore-Low-Power-Firmware-For-Heltec-V3-V4)](https://github.com/dt267/MeshCore-Low-Power-Firmware-For-Heltec-V3-V4/releases) [![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/dt267/MeshCore-Low-Power-Firmware-For-Heltec-V3-V4/total)](https://github.com/dt267/MeshCore-Low-Power-Firmware-For-Heltec-V3-V4/releases)
 
 
+> - New Feature: Command Line Interface for Companion.  
+>   Setup: In the MeshCore app, create a channel named "TerminalCLI". It will now act as a Terminal CLI for Companion; everything typed here is a command. Supported CLI for Companion:  
+> 
+>   | Command | Parameters | Notes |
+>   |---|---|---|
+>   | `stats` | — | Display battery (mV), uptime (s), noise floor, last RSSI/SNR, RX/TX/error packet counters |
+>   | `reboot` | — | Reboot the device |
+>   | `poweroff` | — | Power off the device |
+>   | `gps` | — | Show GPS status |
+>   | `gps on` | — | Enable GPS |
+>   | `gps off` | — | Disable GPS |
+>   | `reg read <addr>` | `addr`: hex register address | Read 1 byte from radio register. Example: `reg read 08B5` |
+>   | `reg write <addr> <val>` | `addr`, `val`: hex | Write 1 byte to radio register. Example: `reg write 08B5 04` |
+>   | `get radio.rxgain` | — | Show current RX gain mode: `off`, `on`, or `auto` |
+>   | `set radio.rxgain <mode>` | `off` \| `on` \| `auto` | Set RX gain mode. `auto` is for Heltec V4 only. |
+>   | `start ota` | — | Start OTA firmware update (WiFi: connect to `MeshCore-OTA`, go to `192.168.4.1/update`; other boards use board OTA) |
+> - New Feature: Wi-Fi OTA Update for Companion.  
+>   How to: Type 'start ota' in "TerminalCLI" (above) and use it just like the Wi-Fi OTA Update on the Repeater.
 > - New Feature: Synchronizing GPS usage with low-power mode on Heltec V4.  
 >     GPS power is kept on only as needed for frame acquisition; update intervals scale dynamically (10-30s) based on signal quality.
 > - New Feature: Adaptive Rx Boosted Gain on Heltec V4.  
