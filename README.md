@@ -20,7 +20,7 @@ Optimized MeshCore firmware, engineered for low power consumption and extended o
 >   | `reg write <addr> <val>` | `addr`, `val`: hex | Write 1 byte to radio register. Example: `reg write 08B5 04` |
 >   | `get radio.rxgain` | — | Show current RX gain mode: `off`, `on`, or `auto` |
 >   | `set radio.rxgain <mode>` | `off` \| `on` \| `auto` | Set RX gain mode. `auto` is for Heltec V4 only. |
->   | `start ota` | — | Start OTA firmware update (WiFi: connect to `MeshCore-OTA`, go to `192.168.4.1/update`; other boards use board OTA) |
+>   | `start ota` | — | Start OTA firmware update (WiFi: connect to `MeshCore-OTA`, go to `192.168.4.1/update`) |
 > - New Feature: Wi-Fi OTA Update for Companion.  
 >   How to: Type 'start ota' in "TerminalCLI" (above) and use it just like the Wi-Fi OTA Update on the Repeater.
 > - New Feature: Synchronizing GPS usage with low-power mode on Heltec V4.  
