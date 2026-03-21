@@ -1,5 +1,4 @@
 # MeshCore - Low power firmware for Heltec Lora 32 V3, V4 & WSL3, Seeed Studio Xiao S3 Wio (esp32s3)
-# MeshCore - Low power firmware for Heltec Lora 32 V3, V4 & WSL3, Seeed Studio Xiao S3 Wio (esp32s3)
 Optimized MeshCore firmware, engineered for low power consumption and extended off-grid battery life for multi-day operation.
 
 
