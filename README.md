@@ -101,7 +101,6 @@ Type `start ota` in the "TerminalCLI" channel → connect to `MeshCore-OTA` Wi-F
 | Heltec V4 Repeater | 13.3 | 127.8 | 5.33 | 
 | Heltec V4 Room Server | 13.4 | 126.9 | 5.29 |
 | XIAO S3 Wio Companion BLE | 11 | 154.5 | 6.44 |
-| XIAO S3 Wio Companion BLE | 11 | 154.5 | 6.44 |
 | XIAO S3 Wio Repeater | 8.7 | 195.4 | 8.14 |
 | XIAO S3 Wio Room Server | 8.7 | 195.4 | 8.14 |
 
@@ -193,7 +192,6 @@ Type `start ota` in the "TerminalCLI" channel → connect to `MeshCore-OTA` Wi-F
 
 ---
 
-## Seeed Studio XIAO ESP32S3 & Wio-SX1262
 ## Seeed Studio XIAO ESP32S3 & Wio-SX1262
 
 ![wio-sx1262-with-xiao-esp32s3](https://github.com/user-attachments/assets/615d1c65-fdb9-4769-acf4-5e9680d1a009)
