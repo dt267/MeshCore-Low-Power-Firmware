@@ -1,60 +1,63 @@
-# MeshCore - Low power firmware for Heltec Lora 32 V3, V4 & WSL3, Seed Studio Xiao S3 Wio (esp32s3)
+# MeshCore - Low power firmware for Heltec Lora 32 V3, V4 & WSL3, Seeed Studio Xiao S3 Wio (esp32s3)
 Optimized MeshCore firmware, engineered for low power consumption and extended off-grid battery life for multi-day operation.
 
 
 [![GitHub Release](https://img.shields.io/github/v/release/dt267/MeshCore-Low-Power-Firmware-For-Heltec-V3-V4)](https://github.com/dt267/MeshCore-Low-Power-Firmware-For-Heltec-V3-V4/releases) [![GitHub Release Date](https://img.shields.io/github/release-date/dt267/MeshCore-Low-Power-Firmware-For-Heltec-V3-V4)](https://github.com/dt267/MeshCore-Low-Power-Firmware-For-Heltec-V3-V4/releases)
 
-> - New Feature: Command Line Interface for Companion.  
->   Setup: In the MeshCore app, create a channel named "TerminalCLI". It will now act as a Terminal CLI for Companion; everything typed here is a command. Supported CLI for Companion:  
-> 
->   | Command | Parameters | Notes |
->   |---|---|---|
->   | `stats` | — | Display battery (mV), uptime (s), noise floor, last RSSI/SNR, RX/TX/error packet counters |
->   | `reboot` | — | Reboot the device |
->   | `poweroff` | — | Power off the device |
->   | `gps` | — | Show GPS status |
->   | `gps on` | — | Enable GPS |
->   | `gps off` | — | Disable GPS |
->   | `reg read <addr>` | `addr`: hex register address | Read 1 byte from radio register. Example: `reg read 08B5` |
->   | `reg write <addr> <val>` | `addr`, `val`: hex | Write 1 byte to radio register. Example: `reg write 08B5 04` |
->   | `get radio.rxgain` | — | Show current RX gain mode: `off`, `on`, or `auto` |
->   | `set radio.rxgain <mode>` | `off` \| `on` \| `auto` | Set RX gain mode. `auto` is for Heltec V4 only. |
->   | `start ota` | — | Start Wi-Fi OTA firmware update: connect to `MeshCore-OTA`, go to `192.168.4.1/update` |
-> - New Feature: Wi-Fi OTA Update for Companion.  
->   How to: Type 'start ota' in "TerminalCLI" (above) and use it just like the Wi-Fi OTA Update on the Repeater.
-> - New Feature: Synchronizing GPS usage with low-power mode on Heltec V4.  
->     GPS power is kept on only as needed for frame acquisition; update intervals scale dynamically (10-30s) based on signal quality.
-> - New Feature: Adaptive Rx Boosted Gain on Heltec V4.  
->     A new algorithm for acquiring and calculating ambient noise floor that accurately tracks environmental fluctuations. This enables the Heltec V4 to autonomously toggle the Rx Boosted Gain mode based on real-time noise floor conditions.
-> - New Feature: 'poweroff' CLI command for repeater and room server.
-> - New Feature: Read/write SX1262 register CLI for repeater and room server.  
->     Usage:
-> 	```
-> 	reg read <address> : read 1 byte from the register.
-> 	reg write <address> <value> : write 1 byte to the register.
-> 	```
->     Examples:
-> 	```
-> 	reg read 08AC ; read Whitening Initial Value (0x08AC).
-> 	reg read 0x0740 ; read Sync Word (supports '0x' prefix).
-> 	reg write 0740 1424 ; write 0x14, 0x24 — set private LoRa sync word.
-> 	reg write 08AC 00 ; write 0x00 to 0x08AC.
-> 	```
->     Example Output:
-> 	```
-> 	reg[0x08AC] = 0xFF (255)
-> 	OK - wrote 0x14 to reg[0x0740]
-> 	```
-> 	Note: Register values will revert to defaults after reboot. Use at your own discretion.
-> - New Feature: Low-battery protection with automated deep sleep at 3.4V and system recovery at 3.5V, allowing stable re-activation after recharging. With a deep sleep current below 0.5mA, a remaining 200mAh battery can provide 400 hours (~16.7 days) of standby time.
-> - Supported battery monitoring for Xiao S3 Wio.
-> - Improved battery measurement and management.
-> - No clock drifted problem on repeater and room server firmware.
-> - Serial port will be deactivated after 30 seconds idle.
-> - The provided firmware in Release is an application-only binary. It does not include the bootloader or partition table (non-merged), designed for seamless integration with existing MeshCore partitions. Please flash to the application partition address 0x10000:
-> 	```
-> 	python -m esptool --chip esp32s3 write-flash 0x10000 <firmware.bin>
-> 	```
+## What's New
+
+- **New Feature: Command Line Interface for Companion.**
+  Setup: In the MeshCore app, create a channel named "TerminalCLI". It will now act as a Terminal CLI for Companion; everything typed here is a command. Supported CLI for Companion:
+
+  | Command | Parameters | Notes |
+  |---|---|---|
+  | `stats` | — | Display battery (mV), uptime (s), noise floor, last RSSI/SNR, RX/TX/error packet counters |
+  | `reboot` | — | Reboot the device |
+  | `poweroff` | — | Power off the device |
+  | `gps` | — | Show GPS status |
+  | `gps on` | — | Enable GPS |
+  | `gps off` | — | Disable GPS |
+  | `reg read <addr>` | `addr`: hex register address | Read 1 byte from radio register. Example: `reg read 08B5` |
+  | `reg write <addr> <val>` | `addr`, `val`: hex | Write 1 byte to radio register. Example: `reg write 08B5 04` |
+  | `get radio.rxgain` | — | Show current RX gain mode: `off`, `on`, or `auto` |
+  | `set radio.rxgain <mode>` | `off` \| `on` \| `auto` | Set RX gain mode. `auto` is for Heltec V4 only. |
+  | `start ota` | — | Start Wi-Fi OTA firmware update: connect to `MeshCore-OTA`, go to `192.168.4.1/update` |
+
+- **New Feature: Wi-Fi OTA Update for Companion.**
+  How to: Type 'start ota' in "TerminalCLI" (above) and use it just like the Wi-Fi OTA Update on the Repeater.
+- **New Feature: Synchronizing GPS usage with low-power mode on Heltec V4.**
+  GPS power is kept on only as needed for frame acquisition; update intervals scale dynamically (10-30s) based on signal quality.
+- **New Feature: Adaptive Rx Boosted Gain on Heltec V4.**
+  A new algorithm for acquiring and calculating ambient noise floor that accurately tracks environmental fluctuations. This enables the Heltec V4 to autonomously toggle the Rx Boosted Gain mode based on real-time noise floor conditions.
+- **New Feature: 'poweroff' CLI command for repeater and room server.**
+- **New Feature: Read/write SX1262 register CLI for repeater and room server.**
+  Usage:
+  ```
+  reg read <address> : read 1 byte from the register.
+  reg write <address> <value> : write 1 byte to the register.
+  ```
+  Examples:
+  ```
+  reg read 08AC ; read Whitening Initial Value (0x08AC).
+  reg read 0x0740 ; read Sync Word (supports '0x' prefix).
+  reg write 0740 1424 ; write 0x14, 0x24 — set private LoRa sync word.
+  reg write 08AC 00 ; write 0x00 to 0x08AC.
+  ```
+  Example Output:
+  ```
+  reg[0x08AC] = 0xFF (255)
+  OK - wrote 0x14 to reg[0x0740]
+  ```
+  Note: Register values will revert to defaults after reboot. Use at your own discretion.
+- **New Feature: Low-battery protection** with automated deep sleep at 3.4V and system recovery at 3.5V, allowing stable re-activation after recharging. With a deep sleep current below 0.5mA, a remaining 200mAh battery can provide 400 hours (~16.7 days) of standby time.
+- Supported battery monitoring for Xiao S3 Wio.
+- Improved battery measurement and management.
+- No clock drift problem on repeater and room server firmware.
+- Serial port will be deactivated after 30 seconds idle.
+- The provided firmware in Release is an application-only binary. It does not include the bootloader or partition table (non-merged), designed for seamless integration with existing MeshCore partitions. Please flash to the application partition address 0x10000:
+  ```
+  python -m esptool --chip esp32s3 write-flash 0x10000 <firmware.bin>
+  ```
 
 
 ## Idle Battery Life Estimation (Based on Data: 2026-02-14, 2000 mAh battery)
@@ -70,7 +73,7 @@ Optimized MeshCore firmware, engineered for low power consumption and extended o
 | Heltec V4 Companion BLE | 20 | 85.0 | 3.54 |
 | Heltec V4 Repeater | 13.3 | 127.8 | 5.33 | 
 | Heltec V4 Room Server | 13.4 | 126.9 | 5.29 |
-| XIAO S3 Wio Companion BLE | 11 | 154.5 |6.44 |
+| XIAO S3 Wio Companion BLE | 11 | 154.5 | 6.44 |
 | XIAO S3 Wio Repeater | 8.7 | 195.4 | 8.14 |
 | XIAO S3 Wio Room Server | 8.7 | 195.4 | 8.14 |
 
@@ -162,7 +165,7 @@ Optimized MeshCore firmware, engineered for low power consumption and extended o
 
 ---
 
-## Seed Studio XIAO ESP32S3 & Wio-SX1262
+## Seeed Studio XIAO ESP32S3 & Wio-SX1262
 
 ![wio-sx1262-with-xiao-esp32s3](https://github.com/user-attachments/assets/615d1c65-fdb9-4769-acf4-5e9680d1a009)
 
