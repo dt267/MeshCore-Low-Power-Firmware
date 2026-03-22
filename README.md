@@ -16,6 +16,10 @@ Optimized MeshCore firmware, engineered for low power consumption and extended o
 
 ## What's New
 
+### v1.14_0322
+- **Node names and messages in non-English languages now display correctly on Companion's screen.**
+  Characters from Bulgarian, Catalan, Croatian, Czech, Danish, Dutch, Estonian, Finnish, French, German, Hungarian, Icelandic, Italian, Latvian, Lithuanian, Macedonian, Maltese, Norwegian, Polish, Portuguese, Romanian, Russian, Serbian, Slovak, Slovenian, Spanish, Swedish, Turkish, Ukrainian, Vietnamese, and Welsh are automatically converted to their closest English equivalents — so text stays readable on standard OLED/LCD screens without any layout changes.
+
 ### v1.14_0320
 - **Command Line Interface for Companion.**
   Setup: In the MeshCore app, create a channel named "TerminalCLI". It will now act as a Terminal CLI for Companion; everything typed here is a command. Supported CLI for Companion:
