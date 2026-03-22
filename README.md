@@ -1,4 +1,4 @@
-# MeshCore - Low power firmware for Heltec Lora 32 V3, V4 & WSL3, Seeed Studio Xiao S3 Wio (esp32s3)
+# MeshCore - Low power firmware for Heltec Lora 32 V3, V4.2 & WSL3, Seeed Studio Xiao S3 Wio (esp32s3)
 Optimized MeshCore firmware, engineered for low power consumption and extended off-grid battery life for multi-day operation.
 
 
@@ -9,12 +9,16 @@ Optimized MeshCore firmware, engineered for low power consumption and extended o
 - [Installation](#installation)
 - [Idle Battery Life Estimation](#idle-battery-life-estimation-based-on-data-2026-02-14-2000-mah-battery)
 - [Power Profiles: Heltec Lora 32 V3](#heltec-lora-32-v3)
-- [Power Profiles: Heltec Lora 32 V4](#heltec-lora-32-v4)
+- [Power Profiles: Heltec Lora 32 V4.2](#heltec-lora-32-v42)
 - [Power Profiles: Seeed Studio XIAO ESP32S3 & Wio-SX1262](#seeed-studio-xiao-esp32s3--wio-sx1262)
-- [Bypass External LNA on Heltec V4](#bypass-external-lna-on-heltec-v4)
+- [Bypass External LNA on Heltec V4.2](#bypass-external-lna-on-heltec-v42)
 - [License](#license)
 
 ## What's New
+
+### v1.14_0322
+- **Node names and messages in non-English languages now display correctly on Companion's screen.**
+  Characters from Bulgarian, Catalan, Croatian, Czech, Danish, Dutch, Estonian, Finnish, French, German, Hungarian, Icelandic, Italian, Latvian, Lithuanian, Macedonian, Maltese, Norwegian, Polish, Portuguese, Romanian, Russian, Serbian, Slovak, Slovenian, Spanish, Swedish, Turkish, Ukrainian, Vietnamese, and Welsh are automatically converted to their closest English equivalents — so text stays readable on standard OLED/LCD screens without any layout changes.
 
 ### v1.14_0320
 - **Command Line Interface for Companion.**
@@ -31,17 +35,17 @@ Optimized MeshCore firmware, engineered for low power consumption and extended o
   | `reg read <addr>` | `addr`: hex register address | Read 1 byte from radio register. Example: `reg read 08B5` |
   | `reg write <addr> <val>` | `addr`, `val`: hex | Write 1 byte to radio register. Example: `reg write 08B5 04` |
   | `get radio.rxgain` | — | Show current RX gain mode: `off`, `on`, or `auto` |
-  | `set radio.rxgain <mode>` | `off` \| `on` \| `auto` | Set RX gain mode. `auto` is for Heltec V4 only. |
+  | `set radio.rxgain <mode>` | `off` \| `on` \| `auto` | Set RX gain mode. `auto` is for Heltec V4.2 only. |
   | `start ota` | — | Start Wi-Fi OTA firmware update: connect to `MeshCore-OTA`, go to `192.168.4.1/update` |
 
 - **Wi-Fi OTA Update for Companion.**
   Type `start ota` in "TerminalCLI" (above) and use it just like the Wi-Fi OTA Update on the Repeater.
 
 ### v1.14_0315
-- **Synchronizing GPS usage with low-power mode on Heltec V4.**
+- **Synchronizing GPS usage with low-power mode on Heltec V4.2.**
   GPS power is kept on only as needed for frame acquisition; update intervals scale dynamically (10-30s) based on signal quality.
-- **Adaptive Rx Boosted Gain on Heltec V4.**
-  A new algorithm for acquiring and calculating ambient noise floor that accurately tracks environmental fluctuations. This enables the Heltec V4 to autonomously toggle the Rx Boosted Gain mode based on real-time noise floor conditions.
+- **Adaptive Rx Boosted Gain on Heltec V4.2.**
+  A new algorithm for acquiring and calculating ambient noise floor that accurately tracks environmental fluctuations. This enables the Heltec V4.2 to autonomously toggle the Rx Boosted Gain mode based on real-time noise floor conditions.
 
 ### v1.14_0307
 - **'poweroff' CLI command for repeater and room server.**
@@ -97,9 +101,9 @@ Type `start ota` in the "TerminalCLI" channel → connect to `MeshCore-OTA` Wi-F
 | Heltec WSL3 Companion BLE | 10 | 170.0 | 7.08 |
 | Heltec WSL3 Repeater | 7.7 | 220.8 | 9.20 |
 | Heltec WSL3 Room Server | 7.9 | 215.2 | 8.97 | 
-| Heltec V4 Companion BLE | 20 | 85.0 | 3.54 |
-| Heltec V4 Repeater | 13.3 | 127.8 | 5.33 | 
-| Heltec V4 Room Server | 13.4 | 126.9 | 5.29 |
+| Heltec V4.2 Companion BLE | 20 | 85.0 | 3.54 |
+| Heltec V4.2 Repeater | 13.3 | 127.8 | 5.33 | 
+| Heltec V4.2 Room Server | 13.4 | 126.9 | 5.29 |
 | XIAO S3 Wio Companion BLE | 11 | 154.5 | 6.44 |
 | XIAO S3 Wio Repeater | 8.7 | 195.4 | 8.14 |
 | XIAO S3 Wio Room Server | 8.7 | 195.4 | 8.14 |
@@ -150,45 +154,45 @@ Type `start ota` in the "TerminalCLI" channel → connect to `MeshCore-OTA` Wi-F
 
 ---
 
-## Heltec Lora 32 V4
+## Heltec Lora 32 V4.2
 
 <img width="800" height="389" alt="v4001" src="https://github.com/user-attachments/assets/658c4b3a-edca-451f-b4d9-d4a75e927d7c" />
 
-### *Typical power profile of Heltec V4 BLE companion 1.13.dev, 5 LoRa messages in 30 seconds (14,400 messages a day):*
+### *Typical power profile of Heltec V4.2 BLE companion 1.13.dev, 5 LoRa messages in 30 seconds (14,400 messages a day):*
 * Maximum: 734.11 mA
 * Minimum: 14.31 mA
 * Mean: 96.64 mA
 
 **Estimated ~17.59 h (0.73 days) with 2000mAh battery.**
 
-<img width="1279" height="348" alt="dt267-v4-companion-h" src="https://github.com/user-attachments/assets/80f1746f-9cde-4b69-a8db-3dd9056dc87c" />
+<img width="1279" height="348" alt="dt267-v4.2-companion-h" src="https://github.com/user-attachments/assets/80f1746f-9cde-4b69-a8db-3dd9056dc87c" />
 
-### *Typical power profile of Heltec V4 BLE companion 1.13.dev in idle:*
+### *Typical power profile of Heltec V4.2 BLE companion 1.13.dev in idle:*
 * Maximum: 107.92 mA
 * Minimum: 14.93 mA
 * Mean: 19.85 mA
 
 **Estimated ~85.64 h (3.56 days) with 2000mAh battery.**
 
-<img width="1279" height="348" alt="dt267-v4-companion-l" src="https://github.com/user-attachments/assets/c042c2d9-2940-433f-a51c-0f901fa9ecaa" />
+<img width="1279" height="348" alt="dt267-v4.2-companion-l" src="https://github.com/user-attachments/assets/c042c2d9-2940-433f-a51c-0f901fa9ecaa" />
 
-### *Typical power profile of Heltec V4 repeater 1.13.dev in high LoRa traffic, 6 LoRa messages in 30 seconds (17,280 messages a day):*
+### *Typical power profile of Heltec V4.2 repeater 1.13.dev in high LoRa traffic, 6 LoRa messages in 30 seconds (17,280 messages a day):*
 * Maximum: 681.08 mA
 * Minimum: 11.07 mA
 * Mean: 108.18 mA
   
 **Estimated ~15.7 h (0.65 days) with 2000mAh battery.**
 
-<img width="1279" height="348" alt="dt267-v4-repeater-h" src="https://github.com/user-attachments/assets/73b0e1a5-e5fe-451c-ad1f-86396202e040" />
+<img width="1279" height="348" alt="dt267-v4.2-repeater-h" src="https://github.com/user-attachments/assets/73b0e1a5-e5fe-451c-ad1f-86396202e040" />
 
-### *Typical power profile of Heltec V4 repeater 1.13.dev in idle:*
+### *Typical power profile of Heltec V4.2 repeater 1.13.dev in idle:*
 * Maximum: 53.55 mA
 * Minimum: 11.74 mA
 * Mean: 13.57 mA
   
 **Estimated ~125.27 h (5.2 days) with 2000mAh battery.**
 
-<img width="1279" height="348" alt="dt267-v4-repeater-l" src="https://github.com/user-attachments/assets/3fe07ea7-d733-4df6-aaa0-7132c9307936" />
+<img width="1279" height="348" alt="dt267-v4.2-repeater-l" src="https://github.com/user-attachments/assets/3fe07ea7-d733-4df6-aaa0-7132c9307936" />
 
 ---
 
@@ -236,21 +240,21 @@ Type `start ota` in the "TerminalCLI" channel → connect to `MeshCore-OTA` Wi-F
 
 ## Note:
 - Heltec V3's LoRa Tx is 22dBm into dummy load.
-- Heltec V4's LoRa Tx is 28dBm into dummy load.
+- Heltec V4.2's LoRa Tx is 28dBm into dummy load.
 - T_hours = 2000 * 0.85 / I_mean
 - [Power Profiles of the Original MeshCore Firmware for Heltec V3](https://github.com/dt267/MeshCore-Low-Power-Firmware-For-Heltec-V3-V4/blob/main/Power-Profiles-of-the-Original-MeshCore-Firmware-for-Heltec-V3.md)
 
 ---
 
-## Bypass External LNA on Heltec V4
-If you encounter poor RX sensitivity or an abnormally high noise floor on the Heltec V4, please perform the following mod to bypass the external LNA as shown in the images below. This modification only affects the RX path, the GC1109 Power Amplifier remains fully functional.
+## Bypass External LNA on Heltec V4.2
+If you encounter poor RX sensitivity or an abnormally high noise floor on the Heltec V4.2, please perform the following mod to bypass the external LNA as shown in the images below. This modification only affects the RX path, the GC1109 Power Amplifier remains fully functional.
 
 
 <img width="781" height="413" alt="Screenshot 2025-12-11 160253" src="https://github.com/user-attachments/assets/4ecc6acb-9944-4ba5-b756-e156f4be1dd2" />
 
 ![IMG_6926](https://github.com/user-attachments/assets/3eb8a0a4-f4c4-4ecd-bb6a-45ec6e796533)
 
-Compare Heltec V3 and Heltec V4 receive sensitivity after the mod:
+Compare Heltec V3 and Heltec V4.2 receive sensitivity after the mod:
 
 <img width="522" height="404" alt="bypassed_external_lna" src="https://github.com/user-attachments/assets/a53c0f4d-eea5-416a-a8c9-9d8f50135dbf" />
 

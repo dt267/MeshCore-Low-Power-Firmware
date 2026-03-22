@@ -1,13 +1,13 @@
-# Power Profiles of the Original MeshCore Firmware for Heltec V4 (1.13.dev)
+# Power Profiles of the Original MeshCore Firmware for Heltec V4.2 (1.13.dev)
 
-## Heltec V4 repeater in high LoRa traffic, 6 LoRa messages in 30 seconds
+## Heltec V4.2 repeater in high LoRa traffic, 6 LoRa messages in 30 seconds
 * Maximum: 697.65 mA
 * Minimum: 11.53 mA
 * Mean: 146.95 mA
 
 <img width="1279" height="348" alt="v4-repeater-h" src="https://github.com/user-attachments/assets/746a51d5-91e1-402e-932a-9fec490d5410" />
 
-## Heltec V4 repeater in power saving mode
+## Heltec V4.2 repeater in power saving mode
 
 * Maximum: 14.42 mA
 * Minimum: 12 mA
