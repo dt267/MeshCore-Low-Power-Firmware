@@ -1,4 +1,4 @@
-# MeshCore - Low power firmware for Heltec Lora 32 V3, V4.2 & WSL3, Seeed Studio Xiao S3 Wio (esp32s3)
+# MeshCore - Low power firmware for Heltec Lora 32 V3, V4.2 & WSL3, Seeed Studio Xiao S3 Wio, RAK4631
 Optimized MeshCore firmware, engineered for low power consumption and extended off-grid battery life for multi-day operation.
 
 
@@ -11,10 +11,27 @@ Optimized MeshCore firmware, engineered for low power consumption and extended o
 - [Power Profiles: Heltec Lora 32 V3](#heltec-lora-32-v3)
 - [Power Profiles: Heltec Lora 32 V4.2](#heltec-lora-32-v42)
 - [Power Profiles: Seeed Studio XIAO ESP32S3 & Wio-SX1262](#seeed-studio-xiao-esp32s3--wio-sx1262)
+- [Power Profiles: RAK4631 (RAK19003)](#rak4631-rak19003)
 - [Bypass External LNA on Heltec V4.2](#bypass-external-lna-on-heltec-v42)
 - [License](#license)
 
 ## What's New
+
+### v1.14.0327
+- **Bidirectional clock sync on Repeater and Room Server — no more `clkreboot` needed.**
+  `clock sync` now works in both directions — no manual `clkreboot` + re-sync required.
+
+- **Repeat mode on Companion now supports custom frequencies.**
+  Useful for off-grid or emergency deployments where no public MeshCore network is available and a private frequency is used. You can add your operating frequency to the allowed list via TerminalCLI — for example `add repeat.freq 915`.
+
+  | Command | Parameters | Notes |
+  |---|---|---|
+  | `get repeat.freqs` | — | List all frequencies allowed for repeat mode (MHz) |
+  | `add repeat.freq <MHz>` | `MHz`: frequency in MHz, e.g. `915` | Add a frequency to the repeat allowed list (max 5). Setting is retained after reboot |
+  | `del repeat.freq <MHz>` | `MHz`: frequency in MHz | Remove a frequency from the repeat allowed list |
+
+- **Low-battery protection and battery voltage reading now available on Xiao S3 Companion** (previously Repeater/Room Server only).
+  Use `get adc.multiplier` / `set adc.multiplier <value>` in TerminalCLI — same commands and circuit as documented in the [Earlier](#earlier) section below. Setting is retained after reboot and power cycle.
 
 ### v1.14_0322
 - **Node names and messages in non-English languages now display correctly on Companion's screen.**
@@ -39,15 +56,18 @@ Optimized MeshCore firmware, engineered for low power consumption and extended o
   | `start ota` | — | Start Wi-Fi OTA firmware update: connect to `MeshCore-OTA`, go to `192.168.4.1/update` |
 
 - **Wi-Fi OTA Update for Companion.**
-  Type `start ota` in "TerminalCLI" (above) and use it just like the Wi-Fi OTA Update on the Repeater.
+  Type `start ota` in "TerminalCLI" (above) and use it just like the Wi-Fi OTA Update on the Repeater.  
+
+  <img height="600" alt="Screenshot 2026-03-19 at 9 38 13 PM" src="https://github.com/user-attachments/assets/c1df229f-5eed-43b8-abdb-906c3c864a62" />
 
 ### v1.14_0315
 - **Synchronizing GPS usage with low-power mode on Heltec V4.2.**
-  GPS power is kept on only as needed for frame acquisition; update intervals scale dynamically (10-30s) based on signal quality.
-- **Adaptive Rx Boosted Gain on Heltec V4.2.**
-  A new algorithm for acquiring and calculating ambient noise floor that accurately tracks environmental fluctuations. This enables the Heltec V4.2 to autonomously toggle the Rx Boosted Gain mode based on real-time noise floor conditions.
+  GPS power is kept on only as needed for frame acquisition; update intervals scale dynamically (10-30s) based on signal quality. GPS power profile on repeater:
+  <img alt="v4-repeater-gps-power-usage" src="https://github.com/user-attachments/assets/cf934adc-ca11-41c3-99a9-7a8d7e1f0857" />
 
 ### v1.14_0307
+- **Adaptive Rx Boosted Gain on Heltec V4.2.**
+  A new algorithm for acquiring and calculating ambient noise floor that accurately tracks environmental fluctuations. This enables the Heltec V4.2 to autonomously toggle the Rx Boosted Gain mode based on real-time noise floor conditions.
 - **'poweroff' CLI command for repeater and room server.**
 
 ### v1.13_0301
@@ -73,7 +93,8 @@ Optimized MeshCore firmware, engineered for low power consumption and extended o
 
 ### Earlier
 - **Low-battery protection:** automated deep sleep at 3.4V and system recovery at 3.5V, allowing stable re-activation after recharging. With a deep sleep current below 0.5mA, a remaining 200mAh battery can provide 400 hours (~16.7 days) of standby time.
-- Supported battery monitoring for Xiao S3 Wio.
+- **Supported battery monitoring for Xiao S3 Wio.** Use cli command `set adc.multiplier 2.04` or `set adc.multiplier 0` to enable/disable battery voltage measurement and low-battery protection feature on repeater/room server. The factor `2.04` must be adjusted accordingly if different resistor values are utilized in the voltage divider circuit. Measure battery voltage circuit:  
+  <img height="100" alt="xiao-measure-bat" src="https://github.com/user-attachments/assets/d073d1f0-44a8-41b7-8f30-631816615716" />
 - Improved battery measurement and management.
 - No clock drift problem on repeater and room server firmware.
 - Serial port will be deactivated after 30 seconds idle.
@@ -91,7 +112,7 @@ python -m esptool --chip esp32s3 write-flash 0x10000 <firmware.bin>
 Type `start ota` in the "TerminalCLI" channel → connect to `MeshCore-OTA` Wi-Fi → go to `192.168.4.1/update`.
 
 
-## Idle Battery Life Estimation (Based on Data: 2026-02-14, 2000 mAh battery)
+## Idle Battery Life Estimation (2000 mAh battery)
 
 | Device | Idle Current (mA) | Estimated Idle Runtime (Hours) | Estimated Idle Runtime (Days) |
 | :--- | :--- | :---: | :---: |
@@ -107,12 +128,14 @@ Type `start ota` in the "TerminalCLI" channel → connect to `MeshCore-OTA` Wi-F
 | XIAO S3 Wio Companion BLE | 11 | 154.5 | 6.44 |
 | XIAO S3 Wio Repeater | 8.7 | 195.4 | 8.14 |
 | XIAO S3 Wio Room Server | 8.7 | 195.4 | 8.14 |
+| RAK4631 Companion BLE | 6.61 | 257.18 | 10.71 |
+| RAK4631 Repeater | 5.79 | 293.6 | 12.23 |
 
 ---
 
 ## Heltec Lora 32 V3 
 
-<img width="690" height="356" alt="helec-v3" src="https://github.com/user-attachments/assets/2a4b7faf-0420-4d31-bcbe-47b970810f22" />
+<img alt="helec-v3" src="https://github.com/user-attachments/assets/2a4b7faf-0420-4d31-bcbe-47b970810f22" />
 
 
 ### *Typical power profile of Heltec V3 BLE companion 1.13.dev, 5 LoRa messages in 30 seconds (14,400 messages a day):*
@@ -122,7 +145,7 @@ Type `start ota` in the "TerminalCLI" channel → connect to `MeshCore-OTA` Wi-F
 
 **Estimated ~54.19 h (2.57 days) with 2000mAh battery.**
 
-<img width="1280" height="348" alt="dt267-v3-113-companion-h" src="https://github.com/user-attachments/assets/3e79cd31-87a9-4366-9576-2013b8ae7469" />
+<img alt="dt267-v3-113-companion-h" src="https://github.com/user-attachments/assets/3e79cd31-87a9-4366-9576-2013b8ae7469" />
 
 
 ### *Typical power profile of Heltec V3 BLE companion 1.13.dev in idle:*
@@ -132,7 +155,7 @@ Type `start ota` in the "TerminalCLI" channel → connect to `MeshCore-OTA` Wi-F
 
 **Estimated ~184.38 h (7.68 days) with 2000mAh battery.**
 
-<img width="1280" height="348" alt="dt267-v3-113-companion-l" src="https://github.com/user-attachments/assets/d0c5bb68-4136-481c-80b7-b1adfe515687" />
+<img alt="dt267-v3-113-companion-l" src="https://github.com/user-attachments/assets/d0c5bb68-4136-481c-80b7-b1adfe515687" />
 
 ### *Typical power profile of Heltec V3 repeater 1.13.dev in high LoRa traffic, 6 LoRa messages in 30 seconds (17,280 messages a day):*
 * Maximum: 160.49 mA
@@ -141,7 +164,7 @@ Type `start ota` in the "TerminalCLI" channel → connect to `MeshCore-OTA` Wi-F
   
 **Estimated ~61.28 h (2.55 days) with 2000mAh battery.**
 
-<img width="1280" height="348" alt="dt267-v3-113-repeater-h" src="https://github.com/user-attachments/assets/54f806e7-b197-47fa-a054-19e9d72cad98" />
+<img alt="dt267-v3-113-repeater-h" src="https://github.com/user-attachments/assets/54f806e7-b197-47fa-a054-19e9d72cad98" />
 
 ### *Typical power profile of Heltec V3 repeater 1.13.dev in idle:*
 * Maximum: 44.28 mA
@@ -150,13 +173,13 @@ Type `start ota` in the "TerminalCLI" channel → connect to `MeshCore-OTA` Wi-F
   
 **Estimated ~234.48 h (9.77 days) with 2000mAh battery.**
 
-<img width="1280" height="348" alt="dt267-v3-113-repeater-l" src="https://github.com/user-attachments/assets/9e8511de-53c9-40e2-89db-eb517d3dcf46" />
+<img alt="dt267-v3-113-repeater-l" src="https://github.com/user-attachments/assets/9e8511de-53c9-40e2-89db-eb517d3dcf46" />
 
 ---
 
 ## Heltec Lora 32 V4.2
 
-<img width="800" height="389" alt="v4001" src="https://github.com/user-attachments/assets/658c4b3a-edca-451f-b4d9-d4a75e927d7c" />
+<img alt="v4001" src="https://github.com/user-attachments/assets/658c4b3a-edca-451f-b4d9-d4a75e927d7c" />
 
 ### *Typical power profile of Heltec V4.2 BLE companion 1.13.dev, 5 LoRa messages in 30 seconds (14,400 messages a day):*
 * Maximum: 734.11 mA
@@ -165,7 +188,7 @@ Type `start ota` in the "TerminalCLI" channel → connect to `MeshCore-OTA` Wi-F
 
 **Estimated ~17.59 h (0.73 days) with 2000mAh battery.**
 
-<img width="1279" height="348" alt="dt267-v4.2-companion-h" src="https://github.com/user-attachments/assets/80f1746f-9cde-4b69-a8db-3dd9056dc87c" />
+<img alt="dt267-v4.2-companion-h" src="https://github.com/user-attachments/assets/80f1746f-9cde-4b69-a8db-3dd9056dc87c" />
 
 ### *Typical power profile of Heltec V4.2 BLE companion 1.13.dev in idle:*
 * Maximum: 107.92 mA
@@ -174,7 +197,7 @@ Type `start ota` in the "TerminalCLI" channel → connect to `MeshCore-OTA` Wi-F
 
 **Estimated ~85.64 h (3.56 days) with 2000mAh battery.**
 
-<img width="1279" height="348" alt="dt267-v4.2-companion-l" src="https://github.com/user-attachments/assets/c042c2d9-2940-433f-a51c-0f901fa9ecaa" />
+<img alt="dt267-v4.2-companion-l" src="https://github.com/user-attachments/assets/c042c2d9-2940-433f-a51c-0f901fa9ecaa" />
 
 ### *Typical power profile of Heltec V4.2 repeater 1.13.dev in high LoRa traffic, 6 LoRa messages in 30 seconds (17,280 messages a day):*
 * Maximum: 681.08 mA
@@ -183,7 +206,7 @@ Type `start ota` in the "TerminalCLI" channel → connect to `MeshCore-OTA` Wi-F
   
 **Estimated ~15.7 h (0.65 days) with 2000mAh battery.**
 
-<img width="1279" height="348" alt="dt267-v4.2-repeater-h" src="https://github.com/user-attachments/assets/73b0e1a5-e5fe-451c-ad1f-86396202e040" />
+<img alt="dt267-v4.2-repeater-h" src="https://github.com/user-attachments/assets/73b0e1a5-e5fe-451c-ad1f-86396202e040" />
 
 ### *Typical power profile of Heltec V4.2 repeater 1.13.dev in idle:*
 * Maximum: 53.55 mA
@@ -192,7 +215,7 @@ Type `start ota` in the "TerminalCLI" channel → connect to `MeshCore-OTA` Wi-F
   
 **Estimated ~125.27 h (5.2 days) with 2000mAh battery.**
 
-<img width="1279" height="348" alt="dt267-v4.2-repeater-l" src="https://github.com/user-attachments/assets/3fe07ea7-d733-4df6-aaa0-7132c9307936" />
+<img alt="dt267-v4.2-repeater-l" src="https://github.com/user-attachments/assets/3fe07ea7-d733-4df6-aaa0-7132c9307936" />
 
 ---
 
@@ -207,7 +230,7 @@ Type `start ota` in the "TerminalCLI" channel → connect to `MeshCore-OTA` Wi-F
 
 **Estimated ~47.9 h (1.99 days) with 2000mAh battery.**
 
-<img width="1280" height="348" alt="xiao-c-h" src="https://github.com/user-attachments/assets/da6005c2-1afa-4418-83d2-da65b6d7b371" />
+<img alt="xiao-c-h" src="https://github.com/user-attachments/assets/da6005c2-1afa-4418-83d2-da65b6d7b371" />
 
 ### *Typical power profile of XIAO S3 Wio companion BLE 1.12.dev in idle:*
 * Maximum: 127.38 mA
@@ -216,9 +239,7 @@ Type `start ota` in the "TerminalCLI" channel → connect to `MeshCore-OTA` Wi-F
 
 **Estimated ~110.8 h (4.62 days) with 2000mAh battery.**
 
-[v1.12_0214: Reducing idle current to 11 mA.](https://github.com/dt267/MeshCore-Low-Power-Firmware-For-Heltec-V3-V4/releases/tag/XIAO-S3-Wio-low-power-v1.12_0214)
-
-<img width="1280" height="348" alt="xiao-c-l" src="https://github.com/user-attachments/assets/291cf991-2cee-47c1-96c1-c55ec0368545" />
+<img alt="xiao-c-l" src="https://github.com/user-attachments/assets/291cf991-2cee-47c1-96c1-c55ec0368545" />
 
 ### *Typical power profile of XIAO S3 Wio repeater 1.12.dev in high LoRa traffic, 6 LoRa messages in 30 seconds (17,280 messages a day):*
 * Maximum: 141.1 mA
@@ -227,7 +248,7 @@ Type `start ota` in the "TerminalCLI" channel → connect to `MeshCore-OTA` Wi-F
   
 **Estimated ~69.2 h (2.88 days) with 2000mAh battery.**
 
-<img width="1276" height="348" alt="xiao-r-h" src="https://github.com/user-attachments/assets/c859735b-a7ea-4d85-8d42-df7ef25249d9" />
+<img alt="xiao-r-h" src="https://github.com/user-attachments/assets/c859735b-a7ea-4d85-8d42-df7ef25249d9" />
 
 ### *Typical power profile of XIAO S3 Wio repeater 1.12.dev in idle:*
 * Maximum: 25.59 mA
@@ -236,7 +257,51 @@ Type `start ota` in the "TerminalCLI" channel → connect to `MeshCore-OTA` Wi-F
   
 **Estimated ~240.5 h (10.02 days) with 2000mAh battery.**
 
-<img width="1276" height="348" alt="xiao-r-l" src="https://github.com/user-attachments/assets/280c8b70-604b-4ea3-b1c4-76f21efc2c24" />
+<img alt="xiao-r-l" src="https://github.com/user-attachments/assets/280c8b70-604b-4ea3-b1c4-76f21efc2c24" />
+
+---
+
+## RAK4631 (RAK19003)
+
+
+
+### *Typical power profile of RAK4631 companion BLE 1.14.dev, 5 LoRa messages in 30 seconds (14,400 messages a day):*
+* Maximum: 104.16 mA
+* Minimum: 6.7 mA
+* Mean: 19.2 mA
+
+**Estimated ~88.5 h (3.69 days) with 2000mAh battery.**
+
+
+
+### *Typical power profile of RAK4631 companion BLE 1.14.dev in idle:*
+* Maximum: 10.92 mA
+* Minimum: 5.25 mA
+* Mean: 6.61 mA
+
+**Estimated ~257.18 h (10.71 days) with 2000mAh battery.**
+
+
+
+### *Typical power profile of RAK4631 repeater 1.14.dev in high LoRa traffic, 6 LoRa messages in 30 seconds (17,280 messages a day):*
+* Maximum: 100.3 mA
+* Minimum: 0.2 mA
+* Mean: 20.23 mA
+  
+**Estimated ~84.03 h (3.5 days) with 2000mAh battery.**
+
+
+
+### *Typical power profile of RAK4631 repeater 1.14.dev in idle:*
+* Maximum: 7.88 mA
+* Minimum: 4.53 mA
+* Mean: 5.79 mA
+  
+**Estimated ~293.6 h (12.23 days) with 2000mAh battery.**
+
+
+
+---
 
 ## Note:
 - Heltec V3's LoRa Tx is 22dBm into dummy load.
