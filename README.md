@@ -33,6 +33,9 @@ Optimized MeshCore firmware, engineered for low power consumption and extended o
 - **Low-battery protection and battery voltage reading now available on Xiao S3 Companion** (previously Repeater/Room Server only).
   Use `get adc.multiplier` / `set adc.multiplier <value>` in TerminalCLI — same commands and circuit as documented in the [Earlier](#earlier) section below. Setting is retained after reboot and power cycle.
 
+- **BLE random disconnects may be fixed.**
+  Early testing shows significantly improved connection stability in the background — feedback welcome.
+
 ### v1.14_0322
 - **Node names and messages in non-English languages now display correctly on Companion's screen.**
   Characters from Bulgarian, Catalan, Croatian, Czech, Danish, Dutch, Estonian, Finnish, French, German, Hungarian, Icelandic, Italian, Latvian, Lithuanian, Macedonian, Maltese, Norwegian, Polish, Portuguese, Romanian, Russian, Serbian, Slovak, Slovenian, Spanish, Swedish, Turkish, Ukrainian, Vietnamese, and Welsh are automatically converted to their closest English equivalents — so text stays readable on standard OLED/LCD screens without any layout changes.
@@ -101,6 +104,8 @@ Optimized MeshCore firmware, engineered for low power consumption and extended o
 
 ## Installation
 
+### Heltec V3 / V4.2 / WSL3 · XIAO S3 Wio (ESP32)
+
 The provided firmware is an application-only binary (non-merged). It does not include the bootloader or partition table, designed for seamless integration with existing MeshCore partitions.
 
 **Option 1: Flash via esptool**
@@ -109,7 +114,15 @@ python -m esptool --chip esp32s3 write-flash 0x10000 <firmware.bin>
 ```
 
 **Option 2: Wi-Fi OTA** *(requires v1.14_0320 or later)*
-Type `start ota` in the "TerminalCLI" channel → connect to `MeshCore-OTA` Wi-Fi → go to `192.168.4.1/update`.
+Type `start ota` via TerminalCLI (Companion) or Command Line (Repeater / Room Server) → connect to `MeshCore-OTA` Wi-Fi → go to `192.168.4.1/update`.
+
+### RAK4631 (nRF52840)
+
+**Option 1: UF2 drag-and-drop**
+Double-tap the Reset button → a USB drive named `RAK4631` appears → copy the `.uf2` file onto it. The device reboots automatically when done.
+
+**Option 2: BLE DFU** *(requires v1.14_0320 or later)*
+Type `start ota` via TerminalCLI (Companion) or Command Line (Repeater / Room Server) → the device enters DFU mode → use the **nRF Device Firmware Update** app (iOS/Android) to upload the `.zip` DFU package.
 
 
 ## Idle Battery Life Estimation (2000 mAh battery)
@@ -263,7 +276,7 @@ Type `start ota` in the "TerminalCLI" channel → connect to `MeshCore-OTA` Wi-F
 
 ## RAK4631 (RAK19003)
 
-
+![rak19003](https://github.com/user-attachments/assets/e95d138e-c4c4-4727-bfbb-860b077af8d3)
 
 ### *Typical power profile of RAK4631 companion BLE 1.14.dev, 5 LoRa messages in 30 seconds (14,400 messages a day):*
 * Maximum: 104.16 mA
@@ -272,7 +285,7 @@ Type `start ota` in the "TerminalCLI" channel → connect to `MeshCore-OTA` Wi-F
 
 **Estimated ~88.5 h (3.69 days) with 2000mAh battery.**
 
-
+<img alt="rak4631-companion-h" src="https://github.com/user-attachments/assets/0c03c8ae-8104-49b5-9984-0b08b09643c2" />
 
 ### *Typical power profile of RAK4631 companion BLE 1.14.dev in idle:*
 * Maximum: 10.92 mA
@@ -281,7 +294,7 @@ Type `start ota` in the "TerminalCLI" channel → connect to `MeshCore-OTA` Wi-F
 
 **Estimated ~257.18 h (10.71 days) with 2000mAh battery.**
 
-
+<img alt="rak4631-companion-l" src="https://github.com/user-attachments/assets/c18b00fd-a722-4e01-a852-c6bcda8d6ff6" />
 
 ### *Typical power profile of RAK4631 repeater 1.14.dev in high LoRa traffic, 6 LoRa messages in 30 seconds (17,280 messages a day):*
 * Maximum: 100.3 mA
@@ -290,7 +303,7 @@ Type `start ota` in the "TerminalCLI" channel → connect to `MeshCore-OTA` Wi-F
   
 **Estimated ~84.03 h (3.5 days) with 2000mAh battery.**
 
-
+<img alt="ra4631-repeater-h" src="https://github.com/user-attachments/assets/2934f559-93c2-439c-aca7-3b6705fc7576" />
 
 ### *Typical power profile of RAK4631 repeater 1.14.dev in idle:*
 * Maximum: 7.88 mA
@@ -299,7 +312,7 @@ Type `start ota` in the "TerminalCLI" channel → connect to `MeshCore-OTA` Wi-F
   
 **Estimated ~293.6 h (12.23 days) with 2000mAh battery.**
 
-
+<img alt="ra4631-repeater-l" src="https://github.com/user-attachments/assets/37951209-5fa6-4a37-9ff3-d91ee58fd820" />
 
 ---
 
