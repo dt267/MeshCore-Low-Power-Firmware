@@ -263,7 +263,7 @@ Type `start ota` in the "TerminalCLI" channel → connect to `MeshCore-OTA` Wi-F
 
 ## RAK4631 (RAK19003)
 
-
+![rak19003](https://github.com/user-attachments/assets/e95d138e-c4c4-4727-bfbb-860b077af8d3)
 
 ### *Typical power profile of RAK4631 companion BLE 1.14.dev, 5 LoRa messages in 30 seconds (14,400 messages a day):*
 * Maximum: 104.16 mA
@@ -272,7 +272,7 @@ Type `start ota` in the "TerminalCLI" channel → connect to `MeshCore-OTA` Wi-F
 
 **Estimated ~88.5 h (3.69 days) with 2000mAh battery.**
 
-
+<img alt="rak4631-companion-h" src="https://github.com/user-attachments/assets/0c03c8ae-8104-49b5-9984-0b08b09643c2" />
 
 ### *Typical power profile of RAK4631 companion BLE 1.14.dev in idle:*
 * Maximum: 10.92 mA
@@ -281,7 +281,7 @@ Type `start ota` in the "TerminalCLI" channel → connect to `MeshCore-OTA` Wi-F
 
 **Estimated ~257.18 h (10.71 days) with 2000mAh battery.**
 
-
+<img alt="rak4631-companion-l" src="https://github.com/user-attachments/assets/c18b00fd-a722-4e01-a852-c6bcda8d6ff6" />
 
 ### *Typical power profile of RAK4631 repeater 1.14.dev in high LoRa traffic, 6 LoRa messages in 30 seconds (17,280 messages a day):*
 * Maximum: 100.3 mA
@@ -290,7 +290,7 @@ Type `start ota` in the "TerminalCLI" channel → connect to `MeshCore-OTA` Wi-F
   
 **Estimated ~84.03 h (3.5 days) with 2000mAh battery.**
 
-
+<img alt="ra4631-repeater-h" src="https://github.com/user-attachments/assets/2934f559-93c2-439c-aca7-3b6705fc7576" />
 
 ### *Typical power profile of RAK4631 repeater 1.14.dev in idle:*
 * Maximum: 7.88 mA
@@ -299,7 +299,7 @@ Type `start ota` in the "TerminalCLI" channel → connect to `MeshCore-OTA` Wi-F
   
 **Estimated ~293.6 h (12.23 days) with 2000mAh battery.**
 
-
+<img alt="ra4631-repeater-l" src="https://github.com/user-attachments/assets/37951209-5fa6-4a37-9ff3-d91ee58fd820" />
 
 ---
 
