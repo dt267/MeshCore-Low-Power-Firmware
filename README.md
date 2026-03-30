@@ -17,7 +17,28 @@ Optimized MeshCore firmware, engineered for low power consumption and extended o
 
 ## What's New
 
-### v1.14.0327
+### v1.14_0329 (pre-release) [Heltec V4 OLED low power - v1.14_0329](https://github.com/dt267/MeshCore-Low-Power-Firmware-For-Heltec-V3-V4/releases/tag/Heltec-V4-OLED-low-power-v1.14_0329)
+
+- **Heltec V4.3 support (KCT8103L FEM).**
+  Firmware automatically detects V4.2 / V4.3 at boot — no configuration required. V4.3 replaces the GC1109 FEM with KCT8103L, which supports explicit LNA/bypass RX mode selection via `radio.rxgain`.
+
+  | Mode | Description |
+  |---|---|
+  | `on` *(default)* | FEM LNA active — best sensitivity |
+  | `off` | FEM bypass — SX1262 boosted gain compensates, better in high-interference environments near strong transmitters |
+
+  > V4.3 does **not** support `auto` mode — use `on` or `off`.
+
+  **TerminalCLI** (Companion app), **Command Line** (Repeater / Room Server):
+  ```
+  set radio.rxgain on
+  set radio.rxgain off
+  get radio.rxgain
+  ```
+  
+  Setting is saved and restored after reboot.
+
+### v1.1414_0327
 - **Bidirectional clock sync on Repeater and Room Server — no more `clkreboot` needed.**
   `clock sync` now works in both directions — no manual `clkreboot` + re-sync required.
 
