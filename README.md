@@ -1,4 +1,4 @@
-# MeshCore - Low power firmware for Heltec Lora 32 V3, V4.2 & WSL3, Seeed Studio Xiao S3 Wio, RAK4631
+# MeshCore - Low power firmware for Heltec Lora 32 V3, V4 & WSL3, Seeed Studio Xiao S3 Wio, RAK4631
 Optimized MeshCore firmware, engineered for low power consumption and extended off-grid battery life for multi-day operation.
 
 
@@ -13,11 +13,62 @@ Optimized MeshCore firmware, engineered for low power consumption and extended o
 - [Power Profiles: Seeed Studio XIAO ESP32S3 & Wio-SX1262](#seeed-studio-xiao-esp32s3--wio-sx1262)
 - [Power Profiles: RAK4631 (RAK19003)](#rak4631-rak19003)
 - [Bypass External LNA on Heltec V4.2](#bypass-external-lna-on-heltec-v42)
+- [Companion TerminalCLI Commands](Companion_TerminalCLI_Commands.md)
 - [License](#license)
 
 ## What's New
 
-### v1.14_0329 (pre-release) [Heltec V4 OLED low power - v1.14_0329](https://github.com/dt267/MeshCore-Low-Power-Firmware-For-Heltec-V3-V4/releases/tag/Heltec-V4-OLED-low-power-v1.14_0329)
+### v1.14_0404
+
+- **Quick Send and Settings — control your Companion without a phone.**
+
+  Two new pages are added to the Companion's display, accessible without a phone or app.
+
+  #### Button controls
+
+  - **Single click / Double click** — navigate between pages (next / previous)
+  - **Long press on FIRST page** — reopen unread message preview (up to 32 messages buffered)
+  - **Long press** on Quick Send or Settings — enter the page; active item highlights
+    - Single click = next item · Double click = exit · Long press = confirm
+
+  #### Quick Send
+
+  Send a short status message directly over LoRa to the public channel — no typing, no phone needed. Useful when your phone is dead or unavailable.
+
+  GPS coordinates are automatically appended if available (e.g. `I'm OK @10.7769,106.7009`). If GPS has no current fix, last known coordinates are used with a `?` prefix so you know before sending.
+
+  **10 built-in presets:**
+  - I'm OK
+  - On my way
+  - I need help
+  - Everyone OK here
+  - Wait for me
+  - Heading home
+  - Running late
+  - Lost contact, call me
+  - Battery low, signing off
+  - All clear
+
+  **Customize via TerminalCLI** — changes are saved to flash and persist after reboot:
+  ```
+  get quick                        list all current presets
+  set quick.0 Arrived at camp      set preset at index 0
+  set quick.reset                  restore all 10 built-in defaults
+  ```
+
+  #### Settings
+
+  A scrollable list of device settings, controlled directly from the button:
+
+  | Item | Action |
+  |---|---|
+  | BLE | Toggle Bluetooth on/off (shows connection state) |
+  | Repeat | Toggle repeat mode on/off |
+  | RxGain | Cycle RxGain mode: OFF → ON → AUTO *(AUTO: V4.2 only)* |
+  | Buzzer | Toggle buzzer on/muted *(boards with buzzer only)* |
+  | Send Advert | Broadcast your presence to nearby nodes |
+  | Start OTA | Start OTA update mode — connect to `MeshCore-OTA` WiFi and go to `192.168.4.1/update` |
+  | Shutdown | Power off the device |
 
 - **Heltec V4.3 support (KCT8103L FEM).**
   Firmware automatically detects V4.2 / V4.3 at boot — no configuration required. V4.3 replaces the GC1109 FEM with KCT8103L, which supports explicit LNA/bypass RX mode selection via `radio.rxgain`.
@@ -38,6 +89,21 @@ Optimized MeshCore firmware, engineered for low power consumption and extended o
   
   Setting is saved and restored after reboot.
 
+- **Unified firmware for "No Display" hardware variants.**
+
+  A single firmware binary now runs on both OLED and no-display hardware — no separate build required. The display is detected automatically at boot via I2C probe.
+
+  | Hardware | Detected as |
+  |---|---|
+  | Heltec V3 with OLED | Heltec V3 |
+  | Heltec WSL3 (no OLED) | Heltec WSL3 |
+  | Heltec V4.2 with OLED | Heltec V4.2 OLED |
+  | Heltec V4.2 without OLED | Heltec V4.2 No Display |
+  | Heltec V4.3 with OLED | Heltec V4.3 OLED |
+  | Heltec V4.3 without OLED | Heltec V4.3 No Display |
+
+  The device name shown in the MeshCore app reflects the actual hardware detected. On no-display hardware, the user button has no effect (previously it could trigger unintended I2C writes).
+
 ### v1.1414_0327
 - **Bidirectional clock sync on Repeater and Room Server — no more `clkreboot` needed.**
   `clock sync` now works in both directions — no manual `clkreboot` + re-sync required.
@@ -55,7 +121,7 @@ Optimized MeshCore firmware, engineered for low power consumption and extended o
   Use `get adc.multiplier` / `set adc.multiplier <value>` in TerminalCLI — same commands and circuit as documented in the [Earlier](#earlier) section below. Setting is retained after reboot and power cycle.
 
 - **BLE random disconnects may be fixed.**
-  Early testing shows significantly improved connection stability in the background — feedback welcome.
+  Early testing shows 100h+ continuous connection stability in the background — feedback welcome.
 
 ### v1.14_0322
 - **Node names and messages in non-English languages now display correctly on Companion's screen.**
