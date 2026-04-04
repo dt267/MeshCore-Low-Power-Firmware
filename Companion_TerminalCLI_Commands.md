@@ -29,3 +29,6 @@ Commands available via the TerminalCLI on companion_radio firmware.
   | `del repeat.freq <MHz>` | `MHz`: frequency to remove | Remove a frequency from the repeat allowed list |
   | `get adc.multiplier` | — | Show the battery voltage calibration multiplier |
   | `set adc.multiplier <value>` | `value`: decimal, e.g. `2.000` | Set battery voltage calibration multiplier. Use `0` to reset to default. |
+  | `get quick` | — | List all Quick Send presets with their index numbers |
+  | `set quick.<N> <text>` | `N`: 0–9, `text`: message | Set preset at index N. Example: `set quick.2 Meet me at the park` |
+  | `set quick.reset` | — | Restore all 10 presets to built-in defaults |
