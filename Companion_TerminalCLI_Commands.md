@@ -1,8 +1,10 @@
 # MeshCore Companion Radio TerminalCLI Commands
 
-Commands available via the TerminalCLI on companion_radio firmware.
+## Command Line Interface for Companion.
+Setup: In the MeshCore app, create a channel named "TerminalCLI". It will now act as a Terminal CLI for Companion; everything typed here is a command.
 
----
+<img height="600" alt="Screenshot 2026-03-19 at 9 38 13 PM" src="https://github.com/user-attachments/assets/c1df229f-5eed-43b8-abdb-906c3c864a62" />
+
 
 ## Command Reference
 
@@ -32,3 +34,7 @@ Commands available via the TerminalCLI on companion_radio firmware.
   | `get quick` | — | List all Quick Send presets with their index numbers |
   | `set quick.<N> <text>` | `N`: 0–9, `text`: message | Set preset at index N. Example: `set quick.2 Meet me at the park` |
   | `set quick.reset` | — | Restore all 10 presets to built-in defaults |
+  | `get loc` | — | List occupied saved location slots, one per line: `N:lat,lon:name` (N is 0-based) |
+  | `set loc.<N> <name> <lat> <lon>` | `N`: 0–9; name may contain spaces; lat/lon come last | Save a GPS location to slot N (0-based, display shows 1–10). Example: `set loc.0 Base camp 10.7769 106.7009` |
+  | `del loc.<N>` | `N`: 0–9 | Clear saved location at slot N (0-based) |
+  | `del loc.all` | — | Clear all saved location slots |
