@@ -32,3 +32,7 @@ Commands available via the TerminalCLI on companion_radio firmware.
   | `get quick` | — | List all Quick Send presets with their index numbers |
   | `set quick.<N> <text>` | `N`: 0–9, `text`: message | Set preset at index N. Example: `set quick.2 Meet me at the park` |
   | `set quick.reset` | — | Restore all 10 presets to built-in defaults |
+  | `get loc` | — | List occupied saved location slots, one per line: `N:lat,lon:name` (N is 0-based) |
+  | `set loc.<N> <name> <lat> <lon>` | `N`: 0–9; name may contain spaces; lat/lon come last | Save a GPS location to slot N (0-based, display shows 1–10). Example: `set loc.0 Base camp 10.7769 106.7009` |
+  | `del loc.<N>` | `N`: 0–9 | Clear saved location at slot N (0-based) |
+  | `del loc.all` | — | Clear all saved location slots |

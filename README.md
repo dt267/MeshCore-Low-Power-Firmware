@@ -13,10 +13,93 @@ Optimized MeshCore firmware, engineered for low power consumption and extended o
 - [Power Profiles: Seeed Studio XIAO ESP32S3 & Wio-SX1262](#seeed-studio-xiao-esp32s3--wio-sx1262)
 - [Power Profiles: RAK4631 (RAK19003)](#rak4631-rak19003)
 - [Bypass External LNA on Heltec V4.2](#bypass-external-lna-on-heltec-v42)
+- [Companion Display UI Guide](Companion_Display_Guide.md)
 - [Companion TerminalCLI Commands](Companion_TerminalCLI_Commands.md)
 - [License](#license)
 
 ## What's New
+
+### v1.14_0410
+
+- **Message preview: scroll long messages & see all 256 buffered messages.**
+
+  The message preview screen is rebuilt from the ground up. All 256 buffered messages are now navigable — previously capped at 32. Long messages that overflow the screen can be scrolled line by line.
+
+  #### Button controls in message preview
+
+  | Action | Effect |
+  |---|---|
+  | **Single click** | Scroll text down (3 lines); advances to next older message at end of text |
+  | **Double click** | Scroll text up (3 lines); goes to next newer message at top; at newest → home |
+  | **Long press** | Open menu: **Save location** *(if message has GPS coords)* / **Home** |
+
+  #### Counter and unread tracking
+
+  ```
+  ┌──────────────────────────────┐
+  │ 5/19                    42s  │
+  │──────────────────────────────│
+  │ (2) Alien:                   │
+  │ Hello everyone, just wanted  │
+  │ to check in. We made it to   │
+  │ base camp safe and sound.    │
+  │                           ▼  │
+  └──────────────────────────────┘
+  ```
+
+  `5/19` = viewing message #5 (newest = 19, oldest = 1). `▼` = more text below. `42s` = time since received. The counter tracks unread messages — when you close preview and return, only new messages since last session are counted.
+
+- **Saved Locations: save GPS coordinates from messages to flash.**
+
+  When viewing a message with GPS coordinates, long press opens a menu. Choose **Save location**, then pick one of 10 slots to save into. Saved locations persist in flash memory — they survive reboot.
+
+  Navigate to the **SAVED LOCS** page on the home screen to browse your saved locations and open the GPS Trace screen for any of them.
+
+  ```
+  ┌──────────────────────────────┐
+  │ SAVED  2/10                  │
+  │──────────────────────────────│
+  │ > Alien: I need help         │
+  │   Big Boy: Heading home      │
+  │                              │
+  │                              │
+  └──────────────────────────────┘
+  ```
+
+  Each entry shows **sender + message snippet** so you can identify entries even when multiple locations from the same person are saved.
+
+  | Press | Effect |
+  |---|---|
+  | Single click | Move highlight to next entry |
+  | Long press | Open GPS Trace screen for that location |
+  | Double click | Return to home |
+
+- **GPS Trace screen: live distance & bearing to a saved location.**
+
+  ```
+  ┌──────────────────────────────┐
+  │ Alien: I need help       5m  │
+  │──────────────────────────────│
+  │      10.7769  106.7009       │
+  │                              │
+  │           1.2km              │
+  │                              │
+  │          247°  WSW           │
+  └──────────────────────────────┘
+  ```
+
+  The timer in the top-right corner shows how long you have been on this Trace screen. Requires own GPS fix for distance/bearing. Raw coordinates are always shown. Any button returns to the Saved Locations list.
+
+- **Saved locations CLI commands (TerminalCLI).**
+
+  Manage saved locations from the terminal without touching the display:
+
+  | Command | Effect |
+  |---|---|
+  | `get loc` | List all occupied slots (`N:lat,lon:name`, N is 0-based) |
+  | `set loc.<N> <name> <lat> <lon>` | Save to slot N (0-based; display shows 1–10) |
+  | `del loc.<N>` | Clear slot N (0-based) |
+  | `del loc.all` | Clear all slots |
 
 ### v1.14_0404
 
