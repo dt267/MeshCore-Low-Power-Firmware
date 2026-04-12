@@ -19,6 +19,69 @@ Optimized MeshCore firmware, engineered for low power consumption and extended o
 
 ## What's New
 
+### v1.14_0417
+
+- **Hybrid RSSI + hardware CAD channel sensing (all node types).**
+
+  `isChannelActive()` now performs a two-stage check before transmitting:
+  1. RSSI check (fast, single SPI register read) — defers if signal is above `noise_floor + int.thresh`.
+  2. Hardware CAD (`scanChannel()`) — if RSSI misses, performs LoRa chirp correlation to detect signals below the noise floor (~16ms blocking scan on SX126x).
+
+  RSSI also detects any in-band signal (interference, jamming), while CAD only correlates LoRa chirp patterns and ignores non-LoRa noise entirely. With hybrid, RSSI acts as the first guard — CAD only runs when the channel appears clear to RSSI.
+
+  `int.thresh=0` disables both RSSI and CAD. `int.thresh=1` enables full hybrid at maximum sensitivity.
+
+  **On repeaters** (single source sending): results depend on topology. Field tests with 4 repeaters (SF8/BW62.5kHz, **`txdelay=2`**, 100 messages):
+
+  - **Repeaters close together / strong inter-repeater signal:** RSSI handles detection well, CAD rarely fires. Example: int.thresh=1 → **9% collision rate**.
+  - **Spread-out repeaters, some pairs below noise floor:** RSSI misses sub-NF pairs; CAD fills the gap. Example: hybrid/CAD **8%** vs RSSI-only **17%**.
+  - **Many hidden node pairs:** neither RSSI nor CAD helps. **Only `txdelay` reduces the floor.** Example: ~20–24% regardless of sensing method.
+
+  **On companions** (multiple sources sending concurrently): channel sensing still helps, but with diminishing returns. Tested with 2 concurrent companions plus a third node sending long messages every 5s (SF8/BW62.5kHz):
+
+  - `int.thresh=3`: **53–64%** of messages successfully relayed by all 4 repeaters (confirmed by hearing each relay back)
+  - `int.thresh=0` (no sensing): **0–1%** relayed by all 4; most messages are relayed by 0–1 repeaters only — collisions occur at two levels: concurrent companion transmissions corrupt each other at the repeater, and the resulting relay transmissions from multiple repeaters collide on the way back
+
+  Channel sensing — even imperfect — is far better than none. The remaining loss at int.thresh=3 is a fundamental ALOHA-style limitation: uncoordinated LoRa nodes cannot eliminate simultaneous transmission without a shared scheduling mechanism that does not exist in this protocol.
+
+- **Companion: `get/set txdelay`, `get/set direct.txdelay`, `get/set int.thresh` via [TerminalCLI](Companion_TerminalCLI_Commands.md).**
+
+  Relay timing and interference threshold are now configurable without reflashing.
+
+- **Companion: "Heard N Repeats" alert after Quick Send.**
+
+  After sending from the Quick Send screen, the display shows how many repeaters have relayed the message (e.g. "Heard 3 Repeats"). The counter updates in real time as each relay is heard.
+
+- **Companion: local time and date on the display.**
+
+  All pages now show the current time (`HH:MM`) in the header, between the page title and the battery icon. The Home page also shows the full date at the bottom (e.g. `14 Apr 2026`).
+
+  Time is sourced from the device RTC, which is synchronized upon app connection or GPS fix. Configure your local timezone offset once via [TerminalCLI](Companion_TerminalCLI_Commands.md):
+  ```
+  set tz.offset 7    # UTC+7
+  set tz.offset -5   # UTC-5
+  get tz.offset
+  ```
+  Offset is saved to flash. All internal timestamps remain UTC — the offset is applied only for display.
+
+- **Companion: Metric / Imperial units.**
+
+  A new **Units** item in the Settings page toggles between Metric and Imperial. Setting is saved to flash and persists after reboot.
+
+  | Display | Metric | Imperial |
+  |---|---|---|
+  | GPS Trace distance | `150m` / `1.2km` | `492ft` / `0.7mi` |
+  | GPS page altitude | `245m` | `804ft` |
+  | Home page date | `14 Apr 2026` | `Apr 14 2026` |
+
+- **Companion: GPS Privacy mode.**
+
+  A new **GPS Privacy** item in the Settings page lets you stop GPS coordinates from being attached to Quick Send messages. When enabled, the Quick Send bottom line shows `GPS: Private` as a reminder. Toggle it off to resume sharing coordinates. Setting is saved to flash.
+
+- **Companion: ESP32 BLE now connects reliably on Windows 11.**
+- **Companion: ESP32 & nRF52 BLE random disconnect issue is fixed.**
+- **Included 'default-scope'**
+
 ### v1.14_0410
 
 - **Message preview: scroll long messages & see all 256 buffered messages.**
@@ -53,7 +116,7 @@ Optimized MeshCore firmware, engineered for low power consumption and extended o
 
   When viewing a message with GPS coordinates, long press opens a menu. Choose **Save location**, then pick one of 10 slots to save into. Saved locations persist in flash memory — they survive reboot.
 
-  Navigate to the **SAVED LOCS** page on the home screen to browse your saved locations and open the GPS Trace screen for any of them.
+  Navigate to the **SAVED LOCS** page on the home screen to browse your saved locations and open the **GPS Trace screen** for any of them.
 
   ```
   ┌──────────────────────────────┐
@@ -71,7 +134,7 @@ Optimized MeshCore firmware, engineered for low power consumption and extended o
   | Press | Effect |
   |---|---|
   | Single click | Move highlight to next entry |
-  | Long press | Open GPS Trace screen for that location |
+  | Long press | Open **GPS Trace screen** for that location |
   | Double click | Return to home |
 
 - **GPS Trace screen: live distance & bearing to a saved location.**
@@ -82,7 +145,7 @@ Optimized MeshCore firmware, engineered for low power consumption and extended o
   │──────────────────────────────│
   │      10.7769  106.7009       │
   │                              │
-  │           1.2km              │
+  │            1.2km             │
   │                              │
   │          247°  WSW           │
   └──────────────────────────────┘
@@ -90,7 +153,7 @@ Optimized MeshCore firmware, engineered for low power consumption and extended o
 
   The timer in the top-right corner shows how long you have been on this Trace screen. Requires own GPS fix for distance/bearing. Raw coordinates are always shown. Any button returns to the Saved Locations list.
 
-- **Saved locations CLI commands (TerminalCLI).**
+- **Saved locations CLI commands ([TerminalCLI](Companion_TerminalCLI_Commands.md)).**
 
   Manage saved locations from the terminal without touching the display:
 
@@ -132,7 +195,7 @@ Optimized MeshCore firmware, engineered for low power consumption and extended o
   - Battery low, signing off
   - All clear
 
-  **Customize via TerminalCLI** — changes are saved to flash and persist after reboot:
+  **Customize via [TerminalCLI](Companion_TerminalCLI_Commands.md)** — changes are saved to flash and persist after reboot:
   ```
   get quick                        list all current presets
   set quick.0 Arrived at camp      set preset at index 0
@@ -163,7 +226,7 @@ Optimized MeshCore firmware, engineered for low power consumption and extended o
 
   > V4.3 does **not** support `auto` mode — use `on` or `off`.
 
-  **TerminalCLI** (Companion app), **Command Line** (Repeater / Room Server):
+  **[TerminalCLI](Companion_TerminalCLI_Commands.md)** (Companion app), **Command Line** (Repeater / Room Server):
   ```
   set radio.rxgain on
   set radio.rxgain off
@@ -192,7 +255,7 @@ Optimized MeshCore firmware, engineered for low power consumption and extended o
   `clock sync` now works in both directions — no manual `clkreboot` + re-sync required.
 
 - **Repeat mode on Companion now supports custom frequencies.**
-  Useful for off-grid or emergency deployments where no public MeshCore network is available and a private frequency is used. You can add your operating frequency to the allowed list via TerminalCLI — for example `add repeat.freq 915`.
+  Useful for off-grid or emergency deployments where no public MeshCore network is available and a private frequency is used. You can add your operating frequency to the allowed list via [TerminalCLI](Companion_TerminalCLI_Commands.md) — for example `add repeat.freq 915`.
 
   | Command | Parameters | Notes |
   |---|---|---|
@@ -201,7 +264,7 @@ Optimized MeshCore firmware, engineered for low power consumption and extended o
   | `del repeat.freq <MHz>` | `MHz`: frequency in MHz | Remove a frequency from the repeat allowed list |
 
 - **Low-battery protection and battery voltage reading now available on Xiao S3 Companion** (previously Repeater/Room Server only).
-  Use `get adc.multiplier` / `set adc.multiplier <value>` in TerminalCLI — same commands and circuit as documented in the [Earlier](#earlier) section below. Setting is retained after reboot and power cycle.
+  Use `get adc.multiplier` / `set adc.multiplier <value>` in [TerminalCLI](Companion_TerminalCLI_Commands.md) — same commands and circuit as documented in the [Earlier](#earlier) section below. Setting is retained after reboot and power cycle.
 
 - **BLE random disconnects may be fixed.**
   Early testing shows 100h+ continuous connection stability in the background — feedback welcome.
@@ -235,7 +298,10 @@ Optimized MeshCore firmware, engineered for low power consumption and extended o
 
 ### v1.14_0315
 - **Synchronizing GPS usage with low-power mode on Heltec V4.2.**
-  GPS power is kept on only as needed for frame acquisition; update intervals scale dynamically (10-30s) based on signal quality. GPS power profile on repeater:
+  GPS power is kept on only as needed for frame acquisition; update intervals scale dynamically (10-30s) based on signal quality. GPS power profile on repeater: 
+   - Mean: 32.39 mA. 
+   - Estimated battery life: ~52 h (2000 mAh battery)
+  
   <img alt="v4-repeater-gps-power-usage" src="https://github.com/user-attachments/assets/cf934adc-ca11-41c3-99a9-7a8d7e1f0857" />
 
 ### v1.14_0307

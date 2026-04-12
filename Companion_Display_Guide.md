@@ -24,6 +24,7 @@ Single click and double click cycle through pages forward and backward.
 |---|---|
 | **Home** | Message count, connection status, battery |
 | **Quick Send** | Send a preset message over LoRa |
+| **Saved Locations** | Preview of saved map locations |
 | **Recent Advert** | Last 4 nodes heard over LoRa |
 | **Radio** | LoRa radio parameters and noise floor |
 | **GPS** | GPS status and coordinates *(if GPS hardware present)* |
@@ -35,23 +36,27 @@ Single click and double click cycle through pages forward and backward.
 
 ```
 ┌──────────────────────────────┐
-│ MyNodeName              [==] │
+│ MyNodeName        14:32 [=]  │
 │           · • · · · ·        │
 │                              │
 │          MSG: 5              │
 │                              │
 │       < Connected >          │
+│         14 Apr 2026          │
 └──────────────────────────────┘
 ```
 
-- Node name at top-left; battery indicator top-right
+- Node name at top-left; `HH:MM` and battery icon packed together at top-right
 - Page indicator dots in the middle row (filled = current page)
 - **MSG: N** — number of messages stored in memory (up to 256)
 - Connection status line:
   - `< Connected >` — app connected via BLE
   - `BLE: OFF` — Bluetooth disabled
   - `Pin: 1234` — waiting for BLE pairing
+- Date at the bottom (`DD Mon YYYY`)
 - **Long press** → open message preview
+
+> **Time and date** show local time once the timezone offset is set. Default is UTC. Configure once via TerminalCLI: `set tz.offset 7` (for UTC+7). Time is synced from the app on connect, or from GPS if hardware is present.
 
 ---
 
@@ -61,7 +66,7 @@ Send a preset message to the public channel without typing.
 
 ```
 ┌──────────────────────────────┐
-│ QUICK SEND              [==] │
+│ QUICK SEND        14:32 [=]  │
 │           · · • · · ·        │
 │ I'm OK                       │
 │ On my way                    │
@@ -71,7 +76,10 @@ Send a preset message to the public channel without typing.
 ```
 
 - 3 presets visible at a time (4 if no GPS); scrolls as you cycle
-- Bottom line shows `GPS:lat,lon` when fix is valid, or `?GPS:lat,lon` when no fix / using last known coords
+- Bottom line shows current GPS status:
+  - `GPS:lat,lon` — valid fix, coordinates will be attached when sending
+  - `?GPS:lat,lon` — no fix / using last known coords from app
+  - `GPS: Private` — GPS Privacy mode is ON; coordinates will **not** be attached
 - **Long press** to enter sub-level (active item highlights)
 
 **In sub-level:**
@@ -82,7 +90,7 @@ Send a preset message to the public channel without typing.
 | Double click | Exit sub-level |
 | Long press | Send highlighted preset → alert "Sent!" or "Send failed" |
 
-GPS coordinates are appended automatically when sending (e.g. `I'm OK @10.7769,106.7009`).
+GPS coordinates are appended automatically when sending (e.g. `I'm OK @10.7769,106.7009`), unless **GPS Privacy** is enabled in Settings.
 
 **Customize presets via [TerminalCLI](Companion_TerminalCLI_Commands.md):**
 ```
@@ -99,12 +107,12 @@ Shows the last 4 nodes that advertised over LoRa, with time since last heard. Re
 
 ```
 ┌──────────────────────────────┐
-│ RECENT ADVERT           [==] │
+│ RECENT ADVERT     14:32 [==] │
 │           · · · • · ·        │
-│ Alien                   42s  │
-│ Base Camp                5m  │
-│ Repeater-1              12m  │
-│ Repeater-2               1h  │
+│ Alien                    42s │
+│ Base Camp                 5m │
+│ Repeater-1               12m │
+│ Repeater-2                1h │
 └──────────────────────────────┘
 ```
 
@@ -116,7 +124,7 @@ LoRa radio parameters — read-only.
 
 ```
 ┌──────────────────────────────┐
-│ RADIO                   [==] │
+│ RADIO             14:32 [==] │
 │           · · · · • ·        │
 │ FQ: 915.000   SF: 10         │
 │ BW: 250.00    CR: 5          │
@@ -142,12 +150,12 @@ Only shown if GPS hardware is present.
 
 ```
 ┌──────────────────────────────┐
-│ GPS                     [==] │
-│ gps on                  fix  │
-│ sat                       8  │
-│ pos       10.7769 106.7009   │
-│ alt                  12.50   │
-│                              │
+│ GPS               14:32 [==] │
+│         · · · · · • ·        │
+│ gps on                   fix │
+│ sat                        8 │
+│ pos         10.7769 106.7009 │
+│ alt                    12.50 │
 └──────────────────────────────┘
 ```
 
@@ -156,7 +164,7 @@ Only shown if GPS hardware is present.
 - `fix` / `no fix` — whether a valid position is available
 - `sat` — number of satellites in view
 - `pos` — current latitude and longitude
-- `alt` — altitude in meters
+- `alt` — altitude
 
 ---
 
@@ -164,12 +172,12 @@ Only shown if GPS hardware is present.
 
 ```
 ┌──────────────────────────────┐
-│ SETTINGS                [==] │
+│ SETTINGS          14:32 [==] │
 │           · · · · · •        │
-│ BLE                      ON  │
-│ Repeat                  OFF  │
-│ RxGain                   ON  │
-│ Buzzer                   ON  │
+│ BLE                       ON │
+│ Repeat                   OFF │
+│ RxGain                    ON │
+│ Units                 Metric │
 └──────────────────────────────┘
 ```
 
@@ -187,8 +195,9 @@ Only shown if GPS hardware is present.
 |---|---|
 | **BLE** | Toggle Bluetooth on/off; shows `ON, Connected` when app is connected |
 | **Repeat** | Toggle packet repeat on/off |
-| **RxGain** | Cycle RxGain: OFF → ON → AUTO *(AUTO: V4.2/V4.3 only)* |
-| **Buzzer** | Toggle buzzer mute *(boards with buzzer only)* |
+| **RxGain** | Cycle RxGain: OFF → ON → AUTO *(AUTO: V4.2 only)* |
+| **Units** | Toggles between Metric and Imperial |
+| **GPS Privacy** | Toggle ON to hide GPS coords from Quick Send messages; Quick Send bottom line shows `GPS: Private` as reminder |
 | **Send Advert** | Broadcast your presence → alert "Advert sent!" |
 | **Start OTA** | OTA update mode — connect to WiFi `MeshCore-OTA`, go to `192.168.4.1/update` |
 | **Shutdown** | Power off the device |
@@ -310,17 +319,17 @@ The GPS Trace screen shows live distance and bearing from your current position 
 
 ```
 ┌──────────────────────────────┐
-│ Alien: I need help       5m  │
+│ Alien: I need help     14:32 │
 │──────────────────────────────│
 │      10.7769  106.7009       │
 │                              │
-│           1.2km              │
+│            1.2km             │
 │                              │
 │          247°  WSW           │
 └──────────────────────────────┘
 ```
 
-- **Top line**: location label + how long you have been tracking (resets to 0 when screen opens)
+- **Top line**: location label + `HH:MM`
 - **Coordinates**: the saved GPS point (always shown)
 - **Distance**: straight-line distance to the target — requires your own GPS fix
 - **Bearing / cardinal direction**: direction to head toward the target

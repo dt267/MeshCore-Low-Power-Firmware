@@ -31,6 +31,14 @@ Setup: In the MeshCore app, create a channel named "TerminalCLI". It will now ac
   | `del repeat.freq <MHz>` | `MHz`: frequency to remove | Remove a frequency from the repeat allowed list |
   | `get adc.multiplier` | — | Show the battery voltage calibration multiplier |
   | `set adc.multiplier <value>` | `value`: decimal, e.g. `2.000` | Set battery voltage calibration multiplier. Use `0` to reset to default. |
+  | `get txdelay` | — | Show flood relay jitter window scale factor (default `0.50`) |
+  | `set txdelay <value>` | `value`: decimal `0..10`, e.g. `2.0` | Set flood relay jitter window scale. Higher = wider window = fewer collisions but higher latency. |
+  | `get direct.txdelay` | — | Show direct relay jitter window scale factor (default `0.20`) |
+  | `set direct.txdelay <value>` | `value`: decimal `0..10` | Set direct relay jitter window scale. |
+  | `get int.thresh` | — | Show RSSI interference threshold in dB above noise floor (`0` = disabled) |
+  | `set int.thresh <dB>` | `dB`: integer `0..100` | Set RSSI interference threshold. `0` disables the check. |
+  | `get tz.offset` | — | Show UTC offset in hours used for display (`0` = UTC) |
+  | `set tz.offset <hours>` | `hours`: integer `-12..14` | Set local timezone offset. Example: `set tz.offset 7` for UTC+7. Applied to the clock and date on the display only — all internal timestamps remain UTC. |
   | `get quick` | — | List all Quick Send presets with their index numbers |
   | `set quick.<N> <text>` | `N`: 0–9, `text`: message | Set preset at index N. Example: `set quick.2 Meet me at the park` |
   | `set quick.reset` | — | Restore all 10 presets to built-in defaults |
