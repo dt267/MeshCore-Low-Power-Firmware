@@ -2,7 +2,7 @@
 Optimized MeshCore firmware, engineered for low power consumption and extended off-grid battery life for multi-day operation.
 
 
-[![GitHub Release](https://img.shields.io/github/v/release/dt267/MeshCore-Low-Power-Firmware-For-Heltec-V3-V4)](https://github.com/dt267/MeshCore-Low-Power-Firmware-For-Heltec-V3-V4/releases) [![GitHub Release Date](https://img.shields.io/github/release-date/dt267/MeshCore-Low-Power-Firmware-For-Heltec-V3-V4)](https://github.com/dt267/MeshCore-Low-Power-Firmware-For-Heltec-V3-V4/releases)
+[![GitHub Release](https://img.shields.io/github/v/release/dt267/MeshCore-Low-Power-Firmware-For-Heltec-V3-V4)](https://github.com/dt267/MeshCore-Low-Power-Firmware-For-Heltec-V3-V4/releases/latest) [![GitHub Release Date](https://img.shields.io/github/release-date/dt267/MeshCore-Low-Power-Firmware-For-Heltec-V3-V4)](https://github.com/dt267/MeshCore-Low-Power-Firmware-For-Heltec-V3-V4/releases/latest)
 
 ## Table of Contents
 - [What's New](#whats-new)
@@ -19,7 +19,7 @@ Optimized MeshCore firmware, engineered for low power consumption and extended o
 
 ## What's New
 
-### v1.14_0417
+### v1.15_0419
 
 - **Hybrid RSSI + hardware CAD channel sensing (all node types).**
 
@@ -341,6 +341,8 @@ Optimized MeshCore firmware, engineered for low power consumption and extended o
 ## Installation
 
 ### Heltec V3 / V4.2 / WSL3 · XIAO S3 Wio (ESP32)
+
+> **Unified binary:** A single firmware file runs on both OLED and no-display hardware variants — no separate build required. The display is detected automatically at boot via I2C probe. The device name shown in the MeshCore app reflects the actual hardware detected (e.g. *Heltec V4.3 No Display* vs *Heltec V4.3 OLED*).
 
 The provided firmware is an application-only binary (non-merged). It does not include the bootloader or partition table, designed for seamless integration with existing MeshCore partitions.
 
