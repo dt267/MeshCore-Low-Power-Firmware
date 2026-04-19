@@ -342,6 +342,8 @@ Optimized MeshCore firmware, engineered for low power consumption and extended o
 
 ### Heltec V3 / V4.2 / WSL3 · XIAO S3 Wio (ESP32)
 
+> **Unified binary:** A single firmware file runs on both OLED and no-display hardware variants — no separate build required. The display is detected automatically at boot via I2C probe. The device name shown in the MeshCore app reflects the actual hardware detected (e.g. *Heltec V4.3 No Display* vs *Heltec V4.3 OLED*).
+
 The provided firmware is an application-only binary (non-merged). It does not include the bootloader or partition table, designed for seamless integration with existing MeshCore partitions.
 
 **Option 1: Flash via esptool**
