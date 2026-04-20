@@ -19,6 +19,39 @@ Optimized MeshCore firmware, engineered for low power consumption and extended o
 
 ## What's New
 
+### v1.15_0426
+
+- **Companion: redesigned message preview.**
+
+  Messages are now grouped by sender or channel so you can read a conversation in one place instead of hunting through a mixed list.
+
+  From the **group list** you can scroll back through older messages from any sender or channel, including ones you've already read. Long press a group to open it.
+
+  When new messages arrive, you go straight to a **new messages view** that shows only the unread ones — from all senders and channels — one by one. Once you've read them all, a single click takes you home.
+
+  Long messages scroll one full page at a time with no overlap. Small arrows (`▲` / `▼`) appear at the corner of the screen to let you know there is more content above or below.
+
+- **Companion: reply directly from message preview.**
+
+  While reading any message, long press to open the menu. A new **Reply** option lets you send a preset message back without leaving the screen:
+
+  - If the message came from a contact, the reply goes to that contact as a private direct message.
+  - If the message came from a channel (Public, #SOS, or any other), the reply goes back to that same channel.
+
+  > **Note:** The **Quick Send** page always sends to the Public channel. Use Reply from the message preview when you want to respond to a specific contact or a non-Public channel.
+
+- **Companion: Contacts page and direct messaging.**
+
+  A new **Contacts** page sits between Quick Send and Saved Locations. Long press it to open the contact list, only chat-capable nodes are listed (repeaters, room servers and sensors are excluded — they cannot receive direct messages). Select a contact and long press to send them a direct message using your Quick Send presets.
+
+- **Companion: configurable Screen Off timeout in Settings.**
+
+  A new **Screen Off** item in the Settings page lets you choose how long the display stays on after the last button press: `15s` → `3min` → `Never`. Setting is saved to flash and persists after reboot.
+
+- **Companion: Flip Screen setting in Settings.**
+
+  A new **Flip Screen** toggle in the Settings page rotates the display 180°. Setting is saved to flash and persists after reboot.
+
 ### v1.15_0419
 
 - **Hybrid RSSI + hardware CAD channel sensing (all node types).**
