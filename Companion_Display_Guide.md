@@ -477,6 +477,7 @@ Only shown if GPS hardware is present.
 | **Send Advert** | Broadcast your presence → alert "Advert sent!" |
 | **Start OTA** | OTA update mode — connect to WiFi `MeshCore-OTA`, go to `192.168.4.1/update` |
 | **Shutdown** | Power off the device |
+| **About** | Show device name, firmware version and build date |
 
 ---
 
