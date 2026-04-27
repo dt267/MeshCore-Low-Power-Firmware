@@ -19,6 +19,44 @@ Optimized MeshCore firmware, engineered for low power consumption and extended o
 
 ## What's New
 
+### v1.15_0427 ([pre-release](https://github.com/dt267/MeshCore-Low-Power-Firmware-For-Heltec-V3-V4/releases/tag/MeshCore-low-power-v1.15.dev_0427)) 
+
+- **Repeater: per-type relay hop cap (`advert.hops.max` / `group.hops.max`).**
+
+  Two new settings let you independently limit how far **advertisement packets** and **group messages** are relayed across the mesh, without affecting direct messages, ACKs, or path discovery.
+
+  | Setting | Controls | Default |
+  |---|---|---|
+  | `advert.hops.max` | Max hops to relay node advertisement (ADVERT) packets | 64 (unchanged) |
+  | `group.hops.max` | Max hops to relay group messages (GRP_TXT / GRP_DATA) | 64 (unchanged) |
+
+  These are **repeater-only** settings. Configure via the **Command Line** in the MeshCore App:
+  ```
+  set advert.hops.max 3    # relay adverts at most 3 hops from sender
+  set group.hops.max 5     # relay group messages at most 5 hops
+  get advert.hops.max
+  get group.hops.max
+  ```
+
+  Setting either value to `0` completely suppresses that packet type — no relay at all, while everything else (DM, ACK, path) continues to work normally.
+
+  **Why this matters — advert storm reduction:**
+
+  Each repeater periodically broadcasts an advertisement that every other repeater in range relays, up to `flood.max` times (default 64). In a network of 35 repeaters and 35 companions, advert traffic alone consumes roughly 4% of airtime. Limiting to 3 hops brings that down to under 0.5% — a 7× reduction — with no loss of communication capability.  
+
+  **No coordination required.** Each repeater applies its own cap independently. You do not need all repeaters to agree on the same value — even a partial deployment reduces airtime. No region configuration, no App UI changes needed.
+
+  **Recommended profiles:**
+
+  | Profile | `advert.hops.max` | `group.hops.max` | Airtime (35R / 35C) | Use case |
+  |---|---|---|---|---|
+  | Default | 64 | 64 | ~4% | No change |
+  | Optimized | 3 | 5 | ~0.5% | Most deployments |
+  | DM-focused | 0 | 3 | ~0.2% | Prioritise direct messages |
+  | EU compliance | 0 | 3 | ~0.2% | Large EU networks (legal requirement) |
+
+  > **Relationship with `flood.max`:** `flood.max` (long-standing setting, default 64) is the master hop cap for **all** flood payloads — DMs on first send, path discovery, group messages, adverts. It applies regardless of payload type. `advert.hops.max` and `group.hops.max` add finer per-type control on top: they can only be equal to or stricter than `flood.max`, never looser. Setting `flood.max` lower automatically clamps both values to match. If you want to suppress adverts entirely while keeping DMs unrestricted, lower `advert.hops.max` to `0` — leave `flood.max` untouched.
+
 ### v1.15_0426
 
 - **Companion: redesigned message preview.**
