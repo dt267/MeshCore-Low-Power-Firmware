@@ -13,13 +13,14 @@ Optimized MeshCore firmware, engineered for low power consumption and extended o
 - [Power Profiles: Seeed Studio XIAO ESP32S3 & Wio-SX1262](#seeed-studio-xiao-esp32s3--wio-sx1262)
 - [Power Profiles: RAK4631 (RAK19003)](#rak4631-rak19003)
 - [Bypass External LNA on Heltec V4.2](#bypass-external-lna-on-heltec-v42)
+- [Stock Antennas SWR Testing](Stock_Antennas_SWR_Testing.md)
 - [Companion Display UI Guide](Companion_Display_Guide.md)
 - [Companion TerminalCLI Commands](Companion_TerminalCLI_Commands.md)
 - [License](#license)
 
 ## What's New
 
-### v1.15_0427 ([pre-release](https://github.com/dt267/MeshCore-Low-Power-Firmware-For-Heltec-V3-V4/releases/tag/MeshCore-low-power-v1.15.dev_0427)) 
+### v1.15_0510
 
 - **Repeater: per-type relay hop cap (`advert.hops.max` / `group.hops.max`).**
 
@@ -27,8 +28,8 @@ Optimized MeshCore firmware, engineered for low power consumption and extended o
 
   | Setting | Controls | Default |
   |---|---|---|
-  | `advert.hops.max` | Max hops to relay node advertisement (ADVERT) packets | 64 (unchanged) |
-  | `group.hops.max` | Max hops to relay group messages (GRP_TXT / GRP_DATA) | 64 (unchanged) |
+  | `advert.hops.max` | Max hops to relay node advertisement (ADVERT) packets | = `flood.max` |
+  | `group.hops.max` | Max hops to relay group messages (GRP_TXT / GRP_DATA) | = `flood.max` |
 
   These are **repeater-only** settings. Configure via the **Command Line** in the MeshCore App:
   ```
@@ -50,12 +51,26 @@ Optimized MeshCore firmware, engineered for low power consumption and extended o
 
   | Profile | `advert.hops.max` | `group.hops.max` | Airtime (35R / 35C) | Use case |
   |---|---|---|---|---|
-  | Default | 64 | 64 | ~4% | No change |
+  | Default | = `flood.max` | = `flood.max` | ~4% | No change |
   | Optimized | 3 | 5 | ~0.5% | Most deployments |
   | DM-focused | 0 | 3 | ~0.2% | Prioritise direct messages |
   | EU compliance | 0 | 3 | ~0.2% | Large EU networks (legal requirement) |
 
-  > **Relationship with `flood.max`:** `flood.max` (long-standing setting, default 64) is the master hop cap for **all** flood payloads — DMs on first send, path discovery, group messages, adverts. It applies regardless of payload type. `advert.hops.max` and `group.hops.max` add finer per-type control on top: they can only be equal to or stricter than `flood.max`, never looser. Setting `flood.max` lower automatically clamps both values to match. If you want to suppress adverts entirely while keeping DMs unrestricted, lower `advert.hops.max` to `0` — leave `flood.max` untouched.
+  > **Relationship with `flood.max` and path hash size:** `flood.max` is the master hop cap for **all** flood payloads. Its default of 64 is calibrated for 1-byte path hash mode. With larger hashes the packet fills up sooner — 2-byte hash caps at 32 hops, 3-byte hash caps at 21 hops — so `flood.max` is typically set to match. `advert.hops.max` and `group.hops.max` are automatically clamped to `flood.max` and work correctly with all hash sizes. If you want to suppress adverts entirely while keeping everything else unrestricted, set `advert.hops.max 0` — leave `flood.max` untouched.
+
+- **Companion: GPS coordinate display formats — DD / UTM / MGRS.**
+
+  A new **Pos. Format** item in the Settings page lets you choose how GPS coordinates are shown on the GPS page, GPS Trace screen, and Quick Send status bar.
+
+  | Format | Example |
+  |---|---|
+  | DD *(default)* — Decimal Degrees | `10.7769  106.7009` |
+  | UTM — Universal Transverse Mercator | `48P 681978E 1190975N` |
+  | MGRS — Military Grid Reference System | `48PXS8197890975` |
+
+  Setting is saved to flash and persists after reboot.
+
+  > **Sharing coordinates with others.** Coordinates attached to messages are always sent in DD form, no matter which Pos. Format you chose. Each receiver sees them in the format they set on their own device — so you can read MGRS while your friend reads DD on the same shared point. Same applies to saved locations and to the TerminalCLI `loc` commands: input and storage stay in DD; only the on-screen display changes.
 
 ### v1.15_0426
 
@@ -415,15 +430,30 @@ Optimized MeshCore firmware, engineered for low power consumption and extended o
 
 > **Unified binary:** A single firmware file runs on both OLED and no-display hardware variants — no separate build required. The display is detected automatically at boot via I2C probe. The device name shown in the MeshCore app reflects the actual hardware detected (e.g. *Heltec V4.3 No Display* vs *Heltec V4.3 OLED*).
 
-The provided firmware is an application-only binary (non-merged). It does not include the bootloader or partition table, designed for seamless integration with existing MeshCore partitions.
+Two binary formats are provided for each firmware variant:
 
-**Option 1: Flash via esptool**
+| File | Contents | Use case |
+| :--- | :--- | :--- |
+| `<name>.bin` | Application only | Update / OTA — preserves existing partitions |
+| `<name>_merged.bin` | Bootloader + partition table + application | First-time install or full recovery |
+
+**Option 1: Full flash (merged binary) — recommended for first-time install**
+
+Flash the `_merged.bin` file starting at address `0x0`. This is self-contained and requires no prior MeshCore installation.
 ```
-python -m esptool --chip esp32s3 write-flash 0x10000 <firmware.bin>
+python -m esptool --chip esp32s3 write_flash 0x0 <name>_merged.bin
+```
+> **Note:** Full flash erases the NVS partition, which stores BLE pairing keys — you will need to re-pair BLE devices after flashing. Settings stored in the SPIFFS filesystem partition are beyond the merged binary range and are **not** affected.
+
+**Option 2: Application update via esptool**
+
+Flash the plain `<name>.bin` file at `0x10000`. The existing bootloader and partition table are preserved.
+```
+python -m esptool --chip esp32s3 write_flash 0x10000 <name>.bin
 ```
 
-**Option 2: Wi-Fi OTA** *(requires v1.14_0320 or later)*
-Type `start ota` via TerminalCLI (Companion) or Command Line (Repeater / Room Server) → connect to `MeshCore-OTA` Wi-Fi → go to `192.168.4.1/update`.
+**Option 3: Wi-Fi OTA** *(requires v1.14_0320 or later)*
+Type `start ota` via TerminalCLI (Companion) or Command Line (Repeater / Room Server) → connect to `MeshCore-OTA` Wi-Fi → go to `192.168.4.1/update`. Upload the plain `<name>.bin` file only — the merged binary is **not** compatible with OTA.
 
 ### RAK4631 (nRF52840)
 
