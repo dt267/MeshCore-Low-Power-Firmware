@@ -363,7 +363,7 @@ Shows live distance and bearing from your current position to a saved location.
 ```
 
 - **Top line**: location label + current time
-- **Coordinates**: the saved GPS point (always shown)
+- **Coordinates**: the saved GPS point (always shown; format follows **Pos. Format** in Settings)
 - **Distance**: straight-line to the target — requires your own GPS fix
 - **Bearing / cardinal direction**: direction to head toward the target
 
@@ -437,7 +437,7 @@ Only shown if GPS hardware is present.
 - `gps on` / `gps off` — current software state
 - `fix` / `no fix` — whether a valid position is available
 - `sat` — number of satellites in view
-- `pos` — current latitude and longitude
+- `pos` — current position (DD by default; UTM or MGRS if selected via **Pos. Format** in Settings)
 - `alt` — altitude
 
 ---
@@ -471,6 +471,7 @@ Only shown if GPS hardware is present.
 | **Repeat** | Toggle packet repeat on/off |
 | **RxGain** | Cycle RxGain: OFF → ON → AUTO *(AUTO: V4.2 only)* |
 | **Units** | Toggles between Metric and Imperial |
+| **Pos. Format** | Cycle GPS coordinate display: `DD` → `UTM` → `MGRS` |
 | **GPS Privacy** | Toggle ON to hide GPS coords from Quick Send messages |
 | **Screen Off** | Cycle screen timeout: `15s` → `3min` → `Never` |
 | **Flip Screen** | Rotate display 180° |
