@@ -1,5 +1,12 @@
-# MeshCore - Low power firmware for Heltec Lora 32 V3, V4 & WSL3, Seeed Studio Xiao S3 Wio, RAK4631
+# MeshCore Low Power Firmware
 Optimized MeshCore firmware, engineered for low power consumption and extended off-grid battery life for multi-day operation.
+
+**Supported devices:** 
+- Heltec WiFi LoRa 32 V3, WSL3
+- Heltec WiFi LoRa 32 V4.2, V4.3 (with or without OLED display)
+- Seeed Studio XIAO ESP32S3 & Wio-SX1262 Kit
+- RAK4631 WisBlock
+- ...
 
 
 [![GitHub Release](https://img.shields.io/github/v/release/dt267/MeshCore-Low-Power-Firmware-For-Heltec-V3-V4)](https://github.com/dt267/MeshCore-Low-Power-Firmware-For-Heltec-V3-V4/releases/latest) [![GitHub Release Date](https://img.shields.io/github/release-date/dt267/MeshCore-Low-Power-Firmware-For-Heltec-V3-V4)](https://github.com/dt267/MeshCore-Low-Power-Firmware-For-Heltec-V3-V4/releases/latest)
@@ -8,6 +15,7 @@ Optimized MeshCore firmware, engineered for low power consumption and extended o
 - [What's New](#whats-new)
 - [Installation](#installation)
 - [Idle Battery Life Estimation](#idle-battery-life-estimation-2000-mah-battery)
+- [Power Profiles: Heltec V4.3](#heltec-v43)
 - [Power Profiles: Heltec Lora 32 V3](#heltec-lora-32-v3)
 - [Power Profiles: Heltec Lora 32 V4.2](#heltec-lora-32-v42)
 - [Power Profiles: Seeed Studio XIAO ESP32S3 & Wio-SX1262](#seeed-studio-xiao-esp32s3--wio-sx1262)
@@ -480,6 +488,11 @@ Type `start ota` via TerminalCLI (Companion) or Command Line (Repeater / Room Se
 
 | Device | Idle Current (mA) | Estimated Idle Runtime (Hours) | Estimated Idle Runtime (Days) |
 | :--- | :--- | :---: | :---: |
+| Heltec V4.3 Companion BLE, KCT8103L LNA on | 22.9 | 74.2 | 3.1 |
+| Heltec V4.3 Companion BLE, KCT8103L LNA off | 15.4 | 110.4 | 4.6 |
+| Heltec V4.3 Companion, BLE off, KCT8103L LNA off | 11.5 | 147.8 | 6.2 |
+| Heltec V4.3 Repeater, KCT8103L LNA on | 16.1 | 105.6 | 4.4 |
+| Heltec V4.3 Repeater, KCT8103L LNA off | 8 | 212.5 | 8.6 |
 | Heltec V3 Companion BLE | 10 | 170.0 | 7.08 |
 | Heltec V3 Repeater | 7.8 | 217.9 | 9.08 |
 | Heltec V3 Room Server | 8.0 | 212.5 | 8.85 |
@@ -496,6 +509,44 @@ Type `start ota` via TerminalCLI (Companion) or Command Line (Repeater / Room Se
 | RAK4631 Repeater | 5.79 | 293.6 | 12.23 |
 
 ---
+
+## Heltec V4.3
+
+### *Typical power profile of Heltec V4.3 BLE companion, KCT8103L LNA off, firmware 1.15.dev, 5 LoRa messages in 30 seconds (14,400 messages a day):*
+* Maximum: 632.5 mA
+* Minimum: 9.2 mA
+* Mean: 76.2 mA
+
+**Estimated ~22.3 h (0.93 days) with 2000mAh battery.**
+
+<img alt="v43_companion_ble_on_lna_off_high" src="https://github.com/user-attachments/assets/e4433853-d9df-4366-b56f-8b1930f8aa1b" />
+
+### *Typical power profile of Heltec V4.3 BLE companion, KCT8103L LNA off, firmware 1.15.dev in idle:*
+* Maximum: 105.7 mA
+* Minimum: 9.7 mA
+* Mean: 15.4 mA
+
+**Estimated ~110.4 h (4.6 days) with 2000mAh battery.**
+
+<img alt="v43_companion_ble_on_lna_off_idle" src="https://github.com/user-attachments/assets/2334bd0f-fce1-41ba-a49f-ee049985463f" />
+
+### *Typical power profile of Heltec V4.3 repeater, KCT8103L LNA off, firmware 1.15.dev, in high LoRa traffic, 6 LoRa messages in 30 seconds (17,280 messages a day):*
+* Maximum: 598.3 mA
+* Minimum: 5.8 mA
+* Mean: 82.2 mA
+  
+**Estimated ~20.7 h (0.86 days) with 2000mAh battery.**
+
+<img alt="v43_repeater_lna_off_high" src="https://github.com/user-attachments/assets/89b7e995-1b9b-4647-8611-7987dfed54b4" />
+
+### *Typical power profile of Heltec V4.3 repeater, KCT8103L LNA off, firmware 1.15.dev in idle:*
+* Maximum: 47 mA
+* Minimum: 6.3 mA
+* Mean: 8 mA
+  
+**Estimated ~212.5 h (8.9 days) with 2000mAh battery.**
+
+<img alt="v43_repeater_lna_off_idle" src="https://github.com/user-attachments/assets/62eb1d6a-4706-4828-b66c-4cf3808412b0" />
 
 ## Heltec Lora 32 V3 
 
