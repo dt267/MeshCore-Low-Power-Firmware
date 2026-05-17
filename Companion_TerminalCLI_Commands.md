@@ -46,3 +46,8 @@ Setup: In the MeshCore app, create a channel named "TerminalCLI". It will now ac
   | `set loc.<N> <name> <lat> <lon>` | `N`: 0–9; name may contain spaces; lat/lon come last | Save a GPS location to slot N (0-based, display shows 1–10). Example: `set loc.0 Base camp 10.7769 106.7009` |
   | `del loc.<N>` | `N`: 0–9 | Clear saved location at slot N (0-based) |
   | `del loc.all` | — | Clear all saved location slots |
+  | `set ch.hops <channel> <N>` | `channel`: channel name; `N`: 1..max | Limit outgoing messages on the channel to at most N hops. Channel names with spaces are supported. |
+  | `set ch.hops <channel> off` | `channel`: channel name | Remove the hop limit for the channel |
+  | `get ch.hops <channel>` | `channel`: channel name (spaces allowed) | Show current hop limit for the channel |
+  | `ch.hops status` | — | List all channels that have an active hop limit |
+  | `ch.hops clear` | — | Remove all channel hop limits |

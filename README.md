@@ -28,6 +28,44 @@ Optimized MeshCore firmware, engineered for low power consumption and extended o
 
 ## What's New
 
+### v1.15_0517
+
+- **Companion: per-channel outgoing hop limit (`ch.hops`).**
+
+  Limit how far your outgoing messages travel on a specific channel, without affecting any other channel or any other node in the network. Useful for keeping a private or local-area channel confined to a small radius — for example, a home-to-nearby-relay link — without touching the rest of the city mesh.
+
+  Configure via **TerminalCLI**:
+
+  | Command | Effect |
+  |---|---|
+  | `set ch.hops <channel> <N>` | Limit outgoing messages on `<channel>` to at most N hops |
+  | `set ch.hops <channel> off` | Remove the limit |
+  | `get ch.hops <channel>` | Show current limit |
+  | `ch.hops status` | List all channels with an active limit |
+  | `ch.hops clear` | Remove all limits |
+
+  ```
+  set ch.hops Public 2         # Public channel messages travel at most 2 hops
+  set ch.hops My Local Net 3   # My Local Net channel travel at most 3 hops
+  set ch.hops Public off       # remove the limit
+  ch.hops status
+  ```
+
+
+  The limit applies to **your outgoing messages only** — other nodes sending on the same channel are unaffected. No repeater configuration or network coordination required.
+
+  The repeater's `group.hops.max` algorithm has been updated to correctly account for sender-side pre-fill, so `ch.hops` and `group.hops.max` work together without conflict — update repeater firmware to get full compatibility.
+
+  Settings are stored in flash and persist after reboot.
+
+- **Companion: toggle RxGain directly from the Radio screen.**
+
+  Long press on the **Radio** page cycles through RxGain modes (OFF → ON → Auto) and shows a popup confirming the new mode. The current mode is now also displayed on the Radio page itself (`RxG: OFF` / `RxG: ON` / `RxG: Auto`), so you can check it at a glance without going into Settings. *(`Auto` is available on Heltec V4.2 only.)*
+
+- **Fix: noise floor stuck at -120 in noisy environments (all node types)**
+
+  In environments with strong in-band interference, the noise floor could remain at -120 dBm for a long time instead of updating to reflect actual conditions. Fixed.
+
 ### v1.15_0510
 
 - **Repeater: per-type relay hop cap (`advert.hops.max` / `group.hops.max`).**

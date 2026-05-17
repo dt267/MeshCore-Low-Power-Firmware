@@ -12,7 +12,7 @@ One button does everything:
 |---|---|
 | **Single click** | Next page / next item / scroll down |
 | **Double click** | Previous page / exit sub-level |
-| **Long press** | Open message preview (Home) · Enter sub-level (Quick Send / Settings) · Toggle GPS (GPS page) |
+| **Long press** | Open message preview (Home) · Enter sub-level (Quick Send / Settings) · Toggle GPS (GPS page) · Cycle RxGain (Radio page) |
 
 ---
 
@@ -394,15 +394,15 @@ Shows the last 4 nodes that advertised over LoRa, with time since last heard. Re
 
 ## Radio page
 
-LoRa radio parameters — read-only.
+LoRa radio parameters. Long press cycles RxGain mode.
 
 ```
 ┌──────────────────────────────┐
 │ RADIO             14:32 [==] │
 │         · · · · · • ·        │
-│ FQ: 915.000   SF: 10         │
-│ BW: 250.00    CR: 5          │
-│ TX: 20dBm                    │
+│ FQ: 915.000          SF: 10  │
+│ BW: 250.00            CR: 5  │
+│ TX: 20dBm          RxG: OFF  │
 │ Noise floor: -95             │
 └──────────────────────────────┘
 ```
@@ -414,7 +414,10 @@ LoRa radio parameters — read-only.
 | BW | Bandwidth in kHz |
 | CR | Coding rate |
 | TX | Transmit power in dBm |
+| RxG | RX Gain mode: `OFF` / `ON` / `Auto` *(Auto: Heltec V4.2 only)* |
 | Noise floor | Ambient noise level in dBm |
+
+**Long press** — cycle RxGain mode (OFF → ON → Auto); a popup confirms the new mode. *(`Auto` is available on Heltec V4.2 only.)*
 
 ---
 
@@ -469,7 +472,7 @@ Only shown if GPS hardware is present.
 |---|---|
 | **BLE** | Toggle Bluetooth on/off; shows `ON, Connected` when app is connected |
 | **Repeat** | Toggle packet repeat on/off |
-| **RxGain** | Cycle RxGain: OFF → ON → AUTO *(AUTO: V4.2 only)* |
+| **RxGain** | Cycle RxGain: OFF → ON → AUTO *(AUTO: Heltec V4.2 only)* |
 | **Units** | Toggles between Metric and Imperial |
 | **Pos. Format** | Cycle GPS coordinate display: `DD` → `UTM` → `MGRS` |
 | **GPS Privacy** | Toggle ON to hide GPS coords from Quick Send messages |
