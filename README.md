@@ -1,5 +1,5 @@
 # MeshCore Low Power Firmware
-Optimized MeshCore firmware, engineered for low power consumption and extended off-grid battery life for multi-day operation.
+MeshCore firmware with deep power optimization, a full companion display UI, and advanced radio and network controls — built for multi-day off-grid operation.
 
 **Supported devices:** 
 - Heltec WiFi LoRa 32 V3, WSL3
@@ -24,9 +24,65 @@ Optimized MeshCore firmware, engineered for low power consumption and extended o
 - [Stock Antennas SWR Testing](Stock_Antennas_SWR_Testing.md)
 - [Companion Display UI Guide](Companion_Display_Guide.md)
 - [Companion TerminalCLI Commands](Companion_TerminalCLI_Commands.md)
+- [Repeater / Room Server CLI Commands](Repeater_CLI_Commands.md)
 - [License](#license)
 
 ## What's New
+
+### v1.15_0524
+
+- **Fix: radio deafness recovery in noisy environments (all node types).**
+
+  When strong in-band interference causes the SX1262 AGC to become overwhelmed, the radio can go deaf — severely degraded in receive sensitivity. The firmware now detects this condition automatically and triggers an immediate hardware recalibration, restoring sensitivity without waiting for the scheduled `agc.reset.interval`. The `agc.reset.interval` setting remains available but is now unnecessary.
+
+  Two new commands let you monitor and reset the AGC reset counter:
+
+  | Command | Effect |
+  |---------|--------|
+  | `get agc.resets` | Show how many times the AGC has been auto-reset since boot or last `clear` |
+  | `clear agc.resets` | Reset the counter to zero |
+
+  **Real-world validation:** A repeater installed near a periodic in-band interference source (confirmed via RTL-SDR) accumulated 918 auto-resets over 8.5 hours (~1.8/min), matching the observed interference sweep cycle. A second repeater at a clean location recorded 0 resets over the same period, confirming no false positives. Without this feature, the first repeater was unreachable remotely due to persistent deafness.
+
+- **GPS update interval configurable at runtime on Heltec V4 (all node types).**
+
+  A new `gps.interval` setting controls the sleep time between GPS position updates. After each fix, GPS powers down for the configured interval, then wakes and acquires a new fix. Set it to `0` to keep GPS always on. Default is 10 seconds.
+
+  Available on **Companion** via [TerminalCLI](Companion_TerminalCLI_Commands.md) and on **Repeater / Room Server** via the Command Line:
+
+  | Command | Effect |
+  |---|---|
+  | `get gps.interval` | Show current interval (`always on` if 0) |
+  | `set gps.interval 0` | GPS always on — maximum accuracy, highest power draw |
+  | `set gps.interval 30` | GPS sleeps 30s after each fix, then re-acquires |
+  | `set gps.interval 300` | GPS sleeps 5 minutes after each fix |
+
+  Setting is saved to flash and takes effect immediately — no reboot needed.
+
+- **GPS constellation selection for L78K on Heltec V4 (`gps.mode`) (all node types).**
+
+  Choose which satellite constellations the L78K module tracks. Average current draw is essentially the same across all configurations in duty cycle mode with `gps.interval` greater than 10 (~23 mA mean current measured on Heltec V4.3 Companion with `gps.mode = 4` and `gps.interval = 10`). Leave at the default `4` for the most robust fix; adjust only if you have a specific coverage reason.
+
+  | Value | Constellations |
+  |---|---|
+  | `1` | GPS only |
+  | `2` | GPS + BeiDou |
+  | `3` | GPS + GLONASS |
+  | `4` | GPS + BeiDou + GLONASS *(default)* |
+
+  Available on **Companion** via [TerminalCLI](Companion_TerminalCLI_Commands.md) and on **Repeater / Room Server** via the Command Line:
+
+  | Command | Effect |
+  |---|---|
+  | `get gps.mode` | Show current constellation selection |
+  | `set gps.mode 4` | GPS + BeiDou + GLONASS (default) |
+  | `set gps.mode 1` | GPS only |
+
+  Setting is saved to flash. Change takes effect on next GPS on.
+
+- **Companion: GPS screen shows interval and constellation when GPS is off.**
+
+  When GPS is off, the GPS page now shows the configured update interval (`intv`) and constellation selection (`mode`, Heltec V4 only), so you can verify settings before enabling GPS.
 
 ### v1.15_0517
 
@@ -61,10 +117,6 @@ Optimized MeshCore firmware, engineered for low power consumption and extended o
 - **Companion: toggle RxGain directly from the Radio screen.**
 
   Long press on the **Radio** page cycles through RxGain modes (OFF → ON → Auto) and shows a popup confirming the new mode. The current mode is now also displayed on the Radio page itself (`RxG: OFF` / `RxG: ON` / `RxG: Auto`), so you can check it at a glance without going into Settings. *(`Auto` is available on Heltec V4.2 only.)*
-
-- **Fix: noise floor stuck at -120 in noisy environments (all node types)**
-
-  In environments with strong in-band interference, the noise floor could remain at -120 dBm for a long time instead of updating to reflect actual conditions. Fixed.
 
 ### v1.15_0510
 
@@ -526,25 +578,25 @@ Type `start ota` via TerminalCLI (Companion) or Command Line (Repeater / Room Se
 
 | Device | Idle Current (mA) | Estimated Idle Runtime (Hours) | Estimated Idle Runtime (Days) |
 | :--- | :--- | :---: | :---: |
-| Heltec V4.3 Companion BLE, KCT8103L LNA on | 22.9 | 74.2 | 3.1 |
-| Heltec V4.3 Companion BLE, KCT8103L LNA off | 15.4 | 110.4 | 4.6 |
-| Heltec V4.3 Companion, BLE off, KCT8103L LNA off | 11.5 | 147.8 | 6.2 |
-| Heltec V4.3 Repeater, KCT8103L LNA on | 16.1 | 105.6 | 4.4 |
-| Heltec V4.3 Repeater, KCT8103L LNA off | 8 | 212.5 | 8.6 |
-| Heltec V3 Companion BLE | 10 | 170.0 | 7.08 |
-| Heltec V3 Repeater | 7.8 | 217.9 | 9.08 |
-| Heltec V3 Room Server | 8.0 | 212.5 | 8.85 |
-| Heltec WSL3 Companion BLE | 10 | 170.0 | 7.08 |
-| Heltec WSL3 Repeater | 7.7 | 220.8 | 9.20 |
-| Heltec WSL3 Room Server | 7.9 | 215.2 | 8.97 | 
-| Heltec V4.2 Companion BLE | 20 | 85.0 | 3.54 |
-| Heltec V4.2 Repeater | 13.3 | 127.8 | 5.33 | 
-| Heltec V4.2 Room Server | 13.4 | 126.9 | 5.29 |
-| XIAO S3 Wio Companion BLE | 11 | 154.5 | 6.44 |
-| XIAO S3 Wio Repeater | 8.7 | 195.4 | 8.14 |
-| XIAO S3 Wio Room Server | 8.7 | 195.4 | 8.14 |
-| RAK4631 Companion BLE | 6.61 | 257.18 | 10.71 |
-| RAK4631 Repeater | 5.79 | 293.6 | 12.23 |
+| Heltec V4.3 Companion BLE, KCT8103L LNA on, SX1262 Boosted Gain off | 22.9 | 74.2 | 3.1 |
+| Heltec V4.3 Companion BLE, KCT8103L LNA off, SX1262 Boosted Gain on | 15.4 | 110.4 | 4.6 |
+| Heltec V4.3 Companion, BLE off, KCT8103L LNA off, SX1262 Boosted Gain on | 11.5 | 147.8 | 6.2 |
+| Heltec V4.3 Repeater, KCT8103L LNA on, SX1262 Boosted Gain off | 16.1 | 105.6 | 4.4 |
+| Heltec V4.3 Repeater, KCT8103L LNA off, SX1262 Boosted Gain on | 8 | 212.5 | 8.6 |
+| Heltec V3 Companion BLE, SX1262 Boosted Gain on | 10 | 170.0 | 7.08 |
+| Heltec V3 Repeater, SX1262 Boosted Gain on | 7.8 | 217.9 | 9.08 |
+| Heltec V3 Room Server, SX1262 Boosted Gain on | 8.0 | 212.5 | 8.85 |
+| Heltec WSL3 Companion BLE, SX1262 Boosted Gain on | 10 | 170.0 | 7.08 |
+| Heltec WSL3 Repeater, SX1262 Boosted Gain on | 7.7 | 220.8 | 9.20 |
+| Heltec WSL3 Room Server, SX1262 Boosted Gain on | 7.9 | 215.2 | 8.97 | 
+| Heltec V4.2 Companion BLE, SX1262 Boosted Gain off | 20 | 85.0 | 3.54 |
+| Heltec V4.2 Repeater, SX1262 Boosted Gain off | 13.3 | 127.8 | 5.33 | 
+| Heltec V4.2 Room Server, SX1262 Boosted Gain off | 13.4 | 126.9 | 5.29 |
+| XIAO S3 Wio Companion BLE, SX1262 Boosted Gain on | 11 | 154.5 | 6.44 |
+| XIAO S3 Wio Repeater, SX1262 Boosted Gain on | 8.7 | 195.4 | 8.14 |
+| XIAO S3 Wio Room Server, SX1262 Boosted Gain on | 8.7 | 195.4 | 8.14 |
+| RAK4631 Companion BLE, SX1262 Boosted Gain on | 6.61 | 257.18 | 10.71 |
+| RAK4631 Repeater, SX1262 Boosted Gain on | 5.79 | 293.6 | 12.23 |
 
 ---
 

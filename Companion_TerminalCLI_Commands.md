@@ -16,10 +16,16 @@ Setup: In the MeshCore app, create a channel named "TerminalCLI". It will now ac
   | `gps` | — | Show GPS status: enabled/disabled, fix status, satellite count |
   | `gps on` | — | Enable GPS |
   | `gps off` | — | Disable GPS |
+  | `get gps.interval` | — | Show GPS update interval (`always on` if `0`) |
+  | `set gps.interval <s>` | `s`: seconds `1..86400`, or `0` = GPS always on (no sleep) | Set how often the GPS wakes up to update location. Applied immediately and saved. Default: `10`. |
+  | `get gps.mode` | — | Show current GNSS constellation selection. *(Heltec V4 only)* |
+  | `set gps.mode <n>` | `n`: `1`=GPS `2`=GPS+BDS `3`=GPS+GLO `4`=GPS+BDS+GLO | Select which constellations the L78K module tracks. Saved to flash; takes effect on next GPS on. Default: `4`. *(Heltec V4 only)* |
   | `reg read <addr>` | `addr`: hex | Read 1 byte from a radio register. Example: `reg read 08B5` |
   | `reg write <addr> <val>` | `addr`, `val`: hex | Write 1 byte to a radio register. Example: `reg write 08B5 04` |
   | `get radio.rxgain` | — | Show current RX gain mode: `off`, `on`, or `auto` |
   | `set radio.rxgain <mode>` | `off` \| `on` \| `auto` | Set RX gain mode. `auto` is only supported on Heltec V4.2. |
+  | `get agc.resets` | — | Show how many times the AGC has been auto-reset since boot or last `clear agc.resets` |
+  | `clear agc.resets` | — | Reset the AGC auto-reset counter to zero |
   | `get tx` | — | Show current transmit power (dBm) |
   | `set tx <dBm>` | `dBm`: integer | Set transmit power in dBm. Saved and applied immediately. |  
   | `start ota` | — | Start OTA firmware update. On ESP32: connect to Wi-Fi `MeshCore-OTA`, then go to `192.168.4.1/update`. On nRF52: enters BLE DFU mode. |

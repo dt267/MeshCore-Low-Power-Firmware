@@ -425,6 +425,7 @@ LoRa radio parameters. Long press cycles RxGain mode.
 
 Only shown if GPS hardware is present.
 
+**GPS on:**
 ```
 ┌──────────────────────────────┐
 │ GPS               14:32 [==] │
@@ -432,14 +433,28 @@ Only shown if GPS hardware is present.
 │ gps on                   fix │
 │ sat                        8 │
 │ pos         10.7769 106.7009 │
-│ alt                    12.50 │
+│ alt                      12m │
 └──────────────────────────────┘
 ```
+
+**GPS off:**
+```
+┌──────────────────────────────┐
+│ GPS               14:32 [==] │
+│         · · · · · · •        │
+│ gps off                      │
+│ intv                  always │
+│ mode             GPS+BDS+GLO │
+└──────────────────────────────┘
+```
+*(mode line: Heltec V4 only)*
 
 - **Long press** — toggle GPS module on/off
 - `gps on` / `gps off` — current software state
 - `fix` / `no fix` — whether a valid position is available
 - `sat` — number of satellites in view
+- `intv` — GPS update interval: `always` if GPS stays on continuously (`gps.interval 0`), otherwise interval in seconds; shown only when GPS is off
+- `mode` — active GNSS constellation (Heltec V4 only; see `gps.mode` in [TerminalCLI Commands](Companion_TerminalCLI_Commands.md))
 - `pos` — current position (DD by default; UTM or MGRS if selected via **Pos. Format** in Settings)
 - `alt` — altitude
 
