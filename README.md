@@ -16,6 +16,7 @@ MeshCore firmware with deep power optimization, a full companion display UI, and
 - [What's New](#whats-new)
 - [Installation](#installation)
 - [Idle Battery Life Estimation](#idle-battery-life-estimation-2000-mah-battery)
+- [Power Profiles: Heltec T096](#heltec-t096)
 - [Power Profiles: Heltec V4.3](#heltec-v43)
 - [Power Profiles: Heltec Lora 32 V3](#heltec-lora-32-v3)
 - [Power Profiles: Heltec Lora 32 V4.2](#heltec-lora-32-v42)
@@ -653,6 +654,8 @@ Firmware 1.15.dev, KCT8103L LNA off, SX1262 Boosted Gain on.
 
 **Estimated ~21.2 h (0.9 days) with 2000mAh battery.**
 
+<img alt="t096_com_h" src="https://github.com/user-attachments/assets/e37f0a8a-2b9a-4325-83e0-3b0560621e77" />
+
 ### *Typical power profile of Heltec T096 BLE companion in idle:*
 
 Firmware 1.15.dev, KCT8103L LNA off, SX1262 Boosted Gain on.
@@ -662,6 +665,8 @@ Firmware 1.15.dev, KCT8103L LNA off, SX1262 Boosted Gain on.
 * Mean: 7.4 mA
 
 **Estimated ~229.7 h (9.6 days) with 2000mAh battery.**
+
+<img alt="t096_com_l" src="https://github.com/user-attachments/assets/40177031-c213-443c-a327-9fb3492f8c6e" />
 
 ### *Typical power profile of Heltec T096 repeater in high LoRa traffic, 6 LoRa messages in 30 seconds (17,280 messages a day):*
 
@@ -673,6 +678,8 @@ Firmware 1.15.dev, KCT8103L LNA off, SX1262 Boosted Gain on.
 
 **Estimated ~20 h (0.8 days) with 2000mAh battery.**
 
+<img alt="t096_rep_h" src="https://github.com/user-attachments/assets/46f5f721-758f-4859-bca8-ef0016cfb511" />
+
 ### *Typical power profile of Heltec T096 repeater in idle:*
 
 Firmware 1.15.dev, KCT8103L LNA off, SX1262 Boosted Gain on.
@@ -682,6 +689,8 @@ Firmware 1.15.dev, KCT8103L LNA off, SX1262 Boosted Gain on.
 * Mean: 7.4 mA
   
 **Estimated ~229.7 h (9.6 days) with 2000mAh battery.**
+
+<img alt="t096_rep_l" src="https://github.com/user-attachments/assets/fa14d784-322d-4294-9f90-476661cd1a6e" />
 
 ## Heltec V4.3
 
