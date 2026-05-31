@@ -1,6 +1,6 @@
 # Companion Radio — Display & Button Guide
 
-How to use the OLED display and button on your Companion Radio node.
+How to use the display and button on your Companion Radio node. Applies to all supported hardware — OLED (Heltec V4) and color TFT (Heltec T096).
 
 ---
 
@@ -447,14 +447,14 @@ Only shown if GPS hardware is present.
 │ mode             GPS+BDS+GLO │
 └──────────────────────────────┘
 ```
-*(mode line: Heltec V4 only)*
+*(mode line: Heltec V4 / T096 only)*
 
 - **Long press** — toggle GPS module on/off
 - `gps on` / `gps off` — current software state
 - `fix` / `no fix` — whether a valid position is available
 - `sat` — number of satellites in view
 - `intv` — GPS update interval: `always` if GPS stays on continuously (`gps.interval 0`), otherwise interval in seconds; shown only when GPS is off
-- `mode` — active GNSS constellation (Heltec V4 only; see `gps.mode` in [TerminalCLI Commands](Companion_TerminalCLI_Commands.md))
+- `mode` — active GNSS constellation (Heltec V4 / T096 only; see `gps.mode` in [TerminalCLI Commands](Companion_TerminalCLI_Commands.md))
 - `pos` — current position (DD by default; UTM or MGRS if selected via **Pos. Format** in Settings)
 - `alt` — altitude
 
@@ -488,13 +488,14 @@ Only shown if GPS hardware is present.
 | **BLE** | Toggle Bluetooth on/off; shows `ON, Connected` when app is connected |
 | **Repeat** | Toggle packet repeat on/off |
 | **RxGain** | Cycle RxGain: OFF → ON → AUTO *(AUTO: Heltec V4.2 only)* |
+| **Brightness** | Cycle backlight intensity: `25` → `50` → `75` → `100` *(Heltec T096 only)* |
 | **Units** | Toggles between Metric and Imperial |
 | **Pos. Format** | Cycle GPS coordinate display: `DD` → `UTM` → `MGRS` |
 | **GPS Privacy** | Toggle ON to hide GPS coords from Quick Send messages |
 | **Screen Off** | Cycle screen timeout: `15s` → `3min` → `Never` |
 | **Flip Screen** | Rotate display 180° |
 | **Send Advert** | Broadcast your presence → alert "Advert sent!" |
-| **Start OTA** | OTA update mode — connect to WiFi `MeshCore-OTA`, go to `192.168.4.1/update` |
+| **Start OTA** | OTA update mode. On ESP32: connect to WiFi `MeshCore-OTA`, go to `192.168.4.1/update`. On nRF52 (T096 / RAK4631): enters BLE DFU mode — use the **nRF Device Firmware Update** app to upload the `.zip` package. |
 | **Shutdown** | Power off the device |
 | **About** | Show device name, firmware version and build date |
 

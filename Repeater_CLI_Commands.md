@@ -17,5 +17,5 @@ For the full upstream command reference see [docs/cli_commands.md](https://githu
 | `clear agc.resets` | — | Reset the AGC auto-reset counter to zero |
 | `get gps.interval` | — | Show GPS update interval. Returns `always on` if `0`. |
 | `set gps.interval <s>` | `s`: seconds `1..86400`, or `0` = GPS always on (no sleep) | Set how often the GPS wakes up to update location. Applied immediately and saved. Default: `10`. |
-| `get gps.mode` | — | Show current GNSS constellation selection. *(Heltec V4 only)* |
-| `set gps.mode <n>` | `n`: `1`=GPS `2`=GPS+BDS `3`=GPS+GLO `4`=GPS+BDS+GLO | Select which constellations the L78K module tracks. Saved to flash; takes effect on next GPS on. Default: `4`. *(Heltec V4 only)* |
+| `get gps.mode` | — | Show current GNSS constellation selection. *(Heltec V4 / T096 only)* |
+| `set gps.mode <n>` | **Heltec V4:** `1`=GPS `2`=GPS+BDS `3`=GPS+GLO `4`=GPS+BDS+GLO (default `4`) · **T096:** `1`=GPS-L1 `2`=All-sys-L1 `3`=All-sys+QZSS-dual (default `3`) | Select GNSS constellation preset. Saved to flash; takes effect on next GPS on. |

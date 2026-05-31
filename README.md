@@ -4,6 +4,7 @@ MeshCore firmware with deep power optimization, a full companion display UI, and
 **Supported devices:** 
 - Heltec WiFi LoRa 32 V3, WSL3
 - Heltec WiFi LoRa 32 V4.2, V4.3 (with or without OLED display)
+- Heltec Mesh Node T096
 - Seeed Studio XIAO ESP32S3 & Wio-SX1262 Kit
 - RAK4631 WisBlock
 - ...
@@ -28,6 +29,38 @@ MeshCore firmware with deep power optimization, a full companion display UI, and
 - [License](#license)
 
 ## What's New
+
+### v1.15_0531
+
+- **Full support for Heltec T096 — companion, repeater, and room server**
+
+  The Heltec T096 is now fully supported across all node types. The hardware is an nRF52840-based board with an SX1262 radio, KCT8103L FEM, UC6580 GPS, and a 0.96" 160×80 color TFT display (ST7735S).
+
+  The complete companion UI — Quick Send, Contacts, Settings, GPS, Saved Locations, GPS Trace, and message preview — runs on the color TFT.
+
+  **Differences from other supported boards:**
+
+  - **Color TFT display.** All companion pages render in color on the 160×80 ST7735S — unlike other supported boards which use a monochrome OLED.
+
+  - **Brightness control.** A **Brightness** item in the Settings page adjusts the TFT backlight intensity: `25` → `50` → `75` → `100`. Setting is saved to flash.
+
+  - **KCT8103L FEM — same as Heltec V4.3.** `set radio.rxgain on` / `off` works identically.
+
+  - **UC6580 GPS.** `gps.interval` works the same as on Heltec V4. Constellation selection (`gps.mode`) uses a different set of options:
+
+    | Value | Constellations |
+    |---|---|
+    | `1` | GPS L1 only |
+    | `2` | All-system L1 (GPS+BDS+GLO+GAL) |
+    | `3` | All-system + QZSS dual-band *(default)* |
+
+- **AGC auto-reset improvements (all node types).**
+
+  Coordination between AGC auto-reset and channel busy detection has been improved. While the noise floor baseline is being re-established after a reset, channel sensing falls back to hardware CAD only.
+
+- **Fix: excessive flash writes on nRF52 Companion (T096, RAK4631).**
+
+  Each received advertisement previously triggered an immediate flash write — both to the advert blob store and to the contact list. In areas with high advert traffic this caused unnecessary flash wear, and a malicious node spamming adverts could wear out ExtraFS in hours. Advert blobs are now buffered in RAM and flushed to flash at most once every 10 minutes. Auto-discovered contacts use the same 10-minute pattern instead of a short debounce timer.
 
 ### v1.15_0524
 
@@ -565,19 +598,27 @@ python -m esptool --chip esp32s3 write_flash 0x10000 <name>.bin
 **Option 3: Wi-Fi OTA** *(requires v1.14_0320 or later)*
 Type `start ota` via TerminalCLI (Companion) or Command Line (Repeater / Room Server) → connect to `MeshCore-OTA` Wi-Fi → go to `192.168.4.1/update`. Upload the plain `<name>.bin` file only — the merged binary is **not** compatible with OTA.
 
-### RAK4631 (nRF52840)
+### RAK4631 / Heltec T096 (nRF52840)
 
 **Option 1: UF2 drag-and-drop**
-Double-tap the Reset button → a USB drive named `RAK4631` appears → copy the `.uf2` file onto it. The device reboots automatically when done.
+Double-tap the Reset button → a USB drive appears → copy the `.uf2` file onto it. The device reboots automatically when done.
+- **RAK4631:** drive is named `RAK4631`
+- **Heltec T096:** drive is typically named `HT-n5262G`
 
 **Option 2: BLE DFU** *(requires v1.14_0320 or later)*
-Type `start ota` via TerminalCLI (Companion) or Command Line (Repeater / Room Server) → the device enters DFU mode → use the **nRF Device Firmware Update** app (iOS/Android) to upload the `.zip` DFU package.
+Enter DFU mode, then use the **nRF Device Firmware Update** app (iOS/Android) to upload the `.zip` DFU package.
+
+Ways to enter DFU mode:
+- **RAK4631:** Type `start ota` via TerminalCLI (Companion) or Command Line (Repeater / Room Server)
+- **Heltec T096:** Hold the user button while pressing Reset — or type `start ota` via TerminalCLI / Command Line — or on Companion: **Settings → Start OTA**
 
 
 ## Idle Battery Life Estimation (2000 mAh battery)
 
 | Device | Idle Current (mA) | Estimated Idle Runtime (Hours) | Estimated Idle Runtime (Days) |
 | :--- | :--- | :---: | :---: |
+| Heltec T096 Companion BLE, KCT8103L LNA off, SX1262 Boosted Gain on | 7.4 | 229.7 | 9.6 |
+| Heltec T096 Repeater, KCT8103L LNA off, SX1262 Boosted Gain on | 7.4 | 229.7 | 9.6 |
 | Heltec V4.3 Companion BLE, KCT8103L LNA on, SX1262 Boosted Gain off | 22.9 | 74.2 | 3.1 |
 | Heltec V4.3 Companion BLE, KCT8103L LNA off, SX1262 Boosted Gain on | 15.4 | 110.4 | 4.6 |
 | Heltec V4.3 Companion, BLE off, KCT8103L LNA off, SX1262 Boosted Gain on | 11.5 | 147.8 | 6.2 |
@@ -600,9 +641,54 @@ Type `start ota` via TerminalCLI (Companion) or Command Line (Repeater / Room Se
 
 ---
 
+## Heltec T096
+
+### *Typical power profile of Heltec T096 BLE companion, 5 LoRa messages in 30 seconds (14,400 messages a day):*
+
+Firmware 1.15.dev, KCT8103L LNA off, SX1262 Boosted Gain on.
+
+* Maximum: 621.9 mA
+* Minimum: - mA
+* Mean: 80.2 mA
+
+**Estimated ~21.2 h (0.9 days) with 2000mAh battery.**
+
+### *Typical power profile of Heltec T096 BLE companion in idle:*
+
+Firmware 1.15.dev, KCT8103L LNA off, SX1262 Boosted Gain on.
+
+* Maximum: 13.6 mA
+* Minimum: 5.8 mA
+* Mean: 7.4 mA
+
+**Estimated ~229.7 h (9.6 days) with 2000mAh battery.**
+
+### *Typical power profile of Heltec T096 repeater in high LoRa traffic, 6 LoRa messages in 30 seconds (17,280 messages a day):*
+
+Firmware 1.15.dev, KCT8103L LNA off, SX1262 Boosted Gain on.
+
+* Maximum: 637.5 mA
+* Minimum: - mA
+* Mean: 85.1 mA
+
+**Estimated ~20 h (0.8 days) with 2000mAh battery.**
+
+### *Typical power profile of Heltec T096 repeater in idle:*
+
+Firmware 1.15.dev, KCT8103L LNA off, SX1262 Boosted Gain on.
+
+* Maximum: 10 mA
+* Minimum: 5 mA
+* Mean: 7.4 mA
+  
+**Estimated ~229.7 h (9.6 days) with 2000mAh battery.**
+
 ## Heltec V4.3
 
-### *Typical power profile of Heltec V4.3 BLE companion, KCT8103L LNA off, firmware 1.15.dev, 5 LoRa messages in 30 seconds (14,400 messages a day):*
+### *Typical power profile of Heltec V4.3 BLE companion, 5 LoRa messages in 30 seconds (14,400 messages a day):*
+
+Firmware 1.15.dev, KCT8103L LNA off, SX1262 Boosted Gain on.
+
 * Maximum: 632.5 mA
 * Minimum: 9.2 mA
 * Mean: 76.2 mA
@@ -611,7 +697,10 @@ Type `start ota` via TerminalCLI (Companion) or Command Line (Repeater / Room Se
 
 <img alt="v43_companion_ble_on_lna_off_high" src="https://github.com/user-attachments/assets/e4433853-d9df-4366-b56f-8b1930f8aa1b" />
 
-### *Typical power profile of Heltec V4.3 BLE companion, KCT8103L LNA off, firmware 1.15.dev in idle:*
+### *Typical power profile of Heltec V4.3 BLE companion in idle:*
+
+Firmware 1.15.dev, KCT8103L LNA off, SX1262 Boosted Gain on.
+
 * Maximum: 105.7 mA
 * Minimum: 9.7 mA
 * Mean: 15.4 mA
@@ -620,7 +709,10 @@ Type `start ota` via TerminalCLI (Companion) or Command Line (Repeater / Room Se
 
 <img alt="v43_companion_ble_on_lna_off_idle" src="https://github.com/user-attachments/assets/2334bd0f-fce1-41ba-a49f-ee049985463f" />
 
-### *Typical power profile of Heltec V4.3 repeater, KCT8103L LNA off, firmware 1.15.dev, in high LoRa traffic, 6 LoRa messages in 30 seconds (17,280 messages a day):*
+### *Typical power profile of Heltec V4.3 repeater in high LoRa traffic, 6 LoRa messages in 30 seconds (17,280 messages a day):*
+
+Firmware 1.15.dev, KCT8103L LNA off, SX1262 Boosted Gain on.
+
 * Maximum: 598.3 mA
 * Minimum: 5.8 mA
 * Mean: 82.2 mA
@@ -629,7 +721,10 @@ Type `start ota` via TerminalCLI (Companion) or Command Line (Repeater / Room Se
 
 <img alt="v43_repeater_lna_off_high" src="https://github.com/user-attachments/assets/89b7e995-1b9b-4647-8611-7987dfed54b4" />
 
-### *Typical power profile of Heltec V4.3 repeater, KCT8103L LNA off, firmware 1.15.dev in idle:*
+### *Typical power profile of Heltec V4.3 repeater in idle:*
+
+Firmware 1.15.dev, KCT8103L LNA off, SX1262 Boosted Gain on.
+
 * Maximum: 47 mA
 * Minimum: 6.3 mA
 * Mean: 8 mA
@@ -643,7 +738,10 @@ Type `start ota` via TerminalCLI (Companion) or Command Line (Repeater / Room Se
 <img alt="helec-v3" src="https://github.com/user-attachments/assets/2a4b7faf-0420-4d31-bcbe-47b970810f22" />
 
 
-### *Typical power profile of Heltec V3 BLE companion 1.13.dev, 5 LoRa messages in 30 seconds (14,400 messages a day):*
+### *Typical power profile of Heltec V3 BLE companion, 5 LoRa messages in 30 seconds (14,400 messages a day):*
+
+Firmware 1.13.dev, SX1262 Boosted Gain on.
+
 * Maximum: 241.48 mA
 * Minimum: 4.99 mA
 * Mean: 31.37 mA
@@ -653,7 +751,10 @@ Type `start ota` via TerminalCLI (Companion) or Command Line (Repeater / Room Se
 <img alt="dt267-v3-113-companion-h" src="https://github.com/user-attachments/assets/3e79cd31-87a9-4366-9576-2013b8ae7469" />
 
 
-### *Typical power profile of Heltec V3 BLE companion 1.13.dev in idle:*
+### *Typical power profile of Heltec V3 BLE companion in idle:*
+
+Firmware 1.13.dev, SX1262 Boosted Gain on.
+
 * Maximum: 102.97 mA
 * Minimum: 5.72 mA
 * Mean: 9.22 mA
@@ -662,7 +763,10 @@ Type `start ota` via TerminalCLI (Companion) or Command Line (Repeater / Room Se
 
 <img alt="dt267-v3-113-companion-l" src="https://github.com/user-attachments/assets/d0c5bb68-4136-481c-80b7-b1adfe515687" />
 
-### *Typical power profile of Heltec V3 repeater 1.13.dev in high LoRa traffic, 6 LoRa messages in 30 seconds (17,280 messages a day):*
+### *Typical power profile of Heltec V3 repeater in high LoRa traffic, 6 LoRa messages in 30 seconds (17,280 messages a day):*
+
+Firmware 1.13.dev, SX1262 Boosted Gain on.
+
 * Maximum: 160.49 mA
 * Minimum: 2.01 mA
 * Mean: 27.74 mA
@@ -671,7 +775,10 @@ Type `start ota` via TerminalCLI (Companion) or Command Line (Repeater / Room Se
 
 <img alt="dt267-v3-113-repeater-h" src="https://github.com/user-attachments/assets/54f806e7-b197-47fa-a054-19e9d72cad98" />
 
-### *Typical power profile of Heltec V3 repeater 1.13.dev in idle:*
+### *Typical power profile of Heltec V3 repeater in idle:*
+
+Firmware 1.13.dev, SX1262 Boosted Gain on.
+
 * Maximum: 44.28 mA
 * Minimum: 5.51 mA
 * Mean: 7.25 mA
@@ -686,7 +793,10 @@ Type `start ota` via TerminalCLI (Companion) or Command Line (Repeater / Room Se
 
 <img alt="v4001" src="https://github.com/user-attachments/assets/658c4b3a-edca-451f-b4d9-d4a75e927d7c" />
 
-### *Typical power profile of Heltec V4.2 BLE companion 1.13.dev, 5 LoRa messages in 30 seconds (14,400 messages a day):*
+### *Typical power profile of Heltec V4.2 BLE companion, 5 LoRa messages in 30 seconds (14,400 messages a day):*
+
+Firmware 1.13.dev, SX1262 Boosted Gain off.
+
 * Maximum: 734.11 mA
 * Minimum: 14.31 mA
 * Mean: 96.64 mA
@@ -695,7 +805,10 @@ Type `start ota` via TerminalCLI (Companion) or Command Line (Repeater / Room Se
 
 <img alt="dt267-v4.2-companion-h" src="https://github.com/user-attachments/assets/80f1746f-9cde-4b69-a8db-3dd9056dc87c" />
 
-### *Typical power profile of Heltec V4.2 BLE companion 1.13.dev in idle:*
+### *Typical power profile of Heltec V4.2 BLE companion in idle:*
+
+Firmware 1.13.dev, SX1262 Boosted Gain off.
+
 * Maximum: 107.92 mA
 * Minimum: 14.93 mA
 * Mean: 19.85 mA
@@ -704,7 +817,10 @@ Type `start ota` via TerminalCLI (Companion) or Command Line (Repeater / Room Se
 
 <img alt="dt267-v4.2-companion-l" src="https://github.com/user-attachments/assets/c042c2d9-2940-433f-a51c-0f901fa9ecaa" />
 
-### *Typical power profile of Heltec V4.2 repeater 1.13.dev in high LoRa traffic, 6 LoRa messages in 30 seconds (17,280 messages a day):*
+### *Typical power profile of Heltec V4.2 repeater in high LoRa traffic, 6 LoRa messages in 30 seconds (17,280 messages a day):*
+
+Firmware 1.13.dev, SX1262 Boosted Gain off.
+
 * Maximum: 681.08 mA
 * Minimum: 11.07 mA
 * Mean: 108.18 mA
@@ -713,7 +829,10 @@ Type `start ota` via TerminalCLI (Companion) or Command Line (Repeater / Room Se
 
 <img alt="dt267-v4.2-repeater-h" src="https://github.com/user-attachments/assets/73b0e1a5-e5fe-451c-ad1f-86396202e040" />
 
-### *Typical power profile of Heltec V4.2 repeater 1.13.dev in idle:*
+### *Typical power profile of Heltec V4.2 repeater in idle:*
+
+Firmware 1.13.dev, SX1262 Boosted Gain off.
+
 * Maximum: 53.55 mA
 * Minimum: 11.74 mA
 * Mean: 13.57 mA
@@ -728,7 +847,10 @@ Type `start ota` via TerminalCLI (Companion) or Command Line (Repeater / Room Se
 
 ![wio-sx1262-with-xiao-esp32s3](https://github.com/user-attachments/assets/615d1c65-fdb9-4769-acf4-5e9680d1a009)
 
-### *Typical power profile of XIAO S3 Wio companion BLE 1.12.dev, 5 LoRa messages in 30 seconds (14,400 messages a day):*
+### *Typical power profile of XIAO S3 Wio BLE companion, 5 LoRa messages in 30 seconds (14,400 messages a day):*
+
+Firmware 1.12.dev, SX1262 Boosted Gain on.
+
 * Maximum: 274 mA
 * Minimum: 4.07 mA
 * Mean: 35.53 mA
@@ -737,7 +859,10 @@ Type `start ota` via TerminalCLI (Companion) or Command Line (Repeater / Room Se
 
 <img alt="xiao-c-h" src="https://github.com/user-attachments/assets/da6005c2-1afa-4418-83d2-da65b6d7b371" />
 
-### *Typical power profile of XIAO S3 Wio companion BLE 1.12.dev in idle:*
+### *Typical power profile of XIAO S3 Wio BLE companion in idle:*
+
+Firmware 1.12.dev, SX1262 Boosted Gain on.
+
 * Maximum: 127.38 mA
 * Minimum: 9.47 mA
 * Mean: 15.34 mA
@@ -746,7 +871,10 @@ Type `start ota` via TerminalCLI (Companion) or Command Line (Repeater / Room Se
 
 <img alt="xiao-c-l" src="https://github.com/user-attachments/assets/291cf991-2cee-47c1-96c1-c55ec0368545" />
 
-### *Typical power profile of XIAO S3 Wio repeater 1.12.dev in high LoRa traffic, 6 LoRa messages in 30 seconds (17,280 messages a day):*
+### *Typical power profile of XIAO S3 Wio repeater in high LoRa traffic, 6 LoRa messages in 30 seconds (17,280 messages a day):*
+
+Firmware 1.12.dev, SX1262 Boosted Gain on.
+
 * Maximum: 141.1 mA
 * Minimum: 0.51 mA
 * Mean: 24.57 mA
@@ -755,7 +883,10 @@ Type `start ota` via TerminalCLI (Companion) or Command Line (Repeater / Room Se
 
 <img alt="xiao-r-h" src="https://github.com/user-attachments/assets/c859735b-a7ea-4d85-8d42-df7ef25249d9" />
 
-### *Typical power profile of XIAO S3 Wio repeater 1.12.dev in idle:*
+### *Typical power profile of XIAO S3 Wio repeater in idle:*
+
+Firmware 1.12.dev, SX1262 Boosted Gain on.
+
 * Maximum: 25.59 mA
 * Minimum: 4.53 mA
 * Mean: 7.07 mA
@@ -770,7 +901,10 @@ Type `start ota` via TerminalCLI (Companion) or Command Line (Repeater / Room Se
 
 ![rak19003](https://github.com/user-attachments/assets/e95d138e-c4c4-4727-bfbb-860b077af8d3)
 
-### *Typical power profile of RAK4631 companion BLE 1.14.dev, 5 LoRa messages in 30 seconds (14,400 messages a day):*
+### *Typical power profile of RAK4631 BLE companion, 5 LoRa messages in 30 seconds (14,400 messages a day):*
+
+Firmware 1.14.dev, SX1262 Boosted Gain on.
+
 * Maximum: 104.16 mA
 * Minimum: 6.7 mA
 * Mean: 19.2 mA
@@ -779,7 +913,10 @@ Type `start ota` via TerminalCLI (Companion) or Command Line (Repeater / Room Se
 
 <img alt="rak4631-companion-h" src="https://github.com/user-attachments/assets/0c03c8ae-8104-49b5-9984-0b08b09643c2" />
 
-### *Typical power profile of RAK4631 companion BLE 1.14.dev in idle:*
+### *Typical power profile of RAK4631 companion BLE in idle:*
+
+Firmware 1.14.dev, SX1262 Boosted Gain on.
+
 * Maximum: 10.92 mA
 * Minimum: 5.25 mA
 * Mean: 6.61 mA
@@ -788,7 +925,10 @@ Type `start ota` via TerminalCLI (Companion) or Command Line (Repeater / Room Se
 
 <img alt="rak4631-companion-l" src="https://github.com/user-attachments/assets/c18b00fd-a722-4e01-a852-c6bcda8d6ff6" />
 
-### *Typical power profile of RAK4631 repeater 1.14.dev in high LoRa traffic, 6 LoRa messages in 30 seconds (17,280 messages a day):*
+### *Typical power profile of RAK4631 repeater in high LoRa traffic, 6 LoRa messages in 30 seconds (17,280 messages a day):*
+
+Firmware 1.14.dev, SX1262 Boosted Gain on.
+
 * Maximum: 100.3 mA
 * Minimum: 0.2 mA
 * Mean: 20.23 mA
@@ -797,7 +937,10 @@ Type `start ota` via TerminalCLI (Companion) or Command Line (Repeater / Room Se
 
 <img alt="ra4631-repeater-h" src="https://github.com/user-attachments/assets/2934f559-93c2-439c-aca7-3b6705fc7576" />
 
-### *Typical power profile of RAK4631 repeater 1.14.dev in idle:*
+### *Typical power profile of RAK4631 repeater in idle:*
+
+Firmware 1.14.dev, SX1262 Boosted Gain on.
+
 * Maximum: 7.88 mA
 * Minimum: 4.53 mA
 * Mean: 5.79 mA
@@ -810,7 +953,7 @@ Type `start ota` via TerminalCLI (Companion) or Command Line (Repeater / Room Se
 
 ## Note:
 - Heltec V3's LoRa Tx is 22dBm into dummy load.
-- Heltec V4.2's LoRa Tx is 28dBm into dummy load.
+- Heltec V4's LoRa Tx is 28dBm into dummy load.
 - T_hours = 2000 * 0.85 / I_mean
 - [Power Profiles of the Original MeshCore Firmware for Heltec V3, V4.2](https://github.com/dt267/MeshCore-Low-Power-Firmware-For-Heltec-V3-V4/blob/main/Power-Profiles-of-the-Original-MeshCore-Firmware-for-Heltec-V3.md)
 
