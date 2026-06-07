@@ -31,6 +31,40 @@ MeshCore firmware with deep power optimization, a full companion display UI, and
 
 ## What's New
 
+### v1.16_0607
+
+- **Companion UI: Native multilingual display on Heltec T096 (ST7735S)**
+
+  Node names and messages now render natively on the T096 color TFT — characters are displayed as-is instead of being converted to ASCII equivalents. Supported languages include all 31 from v1.14 plus additional scripts:
+
+  **Latin-based:** Catalan, Croatian, Czech, Danish, Dutch, Estonian, Finnish, French, German, Hungarian, Icelandic, Italian, Latvian, Lithuanian, Maltese, Norwegian, Polish, Portuguese, Romanian, Slovak, Slovenian, Spanish, Swedish, Turkish, Vietnamese, Welsh
+
+  **Cyrillic:** Belarusian, Bulgarian, Macedonian, Russian, Serbian, Ukrainian
+
+  **Greek:** Greek
+
+- **Companion UI: Contacts screen now includes room servers; request telemetry from any contact.**
+
+  Room servers appear in the contact list tagged `[R]`. Selecting any contact — chat node or room server — and long pressing opens an action menu: **Send message** or **Request telemetry**. Requesting telemetry displays the node's battery voltage and GPS coordinates (if present); long press to open the GPS Trace screen for that location.
+
+  GPS coordinates follow the **Pos. Format** selected in Settings (DD, UTM, or MGRS).
+
+  The message inbox group list now tags group/channel entries with `[G]` and room server entries with `[R]` for consistent visual distinction. Each room message shows the original author's name. When viewing a room message, long press to open the popup and select **Reply** to post back to the room (visible to all subscribers).
+
+  > **Private room servers:** messaging requires a prior login. Public rooms (no password) work without any login. For private rooms, log in once via the MeshCore app — if your account has admin rights on that room server, the session persists across reboots. Regular user sessions are not saved to flash and will require re-login after the room server reboots.
+
+- **Companion: switch the app connection between BLE and USB serial without reflashing.**
+
+  In USB mode the node behaves like a standard `usb` build — the PC app connects over the USB serial port directly. Toggle via **Settings → Connection Mode** on the display, or via TerminalCLI: `set conn.mode usb` / `set conn.mode ble`. The setting persists across reboots. BLE toggle is hidden in the Settings menu while USB mode is active.
+
+- **Repeater, Room Sever: hold user button 5 seconds to power off.**
+
+  Hold the user button for 5 seconds to power off the node — faster than reaching for the CLI when you're standing next to it. The LED blinks 5 times as a warning before shutdown.
+
+- **Repeater, Room Server: `advert.hops.max` default changed to 8; room server support added; `flood.max.advert` alias.**
+
+  `advert.hops.max` now defaults to `8` instead of `flood.max` — advert relay limiting is active out of the box without any configuration. Room servers now also enforce this limit (previously repeater-only). The command `flood.max.advert` is accepted as an alias for compatibility with upstream firmware.
+
 ### v1.15_0531
 
 - **Full support for Heltec T096 — companion, repeater, and room server**

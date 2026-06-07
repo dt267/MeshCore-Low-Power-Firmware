@@ -7,8 +7,8 @@ For the full upstream command reference see [docs/cli_commands.md](https://githu
 
 | Command | Parameters | Notes |
 |---|---|---|
-| `get advert.hops.max` | — | Show max hops for relaying advertisement (ADVERT) packets |
-| `set advert.hops.max <N>` | `N`: `0..flood.max` | Limit how far ADVERT packets are relayed. `0` = suppress all advert relay. Clamped to `flood.max`. **Repeater only.** |
+| `get advert.hops.max` | — | Show max hops for relaying advertisement (ADVERT) packets. Default: `8`. Alias: `flood.max.advert` |
+| `set advert.hops.max <N>` | `N`: `0..flood.max` | Limit how far ADVERT packets are relayed. `0` = suppress all advert relay. Clamped to `flood.max`. Repeater and room server. |
 | `get group.hops.max` | — | Show max hops for relaying group messages (GRP_TXT / GRP_DATA) |
 | `set group.hops.max <N>` | `N`: `0..flood.max` | Limit how far group messages are relayed. `0` = suppress all group relay. Clamped to `flood.max`. **Repeater only.** |
 | `reg read <addr>` | `addr`: hex register address | Read 1 byte from a radio register. Example: `reg read 8AC` |

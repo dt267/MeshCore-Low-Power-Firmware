@@ -57,3 +57,5 @@ Setup: In the MeshCore app, create a channel named "TerminalCLI". It will now ac
   | `get ch.hops <channel>` | `channel`: channel name (spaces allowed) | Show current hop limit for the channel |
   | `ch.hops status` | — | List all channels that have an active hop limit |
   | `ch.hops clear` | — | Remove all channel hop limits |
+  | `get conn.mode` | — | Show current connection transport: `ble` or `usb` |
+  | `set conn.mode <mode>` | `ble` \| `usb` | Switch transport mode. Saves to flash and reboots immediately. In USB mode the node connects via USB serial; BLE is not started. |

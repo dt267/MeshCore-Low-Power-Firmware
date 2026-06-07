@@ -52,8 +52,9 @@ Single click and double click cycle through pages forward and backward.
 - **MSG: N** — number of messages stored in memory (up to 256)
 - Connection status line:
   - `< Connected >` — app connected via BLE
+  - `< USB >` — USB transport mode active (regardless of cable)
   - `BLE: OFF` — Bluetooth disabled
-  - `Pin: 1234` — waiting for BLE pairing
+  - `Pin: 1234` — waiting for BLE pairing *(BLE mode only)*
 - Date at the bottom (`DD Mon YYYY`)
 - **Long press** → open message preview
 
@@ -125,22 +126,98 @@ Shows how many chat contacts are known. **Long press** to open the contact list.
 
 ```
 ┌──────────────────────────────┐
-│ CONTACTS  3                  │
+│ CONTACTS  4                  │
 │──────────────────────────────│
 │ > Alien                      │
 │   Big Boy                    │
-│                              │
+│   [R] Base Camp Room         │
 │                              │
 └──────────────────────────────┘
 ```
 
-Only chat-capable nodes are listed (repeaters, room servers and sensors are excluded — they cannot receive direct messages).
+Chat nodes and room servers are listed. Room servers are tagged `[R]`. Repeaters and sensors are excluded.
 
 | Press | Action |
 |---|---|
 | Single click | Move arrow to next contact |
 | Double click | Return to home |
-| Long press | Open Quick Reply to send a direct message |
+| Long press | Open action menu for selected contact |
+
+---
+
+## Contact Action screen
+
+After selecting a contact and long pressing, an action menu appears:
+
+```
+┌──────────────────────────────┐
+│ Alien                        │
+│──────────────────────────────│
+│ > Send message               │
+│   Request telemetry          │
+│                              │
+│                              │
+└──────────────────────────────┘
+```
+
+| Press | Action |
+|---|---|
+| Single click | Move arrow to next item |
+| Double click | Return to contact list |
+| Long press | Execute selected item |
+
+- **Send message** — opens Quick Reply screen to send a direct message
+- **Request telemetry** — sends a telemetry request and opens the Telemetry Result screen
+
+---
+
+## Telemetry Result screen
+
+Displays battery voltage and GPS coordinates returned by the contact.
+
+**While waiting:**
+```
+┌──────────────────────────────┐
+│ Alien                        │
+│──────────────────────────────│
+│ Requesting...                │
+│                              │
+│                              │
+│                              │
+└──────────────────────────────┘
+```
+
+**On success:**
+```
+┌──────────────────────────────┐
+│ Alien                        │
+│──────────────────────────────│
+│ VBAT: 3.82V                  │
+│ GPS:                         │
+│ 10.7769  106.7009            │
+│ > Trace GPS                  │
+└──────────────────────────────┘
+```
+
+**On timeout:**
+```
+┌──────────────────────────────┐
+│ Alien                        │
+│──────────────────────────────│
+│ No response                  │
+│                              │
+│                              │
+│                              │
+└──────────────────────────────┘
+```
+
+| State | Press | Action |
+|---|---|---|
+| Waiting | Double click | Cancel request, return to contact list |
+| Result | Long press | Open GPS Trace screen *(only shown if GPS data present)* |
+| Result / Timeout | Any other button | Return to contact list |
+
+GPS coordinates follow the **Pos. Format** selected in Settings (DD, UTM, or MGRS). `> Trace GPS` is only shown when GPS data is present in the response.
 
 ---
 
@@ -184,14 +261,15 @@ After reading all new messages (or double click at the start), you land on the g
 │ MSGS  *3 new                 │
 │──────────────────────────────│
 │ > Alien                    5 │
-│   [Public]                 2 │
-│   Big Boy                  1 │
-│   [#SOS]                   8 │
+│   [G] Public               2 │
+│   [R] Dev                  1 │
+│   [G] #SOS                 8 │
 └──────────────────────────────┘
 ```
 
 - Groups sorted by most recently active; number on the right = total messages
 - `>` marks the selected group; `*N new` shown when unread messages exist
+- `[G]` prefix = group/channel; `[R]` prefix = room server; no prefix = direct contact
 
 | Press | Action |
 |---|---|
@@ -246,7 +324,7 @@ Long press any message to open the popup:
 | Long press | Confirm selected item |
 | Double click | Dismiss menu (cancel) |
 
-- **Reply** — opens Quick Reply screen; sends back to the same contact (DM) or the same channel, depending on where the message came from
+- **Reply** — opens Quick Reply screen; sends back to the same contact (DM), the same channel, or the room server (`[R]`) — room replies are posted to the whole room and visible to all subscribers
 - **Save location** — only shown if the message contains GPS coordinates
 - **Home** — go home immediately
 
@@ -466,10 +544,10 @@ Only shown if GPS hardware is present.
 ┌──────────────────────────────┐
 │ SETTINGS          14:32 [==] │
 │         · · · · · · •        │
+| Connection Mode          BLE |
 │ BLE                       ON │
 │ Repeat                   OFF │
 │ RxGain                    ON │
-│ Units                 Metric │
 └──────────────────────────────┘
 ```
 
@@ -485,7 +563,8 @@ Only shown if GPS hardware is present.
 
 | Item | Action |
 |---|---|
-| **BLE** | Toggle Bluetooth on/off; shows `ON, Connected` when app is connected |
+| **BLE** | Toggle Bluetooth on/off; shows `ON, Connected` when app is connected. *Hidden when Connection Mode is USB.* |
+| **Connection Mode** | Switch between `BLE` and `USB` transport. Saves to flash and reboots immediately. |
 | **Repeat** | Toggle packet repeat on/off |
 | **RxGain** | Cycle RxGain: OFF → ON → AUTO *(AUTO: Heltec V4.2 only)* |
 | **Brightness** | Cycle backlight intensity: `25` → `50` → `75` → `100` *(Heltec T096 only)* |
@@ -505,14 +584,15 @@ Only shown if GPS hardware is present.
 
 | Label | Meaning |
 |---|---|
-| `(0) Alien:` | Direct message from Alien, arrived directly |
+| `(0) Alien:` | Message from Alien, arrived directly (0 hops) |
 | `(2) Alien:` | Message from Alien, relayed through 2 nodes |
 | `(D) Alien:` | Message routed directly to this node via a known path |
-| `(1) [Public]` | Public channel broadcast, relayed through 1 node |
-| `(0) [#SOS]` | #SOS channel broadcast, arrived directly |
-| `(2) [MyGroup]` | Private channel "MyGroup", relayed through 2 nodes |
+| `[G] Public` | Public channel broadcast |
+| `[G] #SOS` | #SOS channel broadcast |
+| `[G] MyGroup` | Private channel "MyGroup" |
+| `[R] DevRoom` | Message pushed from room server "DevRoom" |
 
-The number in parentheses is the hop count — how many nodes relayed the message before it reached you. `D` means a direct routed message (not a broadcast).
+For direct messages, the hop count in parentheses tells you how many nodes relayed the message — useful for gauging link quality. Channel and room server messages omit the hop count since it varies per relay and doesn't reflect your own connectivity.
 
-Channel messages are shown in square brackets `[ ]`. The `#` prefix indicates a public hashtag channel anyone can tune into; channels without `#` may be private groups.
+The `#` prefix on a channel name indicates a public hashtag channel; channels without `#` may be private groups.
 
