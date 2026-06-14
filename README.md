@@ -1,9 +1,12 @@
 # MeshCore Low Power Firmware
-MeshCore firmware with deep power optimization, a full companion display UI, and advanced radio and network controls — built for multi-day off-grid operation.
+MeshCore firmware with deep power optimization, a full companion display UI with multi-transport connectivity, and advanced radio and network controls — built for multi-day off-grid operation.
 
 **Supported devices:** 
 - Heltec WiFi LoRa 32 V3, WSL3
 - Heltec WiFi LoRa 32 V4.2, V4.3 (with or without OLED display)
+- Heltec Vision Master E213 (2.13" e-ink)
+- Heltec Vision Master E290 (2.9" e-ink)
+- Heltec Wireless Paper (2.13" e-ink)
 - Heltec Mesh Node T096
 - Seeed Studio XIAO ESP32S3 & Wio-SX1262 Kit
 - RAK4631 WisBlock
@@ -30,6 +33,46 @@ MeshCore firmware with deep power optimization, a full companion display UI, and
 - [License](#license)
 
 ## What's New
+
+### v1.16_0614
+
+- **New devices: Heltec Vision Master E213, Wireless Paper, and Vision Master E290 — full e-ink companion support (Companion, Repeater, Room Server).**
+
+  Three e-ink boards are now fully supported with the complete companion UI — Quick Send, Contacts, Settings, Saved Locations, GPS Trace, and message preview. Repeater and Room Server firmware are provided for all three.
+
+  - **Heltec Vision Master E213** *(author-tested, v1.1.1)* — ESP32-S3 with a 2.13" e-ink display (250×122 px), SX1262 LoRa, and a QuickLink I2C port. Has a second user button (GPIO21): press to scroll up in any list, or to go back — faster than double clicking the main button.
+  - **Heltec Wireless Paper** — ESP32-S3 with the same 2.13" e-ink panel as the E213 in a more compact form factor. Shares the same companion UI and firmware variants as the E213. Single button only.
+  - **Heltec Vision Master E290** — ESP32-S3R8 with a larger 2.9" e-ink display (296×128 px), SX1262 LoRa, and a QuickLink I2C port. Also has a second button (GPIO21) like the E213. The companion UI adapts automatically to the wider panel — more message lines and a larger clock on the Home screen.
+
+  **Common characteristics across all three e-ink boards:**
+  - **Always-on display** — e-ink retains content indefinitely without power; no screen timeout.
+  - **Native multilingual text** — Latin, Cyrillic, and Greek scripts render natively.
+  - **Font Weight setting** — choose between **Thin** and **Bold** via **Settings → Font Weight**. Preference is saved to flash.
+  - **I2C sensor support** — environment sensors can be connected via the QuickLink I2C port.
+
+- **Companion: unified BLE / USB / WiFi connection mode for all ESP32-S3 boards.**
+
+  All ESP32-S3 companion builds (Heltec V3, V4, E213, Wireless Paper, E290, XIAO S3) now ship as a single unified firmware image that supports all three connection transports: **BLE**, **USB serial**, and **WiFi TCP**. The active mode is saved to flash and selected at boot — no per-mode build is needed.
+
+  Switching is done via **Settings → Connection Mode**, which opens a direct selection screen listing all three modes with the current one marked `*`. Navigate to the desired mode and confirm — the device reboots into the new mode.
+
+  Alternatively, switch via [TerminalCLI](Companion_TerminalCLI_Commands.md): `set conn.mode wifi|ble|usb`. WiFi credentials are configured with `set wifi.ssid` / `set wifi.password`, or from the **OTA update page** which now includes a WiFi credentials form alongside the firmware upload button.
+
+  In WiFi mode, the node connects as a STA to your router and the Home screen shows the IP address and port. All three modes meet the low-power criteria of this repo.  
+
+- **Companion UI: Home screen always shows a large clock; message count shown in the header.**
+
+  The center of the Home screen now always shows the current time (`HH:MM`) in a large font — `MSG: N` is gone. If there are messages stored in memory, their count and a small envelope icon appear in the header (where the small clock used to be); the header is left empty when count is zero. The header clock is visible again on all other pages as before.
+
+  On e-ink displays (E213, Wireless Paper, E290), the clock is rendered in a large font; pairing pin or connection status appears at the bottom-left, and the date at the bottom-right. On OLED and T096, the layout is: large clock → date → connection status, stacked top to bottom.
+
+  Before the clock is synchronized with the app or GPS, the display shows uptime counting up from `00:00` since boot, consistent with the small header clock.
+
+- **Repeater/Room Server: flood hop limits now correctly ignore leading-zero path padding.**
+
+  Some senders limit how far a packet propagates by pre-filling the path with zero entries — a TTL trick used by custom firmware, and by companions in this firmware via `ch.hops`. Previously, repeaters counted these zeros as real relay hops, causing packets to be dropped too early or assigned incorrect retransmit priority when any of the flood hop limits (`flood.max`, `flood.max.unscoped`, `advert.hops.max`, `group.hops.max`) was in use. All policy checks now count only actual relay hops, ignoring the leading-zero prefix. In addition, `flood.max.unscoped` is now automatically capped when `flood.max` is reduced or `path.hash.mode` is changed, consistent with the other hop limits.
+
+- **Note on filenames:** Previously, companion firmware was released as separate per-transport builds — the BLE build had `_ble` in its filename (e.g. `Heltec_v3_companion_radio_ble_v1.16.dev_0607.bin`, `RAK_4631_companion_radio_ble_v1.16.dev_0607.uf2`). Since BLE + USB + WiFi are now unified into a single build for ESP32-S3, and BLE + USB for nRF52, the `_ble` suffix is gone. Companion filenames are now simply `Heltec_v3_companion_radio_v1.16.dev_0614.bin` and `RAK_4631_companion_radio_v1.16.dev_0614.uf2`.
 
 ### v1.16_0607
 

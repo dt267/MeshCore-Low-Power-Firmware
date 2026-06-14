@@ -57,5 +57,9 @@ Setup: In the MeshCore app, create a channel named "TerminalCLI". It will now ac
   | `get ch.hops <channel>` | `channel`: channel name (spaces allowed) | Show current hop limit for the channel |
   | `ch.hops status` | — | List all channels that have an active hop limit |
   | `ch.hops clear` | — | Remove all channel hop limits |
-  | `get conn.mode` | — | Show current connection transport: `ble` or `usb` |
-  | `set conn.mode <mode>` | `ble` \| `usb` | Switch transport mode. Saves to flash and reboots immediately. In USB mode the node connects via USB serial; BLE is not started. |
+  | `get conn.mode` | — | Show current connection transport: `ble`, `usb`, or `wifi` |
+  | `set conn.mode <mode>` | `ble` \| `usb` \| `wifi` | Switch transport mode. Saves to flash and reboots immediately. In USB mode the node connects via USB serial; BLE is not started. In WiFi mode the node connects as a STA to the configured network and listens for TCP connections on port 5000. |
+  | `get wifi.ssid` | — | Show the WiFi SSID configured for WiFi mode |
+  | `set wifi.ssid <ssid>` | `ssid`: network name (max 32 chars) | Set the WiFi SSID for WiFi mode. Saved to flash. |
+  | `get wifi.password` | — | Returns `***` (password is write-only) |
+  | `set wifi.password <password>` | `password`: max 64 chars | Set the WiFi password for WiFi mode. Saved to flash. Leave blank or omit for open networks. |
