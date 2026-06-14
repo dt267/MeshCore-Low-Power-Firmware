@@ -1,6 +1,6 @@
 # Companion Radio — Display & Button Guide
 
-How to use the display and button on your Companion Radio node. Applies to all supported hardware — OLED (Heltec V4) and color TFT (Heltec T096).
+How to use the display and button on your Companion Radio node. Applies to all supported hardware — OLED (Heltec V3, V4), color TFT (Heltec T096), and e-ink (Heltec E213, Wireless Paper, E290).
 
 ---
 
@@ -14,6 +14,8 @@ One button does everything:
 | **Double click** | Previous page / exit sub-level |
 | **Long press** | Open message preview (Home) · Enter sub-level (Quick Send / Settings) · Toggle GPS (GPS page) · Cycle RxGain (Radio page) |
 
+> **Heltec E213 and E290 — second button (GPIO21):** Press to scroll up in any list, or to go back/exit any menu. Equivalent to double clicking the main button, but faster. The Wireless Paper has a single button only.
+
 ---
 
 ## Home screen pages
@@ -22,7 +24,7 @@ Single click and double click cycle through pages forward and backward.
 
 | Page | What it shows |
 |---|---|
-| **Home** | Message count, connection status, battery |
+| **Home** | Current time (large), date, connection status, battery |
 | **Quick Send** | Send a preset message over LoRa |
 | **Contacts** | List of known contacts for direct messaging |
 | **Saved Locations** | Preview of saved map locations |
@@ -35,28 +37,48 @@ Single click and double click cycle through pages forward and backward.
 
 ## Home page
 
+**OLED / T096:**
 ```
 ┌──────────────────────────────┐
-│ MyNodeName        14:32 [=]  │
+│ MyNodeName        5✉ [=]     │
 │         · • · · · · ·        │
 │                              │
-│           MSG: 5             │
+│           14:32              │
 │                              │
-│        < Connected >         │
 │         14 Apr 2026          │
+│        < Connected >         │
 └──────────────────────────────┘
 ```
 
-- Node name at top-left; `HH:MM` and battery icon packed together at top-right
-- Page indicator dots in the middle row (filled = current page)
-- **MSG: N** — number of messages stored in memory (up to 256)
-- Connection status line:
-  - `< Connected >` — app connected via BLE
-  - `< USB >` — USB transport mode active (regardless of cable)
-  - `BLE: OFF` — Bluetooth disabled
-  - `Pin: 1234` — waiting for BLE pairing *(BLE mode only)*
-- Date at the bottom (`DD Mon YYYY`)
+**E-ink (E213 / Wireless Paper / E290):**
+```
+┌──────────────────────────────────────────────────────────┐
+│ MyNodeName                                  5✉  [===]    │
+│                · · · • · · · ·                           │
+│                                                          │
+│                       14:32                              │
+│                                                          │
+│                                                          │
+│ Pin: 477370                             14 Apr 2026      │
+└──────────────────────────────────────────────────────────┘
+```
+
+- Node name at top-left; battery icon at top-right
+- **Header**: when messages are stored in memory, shows count + envelope icon (`5✉`) where the clock used to be; empty when count is zero
+- Page indicator dots below the header (filled dot = current page)
+- **Large clock** (`HH:MM`) always centered — shows current local time once synced; shows uptime (`00:00` counting up) before first sync
+- **OLED / T096**: date on the middle-bottom row, connection status at the very bottom
+- **E-ink**: connection status / pairing pin at the bottom-left, date at the bottom-right
 - **Long press** → open message preview
+
+Connection status values:
+- `< BLE Connected >` — app connected via BLE
+- `< USB >` — USB transport mode active
+- `< WiFi Connected >` — app connected via WiFi TCP
+- `IP:192.168.1.x:5000` — WiFi mode, waiting for TCP connection (shows IP once router connection is up)
+- `WiFi: connecting...` — WiFi mode, not yet connected to router
+- `BLE: OFF` — Bluetooth disabled
+- `Pin: 123456` — waiting for BLE pairing *(BLE mode only)*
 
 > **Time and date** show local time once the timezone offset is set. Default is UTC. Configure once via TerminalCLI: `set tz.offset 7` (for UTC+7). Time is synced from the app on connect, or from GPS if hardware is present.
 
@@ -563,8 +585,8 @@ Only shown if GPS hardware is present.
 
 | Item | Action |
 |---|---|
-| **BLE** | Toggle Bluetooth on/off; shows `ON, Connected` when app is connected. *Hidden when Connection Mode is USB.* |
-| **Connection Mode** | Switch between `BLE` and `USB` transport. Saves to flash and reboots immediately. |
+| **BLE** | Toggle Bluetooth on/off; shows `ON, Connected` when app is connected. *Hidden when Connection Mode is USB or WiFi.* |
+| **Connection Mode** | Opens a mode selection screen. Navigate to `BLE`, `USB`, or `WiFi` and confirm — the node reboots into the chosen mode. The current active mode is marked `*`. |
 | **Repeat** | Toggle packet repeat on/off |
 | **RxGain** | Cycle RxGain: OFF → ON → AUTO *(AUTO: Heltec V4.2 only)* |
 | **Brightness** | Cycle backlight intensity: `25` → `50` → `75` → `100` *(Heltec T096 only)* |
@@ -573,8 +595,9 @@ Only shown if GPS hardware is present.
 | **GPS Privacy** | Toggle ON to hide GPS coords from Quick Send messages |
 | **Screen Off** | Cycle screen timeout: `15s` → `3min` → `Never` |
 | **Flip Screen** | Rotate display 180° |
+| **Font Weight** | Cycle font: `Thin` → `Bold`. *(E-ink displays only — E213, Wireless Paper, E290)* |
 | **Send Advert** | Broadcast your presence → alert "Advert sent!" |
-| **Start OTA** | OTA update mode. On ESP32: connect to WiFi `MeshCore-OTA`, go to `192.168.4.1/update`. On nRF52 (T096 / RAK4631): enters BLE DFU mode — use the **nRF Device Firmware Update** app to upload the `.zip` package. |
+| **Start OTA** | OTA update mode. On ESP32: connect to WiFi `MeshCore-OTA`, go to `192.168.4.1`. The page includes a firmware upload section and a **WiFi credentials form** to set the SSID/password for WiFi mode and optionally switch to it immediately. On nRF52 (T096 / RAK4631): enters BLE DFU mode — use the **nRF Device Firmware Update** app to upload the `.zip` package. |
 | **Shutdown** | Power off the device |
 | **About** | Show device name, firmware version and build date |
 
