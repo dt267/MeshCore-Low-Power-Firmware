@@ -34,6 +34,26 @@ MeshCore firmware with deep power optimization, a full companion display UI with
 
 ## What's New
 
+### v1.16_0621
+
+- **Configuration portal for Companion, Repeater, and Room Server — configure, back up, restore, and update firmware without the CLI.** *(ESP32 devices only)*
+
+  Open it the same way as before — `start ota` in the CLI, or **Start OTA** from the companion Settings menu. Previously this landed on a firmware-only upload page; it now opens the full configuration portal where you can configure, back up, restore, flash firmware, and reboot — all from one page in the browser.
+
+  The companion backup covers custom preferences (Quick Send presets, saved locations, channel hop limits, display settings, WiFi credentials,...) that upstream MeshCore doesn't have — handy when moving to a new device. For the Repeater and Room Server, this is the first time backup and restore are available at all — no more re-entering everything from scratch after a node failure or hardware swap.
+
+  The portal is password-protected. Companion: set one with `set portal.password` in the CLI. Repeater / Room Server: the existing admin password is used automatically.
+
+  The backup format is compatible with the official MeshCore app — upstream preferences in the backup can be restored by the app. Passwords are never written to backup files.
+
+- **Config portal AP: open network, login page, 1-client limit, 10-minute idle auto-shutdown.**
+
+  The WiFi AP is open (no AP password); access is gated by a browser login page using the portal password described above. Only one device can associate with the AP at a time. If no device connects within 10 minutes of the AP opening, it shuts down automatically.
+
+- **Fix: full-flash (`_merged.bin`) images for Vision Master E213 and E290 were built with the wrong flash size.**
+
+  Both boards have 16 MB of flash, but their merged full-flash images were generated with an 8 MB flash-size header. The pre-merged images are now built with the correct 16 MB size. If you previously flashed an E213 or E290 using a `_merged.bin`, re-flash with the corrected image. OTA (`.bin`) updates were not affected.
+
 ### v1.16_0614
 
 - **New devices: Heltec Vision Master E213, Wireless Paper, and Vision Master E290 — full e-ink companion support (Companion, Repeater, Room Server).**
@@ -227,7 +247,7 @@ MeshCore firmware with deep power optimization, a full companion display UI with
 
 - **Companion: toggle RxGain directly from the Radio screen.**
 
-  Long press on the **Radio** page cycles through RxGain modes (OFF → ON → Auto) and shows a popup confirming the new mode. The current mode is now also displayed on the Radio page itself (`RxG: OFF` / `RxG: ON` / `RxG: Auto`), so you can check it at a glance without going into Settings. *(`Auto` is available on Heltec V4.2 only.)*
+  Long press on the **Radio** page toggles RxGain (OFF → ON) and shows a popup confirming the new mode. The current mode is displayed on the Radio page itself (`RxG: OFF` / `RxG: ON`), so you can check it at a glance without going into Settings.
 
 ### v1.15_0510
 
@@ -517,7 +537,7 @@ MeshCore firmware with deep power optimization, a full companion display UI with
   |---|---|
   | BLE | Toggle Bluetooth on/off (shows connection state) |
   | Repeat | Toggle repeat mode on/off |
-  | RxGain | Cycle RxGain mode: OFF → ON → AUTO *(AUTO: V4.2 only)* |
+  | RxGain | Toggle RxGain: OFF → ON |
   | Buzzer | Toggle buzzer on/muted *(boards with buzzer only)* |
   | Send Advert | Broadcast your presence to nearby nodes |
   | Start OTA | Start OTA update mode — connect to `MeshCore-OTA` WiFi and go to `192.168.4.1/update` |
@@ -531,7 +551,6 @@ MeshCore firmware with deep power optimization, a full companion display UI with
   | `on` *(default)* | FEM LNA active — best sensitivity |
   | `off` | FEM bypass — SX1262 boosted gain compensates, better in high-interference environments near strong transmitters |
 
-  > V4.3 does **not** support `auto` mode — use `on` or `off`.
 
   **[TerminalCLI](Companion_TerminalCLI_Commands.md)** (Companion app), **Command Line** (Repeater / Room Server):
   ```
@@ -594,8 +613,8 @@ MeshCore firmware with deep power optimization, a full companion display UI with
   | `gps off` | — | Disable GPS |
   | `reg read <addr>` | `addr`: hex register address | Read 1 byte from radio register. Example: `reg read 08B5` |
   | `reg write <addr> <val>` | `addr`, `val`: hex | Write 1 byte to radio register. Example: `reg write 08B5 04` |
-  | `get radio.rxgain` | — | Show current RX gain mode: `off`, `on`, or `auto` |
-  | `set radio.rxgain <mode>` | `off` \| `on` \| `auto` | Set RX gain mode. `auto` is for Heltec V4.2 only. |
+  | `get radio.rxgain` | — | Show current RX gain mode: `off` or `on` |
+  | `set radio.rxgain <mode>` | `off` \| `on` | Set RX gain mode. |
   | `start ota` | — | Start Wi-Fi OTA firmware update: connect to `MeshCore-OTA`, go to `192.168.4.1/update` |
 
 - **Wi-Fi OTA Update for Companion.**

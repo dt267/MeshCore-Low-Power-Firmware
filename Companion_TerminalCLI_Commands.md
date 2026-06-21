@@ -22,13 +22,13 @@ Setup: In the MeshCore app, create a channel named "TerminalCLI". It will now ac
   | `set gps.mode <n>` | **Heltec V4:** `1`=GPS `2`=GPS+BDS `3`=GPS+GLO `4`=GPS+BDS+GLO (default `4`) · **T096:** `1`=GPS-L1 `2`=All-sys-L1 `3`=All-sys+QZSS-dual (default `3`) | Select GNSS constellation preset. Saved to flash; takes effect on next GPS on. |
   | `reg read <addr>` | `addr`: hex | Read 1 byte from a radio register. Example: `reg read 08B5` |
   | `reg write <addr> <val>` | `addr`, `val`: hex | Write 1 byte to a radio register. Example: `reg write 08B5 04` |
-  | `get radio.rxgain` | — | Show current RX gain mode: `off`, `on`, or `auto` |
-  | `set radio.rxgain <mode>` | `off` \| `on` \| `auto` | Set RX gain mode. `auto` is only supported on Heltec V4.2. |
+  | `get radio.rxgain` | — | Show current RX gain mode: `off` or `on` |
+  | `set radio.rxgain <mode>` | `off` \| `on` | Set RX gain mode. |
   | `get agc.resets` | — | Show how many times the AGC has been auto-reset since boot or last `clear agc.resets` |
   | `clear agc.resets` | — | Reset the AGC auto-reset counter to zero |
   | `get tx` | — | Show current transmit power (dBm) |
   | `set tx <dBm>` | `dBm`: integer | Set transmit power in dBm. Saved and applied immediately. |  
-  | `start ota` | — | Start OTA firmware update. On ESP32: connect to Wi-Fi `MeshCore-OTA`, then go to `192.168.4.1/update`. On nRF52: enters BLE DFU mode. |
+  | `start ota` | — | Start OTA firmware update. On ESP32: connect to Wi-Fi `MeshCore-OTA`, then go to `192.168.4.1` (opens the config portal). On nRF52: enters BLE DFU mode. |
   | `get repeat` | — | Show whether repeat mode is `on` or `off`, and the current frequency |
   | `set repeat on` | — | Enable repeat mode |
   | `set repeat off` | — | Disable repeat mode |
@@ -63,3 +63,5 @@ Setup: In the MeshCore app, create a channel named "TerminalCLI". It will now ac
   | `set wifi.ssid <ssid>` | `ssid`: network name (max 32 chars) | Set the WiFi SSID for WiFi mode. Saved to flash. |
   | `get wifi.password` | — | Returns `***` (password is write-only) |
   | `set wifi.password <password>` | `password`: max 64 chars | Set the WiFi password for WiFi mode. Saved to flash. Leave blank or omit for open networks. |
+  | `set portal.password <password>` | `password`: max 32 chars | Set the config portal login password. When set, the browser must log in before accessing the portal. Saved to flash. |
+  | `clear portal.password` | — | Remove the portal password; the portal becomes accessible without login. |

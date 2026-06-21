@@ -514,10 +514,10 @@ LoRa radio parameters. Long press cycles RxGain mode.
 | BW | Bandwidth in kHz |
 | CR | Coding rate |
 | TX | Transmit power in dBm |
-| RxG | RX Gain mode: `OFF` / `ON` / `Auto` *(Auto: Heltec V4.2 only)* |
+| RxG | RX Gain mode: `OFF` / `ON` |
 | Noise floor | Ambient noise level in dBm |
 
-**Long press** — cycle RxGain mode (OFF → ON → Auto); a popup confirms the new mode. *(`Auto` is available on Heltec V4.2 only.)*
+**Long press** — toggle RxGain (OFF / ON); a popup confirms the new mode.
 
 ---
 
@@ -588,7 +588,7 @@ Only shown if GPS hardware is present.
 | **BLE** | Toggle Bluetooth on/off; shows `ON, Connected` when app is connected. *Hidden when Connection Mode is USB or WiFi.* |
 | **Connection Mode** | Opens a mode selection screen. Navigate to `BLE`, `USB`, or `WiFi` and confirm — the node reboots into the chosen mode. The current active mode is marked `*`. |
 | **Repeat** | Toggle packet repeat on/off |
-| **RxGain** | Cycle RxGain: OFF → ON → AUTO *(AUTO: Heltec V4.2 only)* |
+| **RxGain** | Toggle RxGain: OFF → ON |
 | **Brightness** | Cycle backlight intensity: `25` → `50` → `75` → `100` *(Heltec T096 only)* |
 | **Units** | Toggles between Metric and Imperial |
 | **Pos. Format** | Cycle GPS coordinate display: `DD` → `UTM` → `MGRS` |
