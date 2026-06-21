@@ -4,9 +4,9 @@ MeshCore firmware with deep power optimization, a full companion display UI with
 **Supported devices:** 
 - Heltec WiFi LoRa 32 V3, WSL3
 - Heltec WiFi LoRa 32 V4.2, V4.3 (with or without OLED display)
-- Heltec Vision Master E213 (2.13" e-ink)
-- Heltec Vision Master E290 (2.9" e-ink)
-- Heltec Wireless Paper (2.13" e-ink)
+- Heltec Vision Master E213 (2.13" e-ink) — V1.1 only (SSD1680 panel; see note below)
+- Heltec Vision Master E290 (2.9" e-ink) — not yet tested on hardware
+- Heltec Wireless Paper (2.13" e-ink) — V1.1.1 / V1.2 only (SSD1680 panel; see note below)
 - Heltec Mesh Node T096
 - Seeed Studio XIAO ESP32S3 & Wio-SX1262 Kit
 - RAK4631 WisBlock
@@ -56,6 +56,10 @@ MeshCore firmware with deep power optimization, a full companion display UI with
 - **Fix: full-flash (`_merged.bin`) images for Vision Master E213 and E290 were built with the wrong flash size.**
 
   Both boards have 16 MB of flash, but their merged full-flash images were generated with an 8 MB flash-size header. The pre-merged images are now built with the correct 16 MB size. If you previously flashed an E213 or E290 using a `_merged.bin`, re-flash with the corrected image. OTA (`.bin`) updates were not affected.
+
+- **Known limitation: only the SSD1680 panel revision of the 2.13" e-ink boards is supported.**
+
+  The e-ink display driver was rewritten from scratch for this firmware and tested only on the Vision Master E213 V1.1 (SSD1680 panel). Wireless Paper V1.1.1 / V1.2 use the same SSD1680 code path and are expected to work, but have not been tested. Units with a UC8151 controller (E213 V1.0, Wireless Paper V1.1), or the oldest Wireless Paper V1 (DEPG0213BNS800), hang during e-ink init at boot. Use the official MeshCore firmware on those units.
 
 ### v1.16_0614
 
