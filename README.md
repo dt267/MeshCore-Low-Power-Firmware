@@ -50,6 +50,9 @@ MeshCore firmware with deep power optimization, a full companion display UI with
 
   The WiFi AP is open (no AP password); access is gated by a browser login page using the portal password described above. Only one device can associate with the AP at a time. If no device connects within 10 minutes of the AP opening, it shuts down automatically.
 
+  <img alt="config-portal" src="https://github.com/user-attachments/assets/92a088b9-49b3-40d1-8caa-fd3da634347b" />
+
+
 - **Fix: full-flash (`_merged.bin`) images for Vision Master E213 and E290 were built with the wrong flash size.**
 
   Both boards have 16 MB of flash, but their merged full-flash images were generated with an 8 MB flash-size header. The pre-merged images are now built with the correct 16 MB size. If you previously flashed an E213 or E290 using a `_merged.bin`, re-flash with the corrected image. OTA (`.bin`) updates were not affected.
