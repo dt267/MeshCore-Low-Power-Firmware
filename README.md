@@ -34,6 +34,24 @@ MeshCore firmware with deep power optimization, a full companion display UI with
 
 ## What's New
 
+### v1.16_0628
+
+- **Portal: out-of-range numeric inputs are now blocked before saving.** *(Companion, Repeater, Room Server)*
+
+  Save is blocked if any numeric field is out of range; a red error message lists which fields need fixing (e.g. `Spreading Factor (5-12): >= 5`). Covers SF, CR, TX Power, interference threshold, timezone offset, duty cycle, flood max, channel hop limits, and all other bounded numeric fields.
+
+- **Fix: Portal Password and WiFi Password fields now show `********` when already set.** *(Companion)*
+
+  The Repeater and Room Server portals already had this behaviour; the Companion portal was missing it. Both fields now pre-fill with `********` when a password is stored. Submitting without changing the value leaves the password untouched; submitting blank clears it.
+
+- **E-ink font bumped from 13 px to 15 px.** *(Companion — E213, E290, Wireless Paper)*
+
+- **New setting: Message Font — Normal (15 px) or Large (18 px) for message body.** *(Companion — E213, E290, Wireless Paper)* Large is useful for Cyrillic/Greek where glyphs are taller.
+
+- **Fix: newest contacts were invisible on the Contacts screen.** *(Companion)* Index offset bug from upstream PR #2763 (anon-contact slots) — contacts now display correctly.
+
+- **Fix: companion clock stuck in the future.** *(Companion)* If a stored contact had a future-dated timestamp from a mis-clocked peer, the app's correct time sync was refused because it appeared to go backwards. Now accepted; affected contact timestamps are clamped to the corrected clock.
+
 ### v1.16_0621
 
 - **Configuration portal for Companion, Repeater, and Room Server — configure, back up, restore, and update firmware without the CLI.** *(ESP32 devices only)*
