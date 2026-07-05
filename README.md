@@ -34,6 +34,34 @@ MeshCore firmware with deep power optimization, a full companion display UI with
 
 ## What's New
 
+### v1.16_0705
+
+- **New setting: WiFi static IP configuration.** *(Companion — V3, V4, E213, E290, Wireless Paper)*
+
+  When using WiFi transport mode, you can now assign a fixed IP address instead of relying on DHCP. Configure via CLI (`get/set/clear wifi.ip`) or the config portal (Static IP + Subnet Mask fields in the App Transport Connection section). Blank Static IP = DHCP. Included in backup/restore.
+
+- **New setting: Message Font — Normal or Large now available on all displays.** *(Companion — V3, V4, T096, E213, E290, Wireless Paper)*
+
+  On OLED (V3/V4): Message Normal Font with transliteration; Message Large Font with native UTF-8 (Latin, Cyrillic, and Greek).
+  On TFT (T096): both Normal and Large render native UTF-8 — only the size changes.
+  On e-ink: as before — Normal or Large, both native.
+
+- **Fix: incoming message alert sometimes silently missed, bouncing to the Home screen instead.** *(Companion)*
+
+  If the app had synced messages off the device (draining the offline queue) and later disconnected, the next incoming message could fail to show its on-device alert — the screen would wake but land on Home instead. Caused by a stale internal "unread" marker left behind after the queue was drained. Fixed.
+
+- **Fix: WiFi STA could get stuck associated with no IP after reconnect.** *(Companion — WiFi transport)* 
+  
+  If no valid IP is held for 30s, the node now forces a WiFi reconnect to retrigger DHCP, instead of staying stuck until a manual reboot. Static IP config is preserved.
+
+- **Fix: restoring a large backup could crash the node.** *(Companion — config portal)* 
+  
+  Backups grow past 100 KB with many contacts; restore now streams the file instead of loading it all into RAM, so it no longer overflows and crashes.
+
+- **Backup/restore now covers all passwords.** *(Companion, Repeater, Room Server)*
+
+  Passwords are now part of the backup, so a restore fully re-provisions the node with nothing left to re-enter by hand: WiFi and portal login on Companion; Admin and Guest on Repeater and Room Server.
+
 ### v1.16_0628
 
 - **Portal: out-of-range numeric inputs are now blocked before saving.** *(Companion, Repeater, Room Server)*

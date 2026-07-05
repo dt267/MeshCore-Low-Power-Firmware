@@ -63,5 +63,8 @@ Setup: In the MeshCore app, create a channel named "TerminalCLI". It will now ac
   | `set wifi.ssid <ssid>` | `ssid`: network name (max 32 chars) | Set the WiFi SSID for WiFi mode. Saved to flash. |
   | `get wifi.password` | — | Returns `***` (password is write-only) |
   | `set wifi.password <password>` | `password`: max 64 chars | Set the WiFi password for WiFi mode. Saved to flash. Leave blank or omit for open networks. |
+  | `get wifi.ip` | — | Show static IP and subnet configured for WiFi mode, or `DHCP` if none is set |
+  | `set wifi.ip <ip> [subnet]` | `ip`: e.g. `192.168.1.100`; `subnet`: e.g. `255.255.255.0` (optional, default `255.255.255.0`) | Set a static IP for WiFi mode. Saved to flash; takes effect after next reboot into WiFi mode. If subnet is omitted, the previously saved subnet is kept. Example: `set wifi.ip 192.168.1.100` or `set wifi.ip 192.168.1.100 255.255.255.0` |
+  | `clear wifi.ip` | — | Remove static IP; the node will use DHCP on next boot in WiFi mode. |
   | `set portal.password <password>` | `password`: max 32 chars | Set the config portal login password. When set, the browser must log in before accessing the portal. Saved to flash. |
   | `clear portal.password` | — | Remove the portal password; the portal becomes accessible without login. |

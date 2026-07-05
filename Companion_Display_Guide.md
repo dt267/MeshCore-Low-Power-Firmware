@@ -596,6 +596,7 @@ Only shown if GPS hardware is present.
 | **Screen Off** | Cycle screen timeout: `15s` → `3min` → `Never` |
 | **Flip Screen** | Rotate display 180° |
 | **Font Weight** | Cycle font: `Thin` → `Bold`. *(E-ink displays only — E213, Wireless Paper, E290)* |
+| **Message Font** | Cycle message body size: `Normal` → `Large`. Applies to all displays (OLED, TFT, E-ink). |
 | **Send Advert** | Broadcast your presence → alert "Advert sent!" |
 | **Start OTA** | OTA update mode. On ESP32: connect to WiFi `MeshCore-OTA`, go to `192.168.4.1`. The page includes a firmware upload section and a **WiFi credentials form** to set the SSID/password for WiFi mode and optionally switch to it immediately. On nRF52 (T096 / RAK4631): enters BLE DFU mode — use the **nRF Device Firmware Update** app to upload the `.zip` package. |
 | **Shutdown** | Power off the device |
