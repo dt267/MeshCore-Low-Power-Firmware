@@ -64,6 +64,9 @@ Single click and double click cycle through pages forward and backward.
 ```
 
 - Node name at top-left; battery icon at top-right
+- **Battery icon**: shows charge percentage as a fill bar in normal use.
+  - **Charging**: replaced by a lightning-bolt glyph whenever the device detects external power — the percentage isn't meaningful mid-charge. *(V3, Wireless Paper, T096 only — other boards don't have charger detection yet.)*
+  - **USB connected**: replaced by a USB connector glyph whenever Connection Mode is set to USB and a live USB connection is detected — takes priority over the charging glyph if both apply at once. *(Heltec V4, E213, E290, T096 only — V3 and Wireless Paper's USB chip has no way to detect this.)* On V4 / E213 / E290 this means the cable is plugged into a powered host (PC); on T096 it means an app has actually opened the connection — just plugging into a PC without opening anything won't show it.
 - **Header**: when messages are stored in memory, shows count + envelope icon (`5✉`) where the clock used to be; empty when count is zero
 - Page indicator dots below the header (filled dot = current page)
 - **Large clock** (`HH:MM`) always centered — shows current local time once synced; shows uptime (`00:00` counting up) before first sync

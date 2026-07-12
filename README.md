@@ -34,6 +34,20 @@ MeshCore firmware with deep power optimization, a full companion display UI with
 
 ## What's New
 
+### v1.16_0712
+
+- **New: reach Companion via mDNS hostname instead of typing an IP.** *(Companion — WiFi transport, V3, V4, E213, E290, Wireless Paper, XIAO S3)*
+
+  When connected over WiFi, the node is now reachable at `meshcore-xxxx.local` (`xxxx` = the first 2 bytes of its public key, unique per node) instead of needing to know its DHCP-assigned IP. Confirmed working with the official MeshCore app.
+
+- **New: unsynced messages now survive a crash or reboot.** *(Companion)*
+
+  Previously, any message received while the app wasn't connected only lived in RAM — a crash, reboot, or dead battery before the app had a chance to sync meant it was gone for good. Unsynced messages are now also saved to flash and restored automatically on boot, along with the on-device unread indicator. USB-connected companions are covered too, since USB has no reliable way to detect whether the app is actually listening — messages are saved as they arrive rather than waiting for a disconnect that may never be seen in time.
+
+- **New: e-ink ghost-clearing.** *(Companion, Repeater, Room Server — E213, E290, Wireless Paper)*
+
+  Each boot now runs a quick black/white flush to prevent ghosting from building up, Companion adds a **Settings → Clear Ghost** action for a deeper manual clean, and a static screen gets an automatic full refresh every 5 minutes of idle to prevent burn-in.
+  
 ### v1.16_0705
 
 - **New setting: WiFi static IP configuration.** *(Companion — V3, V4, E213, E290, Wireless Paper)*
