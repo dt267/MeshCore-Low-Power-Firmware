@@ -34,6 +34,14 @@ MeshCore firmware with deep power optimization, a full companion display UI with
 
 ## What's New
 
+### v1.16_0714
+
+- **New setting: choose whether unsynced messages are saved to flash.** *(Companion — all platforms)*
+
+  Companion → Settings → **Message Persist**, or CLI `get/set msg.persist`. Off by default — unsynced messages only live in RAM until the app syncs them. Turn on to also persist them to flash so they survive a crash, reboot, or dead battery before the app catches up. Turning off immediately clears any already-persisted copy from flash.
+
+  On NRF52 boards (T096, RAK4631), each persisted message costs one physical flash-page erase, on a small 100KB partition shared with contacts — fine for normal personal use, but sustained heavy traffic (hundreds to 1000+ msgs/day) wears against that partition's erase-cycle lifetime faster than typical usage. ESP32 boards aren't affected: SPIFFS appends into already-erased space and only erases a block during garbage collection, not on every message write.
+
 ### v1.16_0712
 
 - **New: reach Companion via mDNS hostname instead of typing an IP.** *(Companion — WiFi transport, V3, V4, E213, E290, Wireless Paper, XIAO S3)*

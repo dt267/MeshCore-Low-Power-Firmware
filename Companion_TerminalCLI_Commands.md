@@ -32,6 +32,8 @@ Setup: In the MeshCore app, create a channel named "TerminalCLI". It will now ac
   | `get repeat` | — | Show whether repeat mode is `on` or `off`, and the current frequency |
   | `set repeat on` | — | Enable repeat mode |
   | `set repeat off` | — | Disable repeat mode |
+  | `get msg.persist` | — | Show whether unsynced messages are saved to flash: `on` or `off` (default `off`) |
+  | `set msg.persist <mode>` | `on` \| `off` | Persist unsynced messages to flash so they survive a crash, reboot, or dead battery before the app syncs them. Turning off immediately clears any already-persisted copy from flash. |
   | `get repeat.freqs` | — | List all frequencies (MHz) allowed for repeat mode |
   | `add repeat.freq <MHz>` | `MHz`: e.g. `915` or `915.125` | Add a frequency to the repeat allowed list (max 5). Saved after reboot. |
   | `del repeat.freq <MHz>` | `MHz`: frequency to remove | Remove a frequency from the repeat allowed list |

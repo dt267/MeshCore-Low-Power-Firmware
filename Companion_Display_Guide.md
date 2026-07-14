@@ -596,6 +596,7 @@ Only shown if GPS hardware is present.
 | **Units** | Toggles between Metric and Imperial |
 | **Pos. Format** | Cycle GPS coordinate display: `DD` → `UTM` → `MGRS` |
 | **GPS Privacy** | Toggle ON to hide GPS coords from Quick Send messages |
+| **Message Persist** | Toggle ON to persist unsynced messages to flash so they survive a crash, reboot, or dead battery before the app syncs them. Off by default (RAM only). Turning off immediately clears any already-persisted copy from flash. |
 | **Screen Off** | Cycle screen timeout: `15s` → `3min` → `Never` |
 | **Flip Screen** | Rotate display 180° |
 | **Font Weight** | Cycle font: `Thin` → `Bold`. *(E-ink displays only — E213, Wireless Paper, E290)* |
