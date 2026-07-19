@@ -31,6 +31,7 @@ Single click and double click cycle through pages forward and backward.
 | **Recent Advert** | Last 4 nodes heard over LoRa |
 | **Radio** | LoRa radio parameters and noise floor |
 | **GPS** | GPS status and coordinates *(if GPS hardware present)* |
+| **Sensors** | Battery history chart, plus attached environment sensor readings *(if any)* |
 | **Settings** | Device settings |
 
 ---
@@ -560,6 +561,43 @@ Only shown if GPS hardware is present.
 - `mode` — active GNSS constellation (Heltec V4 / T096 only; see `gps.mode` in [TerminalCLI Commands](Companion_TerminalCLI_Commands.md))
 - `pos` — current position (DD by default; UTM or MGRS if selected via **Pos. Format** in Settings)
 - `alt` — altitude
+
+---
+
+## Sensors page
+
+Two views in one page — **Battery** is always first; long press cycles through any attached environment sensors after that.
+
+**Battery — 24h history:**
+```
+┌──────────────────────────────┐
+│ BATTERY                3.82V │
+│         · · · · · · •        │
+│ ▂▃▄▅▆▇█▇▆▅▄▃▂▁▂▃▄  │
+└──────────────────────────────┘
+```
+
+- 24-hour rolling battery-percentage history, one bar per hour, scrolling in as the day goes
+- Dashed lines mark the 100% and 50% levels for a quick read on trend
+- Header top-right shows precise Vbat voltage (the battery icon elsewhere only shows a rough %)
+
+**Attached sensor readings** *(only shown if an environment sensor is detected)*:
+```
+┌──────────────────────────────┐
+│ SENSOR                BME280 │
+│         · · · · · · •        │
+│ 24.3°C          61%          │
+│ 1013hPa         42m          │
+└──────────────────────────────┘
+```
+
+- Header top-right shows the sensor's name (e.g. `BME280`)
+- 2-column grid, up to 6 fields — just the value and its unit (`°C`, `%`, `hPa`, `m`, `V`, `A`, `W`, `kOhm`...) identifies each reading
+- One page per detected sensor. With only one attached, the title just reads `SENSOR`; with more than one, pages are numbered by the order they were detected (`SENSOR 1`, `SENSOR 2`...) rather than the raw LPP channel number
+
+| Press | Action |
+|---|---|
+| Long press | Cycle to next sensor (wraps back to Battery) |
 
 ---
 

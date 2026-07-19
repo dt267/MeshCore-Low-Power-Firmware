@@ -34,6 +34,16 @@ MeshCore firmware with deep power optimization, a full companion display UI with
 
 ## What's New
 
+### v1.16_0719
+
+- **New: Sensors screen.** *(Companion — all platforms)*
+
+  A new **Sensors** page on the Home screen. **Battery** shows a 24-hour rolling battery-percentage history as a bar chart, one bar per hour. If an environment sensor is attached, long press cycles through its readings — temperature, humidity, pressure, altitude, voltage, current, power, distance, or gas resistance — as a plain value+unit grid (`°C`, `hPa`, `V`...). The header shows the sensor's actual name (e.g. "BME280") while viewing its page, and precise Vbat voltage while viewing "Battery". With only one sensor attached, the page title just reads "SENSOR"; with more than one, pages are numbered by detection order ("Sensor 1", "Sensor 2"...) rather than the raw LPP channel number.
+
+- **Message Persist setting now available in the WiFi Companion Portal, and included in backup/restore.** *(Companion — WiFi transport, V3, V4, E213, E290, Wireless Paper, XIAO S3)*
+
+  The Message Persist toggle (added in v1.16_0714) was previously only reachable via CLI or the on-device UI. It's now also a checkbox under General Settings in the Companion Portal, and its value round-trips through the portal's Backup/Restore.
+
 ### v1.16_0714
 
 - **New setting: choose whether unsynced messages are saved to flash.** *(Companion — all platforms)*
