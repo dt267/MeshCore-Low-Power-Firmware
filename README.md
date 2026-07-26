@@ -34,6 +34,20 @@ MeshCore firmware with deep power optimization, a full companion display UI with
 
 ## What's New
 
+### v1.16_0726
+
+- **New: GPS support for Heltec Vision Master E213 via the quick-link UART header.** *(Companion, Repeater, Room Server — E213)*
+
+  E213 exposes its native UART0 pins on the board's quick-link connector. Wire any NMEA GPS module's TX/RX there (crossed), with the module connected and powered at boot/reset so the firmware can confirm it's present — GPS then works as usual. Its baud rate doesn't need to be known in advance: it's auto-detected in software on first use, and re-detected automatically if a different module is swapped in while GPS is off.
+
+- **Fix: a GPS module that stops responding mid-session is now detected.** *(Companion, Repeater, Room Server — V4, T096, E213)*
+
+  Previously, if a working GPS module died or was unplugged after startup, the device had no way to notice — the GPS page just kept showing "no fix" forever. It now shows "Lost GPS module" after about a minute of silence while GPS is on, and recovers automatically once the module (or a replacement) starts responding again, no reboot needed.
+
+- **Fix: Quick Send presets not saved on NRF52 boards.** *(Companion — T096, RAK4631)*
+
+  Presets were only ever written/read via an ESP32-only SPIFFS path, so on NRF52 they silently reset to defaults on every reboot. Now uses the cross-platform store, like Saved Locations.
+
 ### v1.16_0719
 
 - **New: Sensors screen.** *(Companion — all platforms)*
