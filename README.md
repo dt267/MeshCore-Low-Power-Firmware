@@ -34,6 +34,31 @@ MeshCore firmware with deep power optimization, a full companion display UI with
 
 ## What's New
 
+### v1.16_0802
+
+- **New: standby mode and GNSS mode selection for a confirmed ATGM336H-6N quick-link GPS module.** *(Companion, Repeater, Room Server — E213, V3, E290)*
+
+  Both take effect only once the attached module is confirmed to be an **ATGM336H-6N** — detected from the module's own hardware-info reply (tested via M5Stack's Unit GPS v1.1); other modules are left alone.
+
+  - **Standby mode:** the quick-link GPS module is externally, continuously powered — the board has no wire to cut its power directly. Turning GPS off (or between fixes, while duty-cycling) now sends the module into its own low-power standby mode instead of leaving it running at full power the whole time.
+  - **GNSS mode selection:** the same `GNSS Mode` setting already available on V4 and T096 (CLI `get/set gps.mode`, Companion Portal dropdown, shown read-only on the on-device GPS page) is now available on E213, V3, and E290 too: GPS / GPS+BDS / GPS+BDS+GLONASS+Galileo / GPS+BDS+GLONASS+Galileo+QZSS.
+
+- **New: GPS-on reminder icon in the header.** *(Companion — all platforms with GPS)*
+
+  GPS is easy to turn on and forget about, quietly draining the battery in the background. A small circle-with-center-dot icon now appears in the header whenever GPS is active, positioned just left of the battery icon. Shown on the Home page only on OLED (limited header space); shown on every page on T096 and e-ink, which have more header room.
+
+- **New: `gps.minsat` / `gps.hdop` — tune how many satellites and how accurate a fix needs to be before GPS reports it as valid.** *(Companion, Repeater, Room Server — all platforms with GPS)*
+
+  Previously fixed in firmware (minimum 6 satellites, HDOP ≤ 2.0). Now configurable via CLI (`get/set gps.minsat`, `get/set gps.hdop`) and the Companion/Repeater/Room Server portal, so it can be tuned for different sky conditions without a rebuild. Companion's GPS page also now shows current HDOP next to satellite count (`sat / hdop`).
+
+> **Heltec V3 GPS wiring:** module RX → **GPIO47**, module TX → **GPIO48**.
+> **Heltec E213 GPS wiring:** module RX → **GPIO43**, module TX → **GPIO44**.
+> **Heltec E290 GPS wiring:** module RX → **GPIO43**, module TX → **GPIO44**.
+
+- **New: configurable default channel for Quick Send.** *(Companion — all platforms)*
+
+  Quick Send previously always sent to the Public channel. It now targets a configurable channel instead, settable via **Qk.Ch.** in on-device Settings, CLI (`get/set quick.channel`), or a new Default Channel dropdown in the Companion Portal's Quick Send Presets section — and included in portal backup/restore.
+
 ### v1.16_0726
 
 - **New: GPS support for Heltec Vision Master E213 via the quick-link UART header.** *(Companion, Repeater, Room Server — E213)*
@@ -289,9 +314,9 @@ MeshCore firmware with deep power optimization, a full companion display UI with
 
   Setting is saved to flash and takes effect immediately — no reboot needed.
 
-- **GPS constellation selection for L78K on Heltec V4 (`gps.mode`) (all node types).**
+- **GPS constellation selection for L76K on Heltec V4 (`gps.mode`) (all node types).**
 
-  Choose which satellite constellations the L78K module tracks. Average current draw is essentially the same across all configurations in duty cycle mode with `gps.interval` greater than 10 (~23 mA mean current measured on Heltec V4.3 Companion with `gps.mode = 4` and `gps.interval = 10`). Leave at the default `4` for the most robust fix; adjust only if you have a specific coverage reason.
+  Choose which satellite constellations the L76K module tracks. Average current draw is essentially the same across all configurations in duty cycle mode with `gps.interval` greater than 10 (~23 mA mean current measured on Heltec V4.3 Companion with `gps.mode = 4` and `gps.interval = 10`). Leave at the default `4` for the most robust fix; adjust only if you have a specific coverage reason.
 
   | Value | Constellations |
   |---|---|

@@ -69,6 +69,7 @@ Single click and double click cycle through pages forward and backward.
   - **Charging**: replaced by a lightning-bolt glyph whenever the device detects external power — the percentage isn't meaningful mid-charge. *(V3, Wireless Paper, T096 only — other boards don't have charger detection yet.)*
   - **USB connected**: replaced by a USB connector glyph whenever Connection Mode is set to USB and a live USB connection is detected — takes priority over the charging glyph if both apply at once. *(Heltec V4, E213, E290, T096 only — V3 and Wireless Paper's USB chip has no way to detect this.)* On V4 / E213 / E290 this means the cable is plugged into a powered host (PC); on T096 it means an app has actually opened the connection — just plugging into a PC without opening anything won't show it.
 - **Header**: when messages are stored in memory, shows count + envelope icon (`5✉`) where the clock used to be; empty when count is zero
+- **GPS-on icon**: a small circle-with-center-dot glyph appears just left of the battery icon whenever GPS is turned on — an easy thing to forget about and leave draining the battery. *(Only on the Home page for OLED, since header space is tight there; shown on every page on T096 and e-ink, which have more header room.)*
 - Page indicator dots below the header (filled dot = current page)
 - **Large clock** (`HH:MM`) always centered — shows current local time once synced; shows uptime (`00:00` counting up) before first sync
 - **OLED / T096**: date on the middle-bottom row, connection status at the very bottom
@@ -90,7 +91,7 @@ Connection status values:
 
 ## Quick Send page
 
-Send a preset message to the public channel without typing.
+Send a preset message to a channel without typing. Targets the Public channel by default; the target channel can be changed via **Qk.Ch.** in Settings — see [Quick Send Channel screen](#quick-send-channel-screen).
 
 ```
 ┌──────────────────────────────┐
@@ -122,12 +123,41 @@ After sending, the display shows how many nodes have relayed your message (e.g. 
 
 GPS coordinates are appended automatically when sending (e.g. `I'm OK @10.7769,106.7009`), unless **GPS Privacy** is enabled in Settings.
 
-**Customize presets via [TerminalCLI](Companion_TerminalCLI_Commands.md):**
+**Customize presets and target channel via [TerminalCLI](Companion_TerminalCLI_Commands.md):**
 ```
 get quick                        list all presets
 set quick.0 Arrived at camp      change preset at index 0
 set quick.reset                  restore all defaults
+get quick.channel                show current target channel
+set quick.channel MyGroup        change target channel
 ```
+
+---
+
+## Quick Send Channel screen
+
+Opened from **Qk.Ch.** in Settings. Lists every configured channel so the Quick Send target can be picked directly, without stepping through the others.
+
+```
+┌──────────────────────────────┐
+│ QK.CHANNEL 2/12              │
+│──────────────────────────────│
+│   Public                   * │
+│ > Base Camp                  │
+│   #SOS                       │
+│   Valley Net                 │
+└──────────────────────────────┘
+```
+
+- The header counts your position in the list (`2/12`)
+- `*` marks the channel currently in use; the arrow starts there when the screen opens
+- The list scrolls once there are more channels than fit on screen
+
+| Press | Action |
+|---|---|
+| Single click | Move arrow to next channel |
+| Double click | Return to home, target unchanged |
+| Long press | Set highlighted channel as the Quick Send target |
 
 ---
 
@@ -527,7 +557,7 @@ LoRa radio parameters. Long press cycles RxGain mode.
 
 ## GPS page *(optional)*
 
-Only shown if GPS hardware is present.
+Only shown if GPS hardware is present. On E213, V3, and E290's free-GPIO GPS header, the module needs to be connected and powered at boot/reset so the firmware can confirm it's present.
 
 **GPS on:**
 ```
@@ -535,7 +565,7 @@ Only shown if GPS hardware is present.
 │ GPS               14:32 [==] │
 │         · · · · · · •        │
 │ gps on                   fix │
-│ sat                        8 │
+│ sat / hdop           8 / 1.2 │
 │ pos         10.7769 106.7009 │
 │ alt                      12m │
 └──────────────────────────────┘
@@ -551,14 +581,14 @@ Only shown if GPS hardware is present.
 │ mode             GPS+BDS+GLO │
 └──────────────────────────────┘
 ```
-*(mode line: Heltec V4 / T096 only)*
+*(mode line: Heltec V4 / T096 / E213 / V3 / E290 only)*
 
 - **Long press** — toggle GPS module on/off
 - `gps on` / `gps off` — current software state
 - `fix` / `no fix` — whether a valid position is available
-- `sat` — number of satellites in view
+- `sat / hdop` — number of satellites used in the fix, and current HDOP (`--` if not yet available); see `gps.minsat` / `gps.hdop` in [TerminalCLI Commands](Companion_TerminalCLI_Commands.md) to adjust how many satellites / how accurate a fix needs to be before GPS reports it as valid
 - `intv` — GPS update interval: `always` if GPS stays on continuously (`gps.interval 0`), otherwise interval in seconds; shown only when GPS is off
-- `mode` — active GNSS constellation (Heltec V4 / T096 only; see `gps.mode` in [TerminalCLI Commands](Companion_TerminalCLI_Commands.md))
+- `mode` — active GNSS constellation (Heltec V4 / T096 / E213 / V3 / E290 only; see `gps.mode` in [TerminalCLI Commands](Companion_TerminalCLI_Commands.md))
 - `pos` — current position (DD by default; UTM or MGRS if selected via **Pos. Format** in Settings)
 - `alt` — altitude
 
@@ -634,6 +664,7 @@ Two views in one page — **Battery** is always first; long press cycles through
 | **Units** | Toggles between Metric and Imperial |
 | **Pos. Format** | Cycle GPS coordinate display: `DD` → `UTM` → `MGRS` |
 | **GPS Privacy** | Toggle ON to hide GPS coords from Quick Send messages |
+| **Qk.Ch.** | Opens a [channel selection screen](#quick-send-channel-screen) — pick which channel Quick Send targets. The row shows the current channel name, or `(none)` if no channel is configured. Long channel names are truncated with `...` to fit. |
 | **Message Persist** | Toggle ON to persist unsynced messages to flash so they survive a crash, reboot, or dead battery before the app syncs them. Off by default (RAM only). Turning off immediately clears any already-persisted copy from flash. |
 | **Screen Off** | Cycle screen timeout: `15s` → `3min` → `Never` |
 | **Flip Screen** | Rotate display 180° |

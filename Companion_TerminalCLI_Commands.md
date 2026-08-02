@@ -18,8 +18,12 @@ Setup: In the MeshCore app, create a channel named "TerminalCLI". It will now ac
   | `gps off` | — | Disable GPS |
   | `get gps.interval` | — | Show GPS update interval (`always on` if `0`) |
   | `set gps.interval <s>` | `s`: seconds `1..86400`, or `0` = GPS always on (no sleep) | Set how often the GPS wakes up to update location. Applied immediately and saved. Default: `10`. |
-  | `get gps.mode` | — | Show current GNSS constellation selection. *(Heltec V4 / T096 only)* |
-  | `set gps.mode <n>` | **Heltec V4:** `1`=GPS `2`=GPS+BDS `3`=GPS+GLO `4`=GPS+BDS+GLO (default `4`) · **T096:** `1`=GPS-L1 `2`=All-sys-L1 `3`=All-sys+QZSS-dual (default `3`) | Select GNSS constellation preset. Saved to flash; takes effect on next GPS on. |
+  | `get gps.minsat` | — | Show how many satellites GPS needs before it reports a valid fix |
+  | `set gps.minsat <n>` | `n`: `4..24` | Set how many satellites GPS needs before reporting a valid fix. Higher = more reliable, but may take longer to get one. Applied immediately and saved. Default: `6`. |
+  | `get gps.hdop` | — | Show the accuracy threshold (HDOP ×10 — lower number means stricter/more accurate) GPS requires before reporting a valid fix |
+  | `set gps.hdop <n>` | `n`: `5..250` (HDOP×10, e.g. `20` = HDOP 2.0) | Set how accurate a position must be before GPS reports a valid fix. Lower = stricter/more accurate but may take longer; higher = looser/faster but less precise. Applied immediately and saved. Default: `20` (HDOP 2.0). |
+  | `get gps.mode` | — | Show current GNSS constellation selection. *(Heltec V4 / T096 / E213 / V3 / E290 only)* |
+  | `set gps.mode <n>` | **Heltec V4:** `1`=GPS `2`=GPS+BDS `3`=GPS+GLO `4`=GPS+BDS+GLO (default `4`) · **T096:** `1`=GPS-L1 `2`=All-sys-L1 `3`=All-sys+QZSS-dual (default `3`) · **E213 / V3 / E290:** `1`=GPS `2`=GPS+BDS `3`=GPS+BDS+GLO+GAL `4`=GPS+BDS+GLO+GAL+QZSS (default `4`; only takes effect on a confirmed ATGM336H-6N module, tested via M5Stack's Unit GPS v1.1) | Select GNSS constellation preset. Saved to flash; takes effect on next GPS on. |
   | `reg read <addr>` | `addr`: hex | Read 1 byte from a radio register. Example: `reg read 08B5` |
   | `reg write <addr> <val>` | `addr`, `val`: hex | Write 1 byte to a radio register. Example: `reg write 08B5 04` |
   | `get radio.rxgain` | — | Show current RX gain mode: `off` or `on` |
@@ -50,6 +54,8 @@ Setup: In the MeshCore app, create a channel named "TerminalCLI". It will now ac
   | `get quick` | — | List all Quick Send presets with their index numbers |
   | `set quick.<N> <text>` | `N`: 0–9, `text`: message | Set preset at index N. Example: `set quick.2 Meet me at the park` |
   | `set quick.reset` | — | Restore all 10 presets to built-in defaults |
+  | `get quick.channel` | — | Show the channel Quick Send currently targets |
+  | `set quick.channel <channel>` | `channel`: channel name (spaces allowed) | Set the channel Quick Send sends to. Must be an existing, named channel. |
   | `get loc` | — | List occupied saved location slots, one per line: `N:lat,lon:name` (N is 0-based) |
   | `set loc.<N> <name> <lat> <lon>` | `N`: 0–9; name may contain spaces; lat/lon come last | Save a GPS location to slot N (0-based, display shows 1–10). Example: `set loc.0 Base camp 10.7769 106.7009` |
   | `del loc.<N>` | `N`: 0–9 | Clear saved location at slot N (0-based) |
