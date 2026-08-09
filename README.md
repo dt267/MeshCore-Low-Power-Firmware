@@ -29,7 +29,7 @@ MeshCore firmware with deep power optimization, a full companion display UI with
 
 ## What's New
 
-### v1.16_0809
+### v1.17_0809
 
 - **ESP-NOW bridge, now power-optimised and built into the standard repeater firmware.** *(Repeater — all ESP32 boards)*
 
