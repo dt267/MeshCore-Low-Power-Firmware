@@ -12,7 +12,7 @@ One button does everything:
 |---|---|
 | **Single click** | Next page / next item / scroll down |
 | **Double click** | Previous page / exit sub-level |
-| **Long press** | Open message preview (Home) · Enter sub-level (Quick Send / Settings) · Toggle GPS (GPS page) · Cycle RxGain (Radio page) |
+| **Long press** | Open message preview (Home) · Enter sub-level (Quick Send / Settings / Radio) · Send advert (Recent Advert page) · Toggle GPS (GPS page) |
 
 > **Heltec E213 and E290 — second button (GPIO21):** Press to scroll up in any list, or to go back/exit any menu. Equivalent to double clicking the main button, but faster. The Wireless Paper has a single button only.
 
@@ -369,6 +369,8 @@ Long press any message to open the popup:
 │ ┌──────────────────────┐     │
 │ │ > Reply              │     │
 │ │   Save location      │     │
+│ │   Delete             │     │
+│ │   Delete all         │     │
 │ │   Home               │     │
 │ └──────────────────────┘     │
 └──────────────────────────────┘
@@ -382,9 +384,32 @@ Long press any message to open the popup:
 
 - **Reply** — opens Quick Reply screen; sends back to the same contact (DM), the same channel, or the room server (`[R]`) — room replies are posted to the whole room and visible to all subscribers
 - **Save location** — only shown if the message contains GPS coordinates
+- **Delete** — removes the message on screen
+- **Delete all** — removes every message from that sender or channel; only shown in **Level 1**, where the messages on screen really are one conversation, and only when there is more than one of them
 - **Home** — go home immediately
 
-If neither Reply nor GPS coordinates are present, long press goes directly home.
+Reply and Save location depend on the message, but Delete and Home are always there, so a long press always opens the menu.
+
+### Confirming a delete
+
+Both delete items ask first, starting on **No** — a deleted message cannot be brought back:
+
+```
+┌──────────────────────────────┐
+│ (2) Alien:         1/5  3h   │
+│──────────────────────────────│
+│ I need help @10.77,106.70    │
+│ ┌──────────────────────┐     │
+│ │ Delete 5 msgs?       │     │
+│ │ > No                 │     │
+│ │   Yes                │     │
+│ └──────────────────────┘     │
+└──────────────────────────────┘
+```
+
+Single click moves between **No** and **Yes**, long press confirms, double click cancels.
+
+> Deleting takes the message off the node for good. If a phone app has not synced it yet, it never will — delete what you have already read, not what you are still waiting to sync.
 
 ---
 
@@ -511,7 +536,7 @@ If your node has no GPS fix, only the coordinates are shown.
 
 ## Recent Advert page
 
-Shows the last 4 nodes that advertised over LoRa, with time since last heard. Read-only.
+Shows the last 4 nodes that advertised over LoRa, with time since last heard.
 
 ```
 ┌──────────────────────────────┐
@@ -524,11 +549,13 @@ Shows the last 4 nodes that advertised over LoRa, with time since last heard. Re
 └──────────────────────────────┘
 ```
 
+**Long press** — broadcast your own advert → alert "Advert sent!" or "Advert failed..". Handy when two people standing together want to pick each other up straight away. Also available as **Send Advert** in [Settings](#settings-page).
+
 ---
 
 ## Radio page
 
-LoRa radio parameters. Long press cycles RxGain mode.
+LoRa radio parameters. Long press opens a sub-level holding the two settings this page displays.
 
 ```
 ┌──────────────────────────────┐
@@ -537,7 +564,7 @@ LoRa radio parameters. Long press cycles RxGain mode.
 │ FQ: 915.000          SF: 10  │
 │ BW: 250.00            CR: 5  │
 │ TX: 20dBm          RxG: OFF  │
-│ Noise floor: -95             │
+│ NF: -95            RxD: OFF  │
 └──────────────────────────────┘
 ```
 
@@ -549,9 +576,34 @@ LoRa radio parameters. Long press cycles RxGain mode.
 | CR | Coding rate |
 | TX | Transmit power in dBm |
 | RxG | RX Gain mode: `OFF` / `ON` |
-| Noise floor | Ambient noise level in dBm |
+| NF | Noise floor — ambient noise level in dBm |
+| RxD | RX duty cycle: `OFF` / `ON` |
 
-**Long press** — toggle RxGain (OFF / ON); a popup confirms the new mode.
+- **Long press** to enter sub-level (active item highlights)
+
+```
+┌──────────────────────────────┐
+│ RADIO             14:32 [==] │
+│         · · · · · • ·        │
+│ RxGain                    ON │
+│ RxDuty                   OFF │
+└──────────────────────────────┘
+```
+
+**In sub-level:**
+
+| Press | Action |
+|---|---|
+| Single click | Next item |
+| Double click | Exit sub-level |
+| Long press | Activate item |
+
+| Item | Action |
+|---|---|
+| **RxGain** | Toggle RxGain: OFF → ON |
+| **RxDuty** | Toggle RX duty cycle on/off — sleeps the receiver to save 2-3 mA. Only works at SF5-SF8. |
+
+Both items stay in [Settings](#settings-page) as well; the sub-level just puts them next to the `RxG` and `RxD` readings they change.
 
 ---
 
@@ -660,6 +712,7 @@ Two views in one page — **Battery** is always first; long press cycles through
 | **Connection Mode** | Opens a mode selection screen. Navigate to `BLE`, `USB`, or `WiFi` and confirm — the node reboots into the chosen mode. The current active mode is marked `*`. |
 | **Repeat** | Toggle packet repeat on/off |
 | **RxGain** | Toggle RxGain: OFF → ON |
+| **RxDuty** | Toggle RX duty cycle on/off — sleeps the receiver to save 2-3 mA. Only works at SF5-SF8. |
 | **Brightness** | Cycle backlight intensity: `25` → `50` → `75` → `100` *(Heltec T096 only)* |
 | **Units** | Toggles between Metric and Imperial |
 | **Pos. Format** | Cycle GPS coordinate display: `DD` → `UTM` → `MGRS` |

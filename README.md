@@ -29,6 +29,35 @@ MeshCore firmware with deep power optimization, a full companion display UI with
 
 ## What's New
 
+### v1.17_0816
+
+- **New: RX duty cycle.** *(All roles — SX1262 boards)*
+
+  Receiving continuously is the largest part of a node's idle current. The SX1262 has a Listen mode (`SetRxDutyCycle`) that alternates a short receive window with sleep. A Heltec V3 repeater idles at **4.9 mA instead of 7.8 mA** — **14.5 days instead of 9.1** on a 2000 mAh battery. Other boards save a similar 2-3 mA off their [idle figure](#idle-battery-life-estimation-2000-mah-battery).
+
+  No packets lost, tested against continuous reception: weak signals below the noise floor, back-to-back packets, while the node is transmitting, and two transmitters colliding on a live network. Noise floor measurement and AGC auto-reset keep working with it on.
+
+  Off by default. Turn on with `set rx.duty on`, in the **Radio** section of the config portal, or on a companion's display — from **Settings**, or by long pressing the **Radio** page for a sub-level holding **RxGain** and **RxDuty**. Included in backup/restore.
+
+  > Only works at **SF5 to SF8**. `get rx.duty` tells you whether your node is running it.
+
+- **New: per-channel message priority.** *(Companion — all platforms)*
+
+  Received messages all share one unsynced offline message queue until the app syncs them, so a busy channel (bot pings, frequent status broadcasts) can crowd out messages from channels that actually matter. Each channel can now be capped to protect the others' space, or promoted to the same protected standing a direct message has always had — previously DM-only. Four levels:
+
+  | Level | Behavior |
+  |---|---|
+  | `none` | Completely blocked — never delivered to the app, never shown on-screen, no notification of any kind |
+  | `low` | Capped at 12 unsynced offline messages (5% of the 256-message queue on these boards) — enough to see recent activity without hogging space other channels need; oldest trimmed first once the channel exceeds it, never the message currently on screen |
+  | `normal` (default) | Unchanged existing behavior |
+  | `high` | Same standing as a direct message — never dropped to make room for anything else |
+
+  Configure via the **Command Line** (`get/set ch.msgs <channel> <none|low|normal|high>`, `ch.msgs status`, `ch.msgs clear`) — available on every platform — or the **Companion Portal** (WiFi-capable boards), in the same **Channel Settings** table as the existing per-channel hop limit. Included in backup/restore.
+
+- **New: delete messages on the device.** *(Companion — all platforms)*
+
+  The popup on a message now has **Delete** for the message on screen, and **Delete all** for the whole conversation when you reached it through the message list; both confirm first. Until now the message list only emptied by syncing to the app, so a device used without a phone could not clear it at all. A deleted message is gone for good — an app connecting later will never receive it.
+
 ### v1.17_0809
 
 - **ESP-NOW bridge, now power-optimised and built into the standard repeater firmware.** *(Repeater — all ESP32 boards)*

@@ -28,6 +28,8 @@ Setup: In the MeshCore app, create a channel named "TerminalCLI". It will now ac
   | `reg write <addr> <val>` | `addr`, `val`: hex | Write 1 byte to a radio register. Example: `reg write 08B5 04` |
   | `get radio.rxgain` | — | Show current RX gain mode: `off` or `on` |
   | `set radio.rxgain <mode>` | `off` \| `on` | Set RX gain mode. |
+  | `get rx.duty` | — | Show whether RX duty cycle is on, and the listening windows in use |
+  | `set rx.duty <mode>` | `on` \| `off` \| `<sleep> <wake>` | Sleep the receiver between short listening windows to cut idle current by 2-3 mA. `on` picks the windows for the spreading factor in use, and also resets a custom pair back to them. The `<sleep> <wake>` form sets the windows in LoRa symbols; sizes the radio cannot run are refused. Saved; applied immediately. Default: `off`. **SX1262 boards only.** |
   | `get agc.resets` | — | Show how many times the AGC has been auto-reset since boot or last `clear agc.resets` |
   | `clear agc.resets` | — | Reset the AGC auto-reset counter to zero |
   | `get tx` | — | Show current transmit power (dBm) |
@@ -65,6 +67,10 @@ Setup: In the MeshCore app, create a channel named "TerminalCLI". It will now ac
   | `get ch.hops <channel>` | `channel`: channel name (spaces allowed) | Show current hop limit for the channel |
   | `ch.hops status` | — | List all channels that have an active hop limit |
   | `ch.hops clear` | — | Remove all channel hop limits |
+  | `set ch.msgs <channel> <tier>` | `channel`: channel name (spaces allowed); `tier`: `none` \| `low` \| `normal` \| `high` | Set how many unsynced offline messages the channel is allowed to keep. `none` = completely blocked — never delivered to the app, never shown on-screen, no notification of any kind. `low` = capped at 12 unsynced offline messages, oldest trimmed first once over the cap — except the message currently on screen, which is never trimmed. `normal` (default) = unlimited, unchanged behavior. `high` = unlimited and never dropped to make room — same protected standing as a direct message. |
+  | `get ch.msgs <channel>` | `channel`: channel name (spaces allowed) | Show current message priority tier for the channel |
+  | `ch.msgs status` | — | List all channels not set to `normal` (the default) |
+  | `ch.msgs clear` | — | Reset all channels to `normal` |
   | `get conn.mode` | — | Show current connection transport: `ble`, `usb`, or `wifi` |
   | `set conn.mode <mode>` | `ble` \| `usb` \| `wifi` | Switch transport mode. Saves to flash and reboots immediately. In USB mode the node connects via USB serial; BLE is not started. In WiFi mode the node connects as a STA to the configured network and listens for TCP connections on port 5000. |
   | `get wifi.ssid` | — | Show the WiFi SSID configured for WiFi mode |
