@@ -10,6 +10,7 @@ MeshCore firmware with deep power optimization, a full companion display UI with
 - Heltec Mesh Node T096
 - Seeed Studio XIAO ESP32S3 & Wio-SX1262 Kit
 - RAK4631 WisBlock
+- Waveshare ESP32-S3-LR1121-XF (dual-band sub-GHz + 2.4 GHz)
 - ...
 
 
@@ -28,6 +29,48 @@ MeshCore firmware with deep power optimization, a full companion display UI with
 - [License](#license)
 
 ## What's New
+
+### v1.17_0830
+
+- **New device: Waveshare ESP32-S3-LR1121-XF — dual-band sub-GHz + 2.4 GHz.** *(Companion, Repeater, Room Server)*
+
+  The first LR1121 board here, a dual-band radio running on both the sub-GHz LoRa bands and 2.4 GHz, each band with its own TX power setting. Companion is the unified BLE / USB / WiFi image; repeater includes the ESP-NOW bridge. Tested on hardware on both bands.
+
+  > **Wiring:** I2C sensors — SDA **GPIO8**, SCL **GPIO9**. GPS — module RX → **GPIO43**, module TX → **GPIO44**.
+
+- **New: `get`/`set radio` on the Companion TerminalCLI.** *(Companion — all platforms)*
+
+  Reads and sets frequency, bandwidth, spreading factor and coding rate — the same commands the Repeater already has. See [Companion TerminalCLI Commands](Companion_TerminalCLI_Commands.md).
+
+  A change to the spreading factor, bandwidth, coding rate or a small frequency shift applies right away. A frequency change of 20 MHz or more — moving between sub-GHz bands, or between sub-GHz and 2.4 GHz — is saved but only takes effect after a reboot. The TerminalCLI replies `OK - reboot to apply`; the app's Settings screen only confirms the values were saved, so after a band change made there, reboot the node yourself.
+
+- **Changed: Battery history is now 14 days, not 24 hours.** *(Companion — all platforms)*
+
+  The Sensors screen's **Battery** bar chart (added in v1.16_0719) now shows one bar per day over the last 14 days instead of one bar per hour over the last 24. At these boards' actual idle power draw, battery barely moves hour to hour, so the daily trend is the more useful view.
+
+- **Triple-click the button to go back.** *(Companion — single-button boards)*
+
+  A triple-click now steps backward through the Quick Send, Settings and Radio sub-menus.
+
+- **New: hold the button 5 seconds to force BLE mode.** *(Companion — boards with no display)*
+
+  On a board with no display, switching the connection mode to WiFi or USB has no way back if that transport never comes up — the CLI that would switch it is only reachable over the same dead link. Holding the button for 5 seconds now reverts the node to BLE and reboots it.
+
+- **Fix: RX duty cycle windows now computed for the SF and bandwidth in use.** *(All roles — SX1262 boards)*
+
+  Previously they were hardcoded to SF8 / BW 62.5 kHz. If no valid window fits the current SF/BW, `set rx.duty on` reports the refusal and stays off instead of saving a broken state.
+
+- **Fix: dropped the −120 dBm noise-floor clamp.** *(All roles)*
+
+  Noise floor was pinned to a −120 dBm minimum; that clamp is removed.
+
+- **Fix: Companion TerminalCLI.** *(Companion)*
+
+  Typing `gps` on a board with GPS support but no module detected could crash and reboot the node; it now replies "Can't find GPS". A command sent with a trailing space, tab or newline — no longer falls through to "unknown cmd".
+
+- **Fix: repeater bridge default.** *(Repeater)*
+
+  The previous release shipped it defaulting to on by mistake. Fresh flashes and factory resets now default it to off; a node that already has it on keeps it.
 
 ### v1.17_0816
 

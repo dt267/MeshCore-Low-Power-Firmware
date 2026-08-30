@@ -12,15 +12,16 @@ One button does everything:
 |---|---|
 | **Single click** | Next page / next item / scroll down |
 | **Double click** | Previous page / exit sub-level |
+| **Triple click** | Previous item in most lists and sub-levels — falls back to double click's action on screens with no separate "previous" step |
 | **Long press** | Open message preview (Home) · Enter sub-level (Quick Send / Settings / Radio) · Send advert (Recent Advert page) · Toggle GPS (GPS page) |
 
-> **Heltec E213 and E290 — second button (GPIO21):** Press to scroll up in any list, or to go back/exit any menu. Equivalent to double clicking the main button, but faster. The Wireless Paper has a single button only.
+> **Heltec E213 and E290 — second button (GPIO21):** Sends the same signal as triple-clicking the main button — previous item in a list or sub-level, or double click's action on screens with no separate "previous" step. The Wireless Paper has a single button only.
 
 ---
 
 ## Home screen pages
 
-Single click and double click cycle through pages forward and backward.
+Single click cycles forward; double click and triple click both cycle backward.
 
 | Page | What it shows |
 |---|---|
@@ -41,7 +42,7 @@ Single click and double click cycle through pages forward and backward.
 **OLED / T096:**
 ```
 ┌──────────────────────────────┐
-│ MyNodeName        5✉ [=]     │
+│ MyNodeName        5✉ [=]    │
 │         · • · · · · ·        │
 │                              │
 │           14:32              │
@@ -54,7 +55,7 @@ Single click and double click cycle through pages forward and backward.
 **E-ink (E213 / Wireless Paper / E290):**
 ```
 ┌──────────────────────────────────────────────────────────┐
-│ MyNodeName                                  5✉  [===]    │
+│ MyNodeName                                  5✉  [===]   │
 │                · · · • · · · ·                           │
 │                                                          │
 │                       14:32                              │
@@ -117,6 +118,7 @@ Send a preset message to a channel without typing. Targets the Public channel by
 |---|---|
 | Single click | Next preset |
 | Double click | Exit sub-level |
+| Triple click | Previous preset |
 | Long press | Send highlighted preset → alert "Sent!" or "Send failed" |
 
 After sending, the display shows how many nodes have relayed your message (e.g. `Heard 3 Repeats`). The count updates in real time as each relay is heard.
@@ -157,6 +159,7 @@ Opened from **Qk.Ch.** in Settings. Lists every configured channel so the Quick 
 |---|---|
 | Single click | Move arrow to next channel |
 | Double click | Return to home, target unchanged |
+| Triple click | Move arrow to previous channel |
 | Long press | Set highlighted channel as the Quick Send target |
 
 ---
@@ -197,6 +200,7 @@ Chat nodes and room servers are listed. Room servers are tagged `[R]`. Repeaters
 |---|---|
 | Single click | Move arrow to next contact |
 | Double click | Return to home |
+| Triple click | Move arrow to previous contact |
 | Long press | Open action menu for selected contact |
 
 ---
@@ -220,6 +224,7 @@ After selecting a contact and long pressing, an action menu appears:
 |---|---|
 | Single click | Move arrow to next item |
 | Double click | Return to contact list |
+| Triple click | Move arrow to previous item |
 | Long press | Execute selected item |
 
 - **Send message** — opens Quick Reply screen to send a direct message
@@ -379,6 +384,7 @@ Long press any message to open the popup:
 | Press | Action |
 |---|---|
 | Single click | Move to next item |
+| Triple click | Move to previous item |
 | Long press | Confirm selected item |
 | Double click | Dismiss menu (cancel) |
 
@@ -434,6 +440,7 @@ The header shows who the message will go to (`To: Alien` for a DM, `To: [Public]
 |---|---|
 | Single click | Next preset |
 | Double click | Cancel, return without sending |
+| Triple click | Previous preset |
 | Long press | Send selected preset |
 
 After sending, an alert confirms success or failure and the screen returns to the message preview.
@@ -458,6 +465,7 @@ When viewing a message that contains GPS coordinates, long press opens the popup
 | Press | Action |
 |---|---|
 | Single click | Move to next slot |
+| Triple click | Move to previous slot |
 | Long press | Save to selected slot |
 | Double click | Cancel |
 
@@ -500,6 +508,7 @@ Each entry shows **sender name + message snippet** so you can tell entries apart
 | Press | Action |
 |---|---|
 | Single click | Move highlight to next entry |
+| Triple click | Move highlight to previous entry |
 | Long press | Open GPS trace screen for highlighted entry |
 | Double click | Return to home |
 
@@ -596,6 +605,7 @@ LoRa radio parameters. Long press opens a sub-level holding the two settings thi
 |---|---|
 | Single click | Next item |
 | Double click | Exit sub-level |
+| Triple click | Previous item |
 | Long press | Activate item |
 
 | Item | Action |
@@ -650,16 +660,16 @@ Only shown if GPS hardware is present. On E213, V3, and E290's free-GPIO GPS hea
 
 Two views in one page — **Battery** is always first; long press cycles through any attached environment sensors after that.
 
-**Battery — 24h history:**
+**Battery — 14-day history:**
 ```
 ┌──────────────────────────────┐
-│ BATTERY                3.82V │
+│ BATTERY 14D             3.82V │
 │         · · · · · · •        │
-│ ▂▃▄▅▆▇█▇▆▅▄▃▂▁▂▃▄  │
+│ ▂▃▄▅▆▇█▇▆▅▄▃▂▁          │
 └──────────────────────────────┘
 ```
 
-- 24-hour rolling battery-percentage history, one bar per hour, scrolling in as the day goes
+- 14-day rolling battery-percentage history, one bar per day, scrolling in as the days go
 - Dashed lines mark the 100% and 50% levels for a quick read on trend
 - Header top-right shows precise Vbat voltage (the battery icon elsewhere only shows a rough %)
 
@@ -704,6 +714,7 @@ Two views in one page — **Battery** is always first; long press cycles through
 |---|---|
 | Single click | Next item (scrolls if more than 4) |
 | Double click | Exit sub-level |
+| Triple click | Previous item |
 | Long press | Activate item |
 
 | Item | Action |

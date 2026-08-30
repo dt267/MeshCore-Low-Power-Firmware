@@ -15,8 +15,8 @@ For the full upstream command reference see [docs/cli_commands.md](https://githu
 | `reg write <addr> <val>` | `addr`, `val`: hex | Write 1 or more bytes to a radio register. Values revert after reboot. Example: `reg write 0740 1424` |
 | `get rx.duty` | — | Show whether RX duty cycle is on, and the listening windows in use |
 | `set rx.duty <mode>` | `on` \| `off` \| `<sleep> <wake>` | Sleep the receiver between short listening windows to cut idle current by 2-3 mA. `on` picks the windows for the spreading factor in use, and also resets a custom pair back to them. The `<sleep> <wake>` form sets the windows in LoRa symbols; sizes the radio cannot run are refused. Saved; applied immediately. Default: `off`. **SX1262 boards only.** |
-| `get agc.resets` | — | Show how many times the AGC has been auto-reset since boot or last `clear agc.resets` |
-| `clear agc.resets` | — | Reset the AGC auto-reset counter to zero |
+| `get agc.resets` | — | Show how many times the AGC has been auto-reset since boot or last `clear agc.resets`. Returns `n/a (not supported on LR1121)` on LR1121 boards. |
+| `clear agc.resets` | — | Reset the AGC auto-reset counter to zero. No-op on LR1121 boards (replies `not applicable on LR1121`). |
 | `get gps.interval` | — | Show GPS update interval. Returns `always on` if `0`. |
 | `set gps.interval <s>` | `s`: seconds `1..86400`, or `0` = GPS always on (no sleep) | Set how often the GPS wakes up to update location. Applied immediately and saved. Default: `10`. |
 | `get gps.minsat` | — | Show how many satellites GPS needs before it reports a valid fix |

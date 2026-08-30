@@ -26,12 +26,14 @@ Setup: In the MeshCore app, create a channel named "TerminalCLI". It will now ac
   | `set gps.mode <n>` | **Heltec V4:** `1`=GPS `2`=GPS+BDS `3`=GPS+GLO `4`=GPS+BDS+GLO (default `4`) · **T096:** `1`=GPS-L1 `2`=All-sys-L1 `3`=All-sys+QZSS-dual (default `3`) · **E213 / V3 / E290:** `1`=GPS `2`=GPS+BDS `3`=GPS+BDS+GLO+GAL `4`=GPS+BDS+GLO+GAL+QZSS (default `4`; only takes effect on a confirmed ATGM336H-6N module, tested via M5Stack's Unit GPS v1.1) | Select GNSS constellation preset. Saved to flash; takes effect on next GPS on. |
   | `reg read <addr>` | `addr`: hex | Read 1 byte from a radio register. Example: `reg read 08B5` |
   | `reg write <addr> <val>` | `addr`, `val`: hex | Write 1 byte to a radio register. Example: `reg write 08B5 04` |
+  | `get radio` | — | Show current radio parameters as `freq,bw,sf,cr` — frequency (MHz), bandwidth (kHz), spreading factor, coding rate |
+  | `set radio <freq> <bw> <sf> <cr>` | `freq`: MHz `150..2500`; `bw`: kHz `7.8..815`; `sf`: `5..12`; `cr`: `5..8` | Set all four radio parameters at once, space-separated. Always saved. A change to `bw`/`sf`/`cr` or a frequency shift under 20 MHz applies immediately; a frequency change of 20 MHz or more replies `OK - reboot to apply` and takes effect on the next restart. Example: `set radio 869.525 250 10 5` |
   | `get radio.rxgain` | — | Show current RX gain mode: `off` or `on` |
   | `set radio.rxgain <mode>` | `off` \| `on` | Set RX gain mode. |
   | `get rx.duty` | — | Show whether RX duty cycle is on, and the listening windows in use |
   | `set rx.duty <mode>` | `on` \| `off` \| `<sleep> <wake>` | Sleep the receiver between short listening windows to cut idle current by 2-3 mA. `on` picks the windows for the spreading factor in use, and also resets a custom pair back to them. The `<sleep> <wake>` form sets the windows in LoRa symbols; sizes the radio cannot run are refused. Saved; applied immediately. Default: `off`. **SX1262 boards only.** |
-  | `get agc.resets` | — | Show how many times the AGC has been auto-reset since boot or last `clear agc.resets` |
-  | `clear agc.resets` | — | Reset the AGC auto-reset counter to zero |
+  | `get agc.resets` | — | Show how many times the AGC has been auto-reset since boot or last `clear agc.resets`. Returns `n/a (not supported on LR1121)` on LR1121 boards. |
+  | `clear agc.resets` | — | Reset the AGC auto-reset counter to zero. No-op on LR1121 boards (replies `not applicable on LR1121`). |
   | `get tx` | — | Show current transmit power (dBm) |
   | `set tx <dBm>` | `dBm`: integer | Set transmit power in dBm. Saved and applied immediately. |  
   | `start ota` | — | Start OTA firmware update. On ESP32: connect to Wi-Fi `MeshCore-OTA`, then go to `192.168.4.1` (opens the config portal). On nRF52: enters BLE DFU mode. |
