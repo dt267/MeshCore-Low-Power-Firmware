@@ -31,7 +31,15 @@ MeshCore firmware with deep power optimization, a full companion display UI with
 
 ## What's New
 
+### v1.17_0914
+
+- **Fix: Companion could crash on `start ota` and then stay in a boot loop.** *(Companion — ESP32 boards)*
+
+  Affects v1.17_0913 companion builds; repeater and room server are not affected.
+
 ### v1.17_0913
+
+> **Known issue, fixed in v1.17_0914:** Companion builds of this release can crash on `start ota` and then loop at boot until reset. Since OTA itself is what fails, a companion already on v1.17_0913 must be updated over USB.
 
 - **New device: EBYTE EoRa-HUB-xxxTB — dual-band sub-GHz + 2.4 GHz.** *(Companion, Repeater, Room Server)*
 
