@@ -10,9 +10,17 @@ Setup: In the MeshCore app, create a channel named "TerminalCLI". It will now ac
 
 | Command | Parameters | Notes |
   |---|---|---|
+  | `help` | — | List every command this board supports, grouped into sections. Only works over the app link; a remote CLI request replies `help is local-only`. |
   | `stats` | — | Show battery voltage (mV), uptime (s), noise floor, last RSSI/SNR, and RX/TX/error packet counts |
   | `reboot` | — | Reboot the device |
   | `poweroff` | — | Power off the device |
+  | `ver` | — | Show firmware version and build date |
+  | `board` | — | Show the board/manufacturer name this firmware was built for |
+  | `get name` | — | Show the node name |
+  | `set name <text>` | `text`: max 31 chars | Set the node name. The characters `[` `]` `\` `:` `,` `?` `*` are rejected. Saved to flash. |
+  | `set pin <n>` | `n`: 6-digit BLE pairing pin, or `0` for the built-in default | Set the BLE pairing pin. Saved to flash; takes effect on the next reboot. `0` restores the compiled-in default, which on a board with a display is a new random pin each session. |
+  | `clock` | — | Show the current UTC date and time |
+  | `clock sync` | — | Set the clock from the timestamp of the command itself, i.e. the clock of the phone that sent it. Refused if that clock is older than the firmware build date. |
   | `gps` | — | Show GPS status: enabled/disabled, fix status, satellite count |
   | `gps on` | — | Enable GPS |
   | `gps off` | — | Disable GPS |
@@ -24,12 +32,10 @@ Setup: In the MeshCore app, create a channel named "TerminalCLI". It will now ac
   | `set gps.hdop <n>` | `n`: `5..250` (HDOP×10, e.g. `20` = HDOP 2.0) | Set how accurate a position must be before GPS reports a valid fix. Lower = stricter/more accurate but may take longer; higher = looser/faster but less precise. Applied immediately and saved. Default: `20` (HDOP 2.0). |
   | `get gps.mode` | — | Show current GNSS constellation selection. *(Heltec V4 / T096 / E213 / V3 / E290 only)* |
   | `set gps.mode <n>` | **Heltec V4:** `1`=GPS `2`=GPS+BDS `3`=GPS+GLO `4`=GPS+BDS+GLO (default `4`) · **T096:** `1`=GPS-L1 `2`=All-sys-L1 `3`=All-sys+QZSS-dual (default `3`) · **E213 / V3 / E290:** `1`=GPS `2`=GPS+BDS `3`=GPS+BDS+GLO+GAL `4`=GPS+BDS+GLO+GAL+QZSS (default `4`; only takes effect on a confirmed ATGM336H-6N module, tested via M5Stack's Unit GPS v1.1) | Select GNSS constellation preset. Saved to flash; takes effect on next GPS on. |
-  | `reg read <addr>` | `addr`: hex | Read 1 byte from a radio register. Example: `reg read 08B5` |
-  | `reg write <addr> <val>` | `addr`, `val`: hex | Write 1 byte to a radio register. Example: `reg write 08B5 04` |
   | `get radio` | — | Show current radio parameters as `freq,bw,sf,cr` — frequency (MHz), bandwidth (kHz), spreading factor, coding rate |
-  | `set radio <freq> <bw> <sf> <cr>` | `freq`: MHz `150..2500`; `bw`: kHz `7.8..815`; `sf`: `5..12`; `cr`: `5..8` | Set all four radio parameters at once, space-separated. Always saved. A change to `bw`/`sf`/`cr` or a frequency shift under 20 MHz applies immediately; a frequency change of 20 MHz or more replies `OK - reboot to apply` and takes effect on the next restart. Example: `set radio 869.525 250 10 5` |
-  | `get radio.rxgain` | — | Show current RX gain mode: `off` or `on` |
-  | `set radio.rxgain <mode>` | `off` \| `on` | Set RX gain mode. |
+  | `set radio <freq>,<bw>,<sf>,<cr>` | `freq`: MHz `150..2500`; `bw`: kHz, exact chip step only — **SX1262:** `7.8` `10.4` `15.6` `20.8` `31.25` `41.7` `62.5` `125` `250` `500` · **LR1121:** `62.5` `125` `250` `500`, plus `203.125` `406.25` `812.5` above 1 GHz; `sf`: `5..12`; `cr`: `5..8` | Set all four at once, **comma-separated** (no spaces). Saved and applied without a reboot. Example: `set radio 869.525,250,10,5` |
+  | `get radio.rxgain` | — | Show the RX gain state, worded like the `set` reply, e.g. `> RX gain on` or `> External FEM LNA on` |
+  | `set radio.rxgain <mode>` | `off` \| `on` · Heltec V4.3 / T096: `off` \| `int` \| `ext` | `off` = SX1262 Rx power saving gain (lowest RX current). `on` = SX1262 Rx boosted gain. Heltec V4.3 / T096: `off` also bypasses the KCT8103L LNA, `int` = SX1262 Rx boosted gain only, `ext` = KCT8103L LNA only; `on` is another spelling of `int`. Saved and applied immediately. Default: `off` on Heltec V4.3 / T096, `on` elsewhere. |
   | `get rx.duty` | — | Show whether RX duty cycle is on, and the listening windows in use |
   | `set rx.duty <on\|off>` | `on` \| `off` | Sleep the receiver between short listening windows to cut idle current by 2-3 mA. `on` uses the windows computed for the spreading factor in use; if none fit the current SF/BW the request is refused and duty cycling stays off. Saved; applied immediately. Default: `off`. |
   | `get agc.resets` | — | Show how many times the AGC has been auto-reset since boot or last `clear agc.resets`. Returns `n/a (not supported on LR1121)` on LR1121 boards. |
@@ -52,7 +58,7 @@ Setup: In the MeshCore app, create a channel named "TerminalCLI". It will now ac
   | `get direct.txdelay` | — | Show direct relay jitter window scale factor (default `0.20`) |
   | `set direct.txdelay <value>` | `value`: decimal `0..10` | Set direct relay jitter window scale. |
   | `get int.thresh` | — | Show RSSI interference threshold in dB above noise floor (`0` = disabled) |
-  | `set int.thresh <dB>` | `dB`: integer `0..100` | Set RSSI interference threshold. `0` disables the check. |
+  | `set int.thresh <dB>` | `dB`: integer `0..200` | Set RSSI interference threshold. `0` disables the check. |
   | `get tz.offset` | — | Show UTC offset in hours used for display (`0` = UTC) |
   | `set tz.offset <hours>` | `hours`: integer `-12..14` | Set local timezone offset. Example: `set tz.offset 7` for UTC+7. Applied to the clock and date on the display only — all internal timestamps remain UTC. |
   | `get quick` | — | List all Quick Send presets with their index numbers |

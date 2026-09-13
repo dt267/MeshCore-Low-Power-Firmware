@@ -600,7 +600,7 @@ LoRa radio parameters. Long press opens a sub-level holding the two settings thi
 | BW | Bandwidth in kHz |
 | CR | Coding rate |
 | TX | Transmit power in dBm |
-| RxG | RX Gain mode: `OFF` / `ON` |
+| RxG | RX gain mode: `OFF` / `ON` — on Heltec V4.3 / T096 `OFF` / `INT` / `EXT` (see the TerminalCLI `radio.rxgain` command) |
 | NF | Noise floor — ambient noise level in dBm |
 | RxD | RX duty cycle: `OFF` / `ON` |
 
@@ -626,7 +626,7 @@ LoRa radio parameters. Long press opens a sub-level holding the two settings thi
 
 | Item | Action |
 |---|---|
-| **RxGain** | Toggle RxGain: OFF → ON |
+| **RxGain** | Cycle RX gain: OFF → ON — on Heltec V4.3 / T096 OFF → INT → EXT |
 | **RxDuty** | Toggle RX duty cycle on/off — sleeps the receiver to save 2-3 mA. Only works at SF5-SF8. |
 
 Both items stay in [Settings](#settings-page) as well; the sub-level just puts them next to the `RxG` and `RxD` readings they change.
@@ -738,7 +738,7 @@ Two views in one page — **Battery** is always first; long press cycles through
 | **BLE** | Toggle Bluetooth on/off; shows `ON, Connected` when app is connected. *Hidden when Connection Mode is USB or WiFi.* |
 | **Connection Mode** | Opens a mode selection screen. Navigate to `BLE`, `USB`, or `WiFi` and confirm — the node reboots into the chosen mode. The current active mode is marked `*`. |
 | **Repeat** | Toggle packet repeat on/off |
-| **RxGain** | Toggle RxGain: OFF → ON |
+| **RxGain** | Cycle RX gain: OFF → ON — on Heltec V4.3 / T096 OFF → INT → EXT |
 | **RxDuty** | Toggle RX duty cycle on/off — sleeps the receiver to save 2-3 mA. Only works at SF5-SF8. |
 | **Brightness** | Cycle backlight intensity: `25` → `50` → `75` → `100` *(Heltec T096 only)* |
 | **Units** | Toggles between Metric and Imperial |

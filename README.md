@@ -11,6 +11,7 @@ MeshCore firmware with deep power optimization, a full companion display UI with
 - Seeed Studio XIAO ESP32S3 & Wio-SX1262 Kit
 - RAK4631 WisBlock
 - Waveshare ESP32-S3-LR1121-XF (dual-band sub-GHz + 2.4 GHz)
+- EBYTE EoRa-HUB-xxxTB (dual-band sub-GHz + 2.4 GHz)
 - ...
 
 
@@ -29,6 +30,35 @@ MeshCore firmware with deep power optimization, a full companion display UI with
 - [License](#license)
 
 ## What's New
+
+### v1.17_0913
+
+- **New device: EBYTE EoRa-HUB-xxxTB — dual-band sub-GHz + 2.4 GHz.** *(Companion, Repeater, Room Server)*
+
+  A second LR1121 board: an ESP32-S3 carrier for EBYTE's E80-xxxM2213S module with a 0.96" OLED, dual-band across the sub-GHz LoRa bands and 2.4 GHz, each band with its own TX power. Companion is the unified BLE / USB / WiFi image; repeater includes the ESP-NOW bridge. Tested on hardware on both bands.
+
+  > **Wiring:** I2C sensors — SDA **GPIO18**, SCL **GPIO17**. GPS — module RX → **GPIO47**, module TX → **GPIO48**.
+
+- **New: adjustable ESP-NOW bridge TX power.** *(Repeater — ESP-NOW bridge builds)*
+
+  `set bridge.tx <dbm>` (2-20 dBm, rounded to the nearest hardware step) or the new "TX Power (dBm)" field on the config portal lowers the bridge's 2.4 GHz transmit power where two repeaters have signal to spare, to save current. Applies immediately, no reboot; kept in backup/restore. Default stays at the 20 dBm maximum.
+
+- **New: the config portal checks a firmware file against the board before flashing it.** *(Companion, Repeater, Room Server — ESP32 boards)*
+
+  A `.bin` built for another board still boots and drives that board's pins, which can damage it. **Flash Firmware** now refuses one before uploading. A file for a different node type, or with no board identity — anything built before this release — flashes only after ticking a confirmation.
+
+- **New: `adc.multiplier` works on every board.** *(Companion, Repeater, Room Server)*
+
+  `set adc.multiplier <ratio>` fine-tunes the battery voltage reading against a meter; `0` restores the board default. Previously Xiao S3 Wio only.
+
+- **New: `help` lists every command the node accepts.** *(Companion — TerminalCLI)*
+
+  Typing `help` in the TerminalCLI channel returns the full command list, grouped into sections.
+
+- **Changed: `radio.rxgain` on Heltec V4.3 / T096 is now `off` / `int` / `ext`.** *(Companion, Repeater, Room Server)*
+
+  `off` = KCT8103L LNA bypassed and SX1262 Rx power saving gain (lowest RX current). `int` = SX1262 Rx boosted gain only. `ext` = KCT8103L LNA only. Default is `off`. Same names on the display and the config portal. Other boards keep `off` / `on`. After upgrading, an old `on` comes up as `int`, an old `off` as `off`.
+
 
 ### v1.17_0906
 
@@ -66,7 +96,7 @@ MeshCore firmware with deep power optimization, a full companion display UI with
 
   Reads and sets frequency, bandwidth, spreading factor and coding rate — the same commands the Repeater already has. See [Companion TerminalCLI Commands](Companion_TerminalCLI_Commands.md).
 
-  A change to the spreading factor, bandwidth, coding rate or a small frequency shift applies right away. A frequency change of 20 MHz or more — moving between sub-GHz bands, or between sub-GHz and 2.4 GHz — is saved but only takes effect after a reboot. The TerminalCLI replies `OK - reboot to apply`; the app's Settings screen only confirms the values were saved, so after a band change made there, reboot the node yourself.
+  A change to the spreading factor, bandwidth, coding rate or a small frequency shift applies right away. A frequency change of 20 MHz or more — moving between sub-GHz bands, or between sub-GHz and 2.4 GHz — replies `OK - applying shortly`, and the app's Settings screen behaves the same way. Neither needs a reboot.
 
 - **Changed: Battery history is now 14 days, not 24 hours.** *(Companion — all platforms)*
 
@@ -908,7 +938,7 @@ MeshCore firmware with deep power optimization, a full companion display UI with
 
 ## Installation
 
-### Heltec V3 / V4.2 / WSL3 · XIAO S3 Wio (ESP32)
+### ESP32-S3
 
 > **Unified binary:** A single firmware file runs on both OLED and no-display hardware variants — no separate build required. The display is detected automatically at boot via I2C probe. The device name shown in the MeshCore app reflects the actual hardware detected (e.g. *Heltec V4.3 No Display* vs *Heltec V4.3 OLED*).
 
@@ -937,7 +967,7 @@ python -m esptool --chip esp32s3 write_flash 0x10000 <name>.bin
 **Option 3: Wi-Fi OTA** *(requires v1.14_0320 or later)*
 Type `start ota` via TerminalCLI (Companion) or Command Line (Repeater / Room Server) → connect to `MeshCore-OTA` Wi-Fi → go to `192.168.4.1/update`. Upload the plain `<name>.bin` file only — the merged binary is **not** compatible with OTA.
 
-### RAK4631 / Heltec T096 (nRF52840)
+### nRF52840
 
 **Option 1: UF2 drag-and-drop**
 Double-tap the Reset button → a USB drive appears → copy the `.uf2` file onto it. The device reboots automatically when done.

@@ -11,8 +11,11 @@ For the full upstream command reference see [docs/cli_commands.md](https://githu
 | `set advert.hops.max <N>` | `N`: `0..flood.max` | Limit how far ADVERT packets are relayed. `0` = suppress all advert relay. Clamped to `flood.max`. Repeater and room server. |
 | `get group.hops.max` | — | Show max hops for relaying group messages (GRP_TXT / GRP_DATA) |
 | `set group.hops.max <N>` | `N`: `0..flood.max` | Limit how far group messages are relayed. `0` = suppress all group relay. Clamped to `flood.max`. **Repeater only.** |
-| `reg read <addr>` | `addr`: hex register address | Read 1 byte from a radio register. Example: `reg read 8AC` |
-| `reg write <addr> <val>` | `addr`, `val`: hex | Write 1 or more bytes to a radio register. Values revert after reboot. Example: `reg write 0740 1424` |
+| `get radio` | — | Show current radio parameters as `freq,bw,sf,cr` — frequency (MHz), bandwidth (kHz), spreading factor, coding rate |
+| `set radio <freq>,<bw>,<sf>,<cr>` | `freq`: MHz `150..2500`; `bw`: kHz, exact chip step only — **SX1262:** `7.8` `10.4` `15.6` `20.8` `31.25` `41.7` `62.5` `125` `250` `500` · **LR1121:** `62.5` `125` `250` `500`, plus `203.125` `406.25` `812.5` above 1 GHz; `sf`: `5..12`; `cr`: `5..8` | Set all four at once, **comma-separated** (no spaces). Saved and applied without a reboot. Example: `set radio 869.525,250,10,5` |
+| `get radio.rxgain` | — | Show the RX gain state, worded like the `set` reply, e.g. `> RX gain on` or `> External FEM LNA on` |
+| `set radio.rxgain <mode>` | `off` \| `on` · Heltec V4.3 / T096: `off` \| `int` \| `ext` | `off` = SX1262 Rx power saving gain (lowest RX current). `on` = SX1262 Rx boosted gain. Heltec V4.3 / T096: `off` also bypasses the KCT8103L LNA, `int` = SX1262 Rx boosted gain only, `ext` = KCT8103L LNA only; `on` is another spelling of `int`. Saved and applied immediately. Default: `off` on Heltec V4.3 / T096, `on` elsewhere. |
+| `tempradio <freq>,<bw>,<sf>,<cr>,<mins>` | same as `set radio`, plus `mins`: minutes `>0` | Apply radio params temporarily, then revert automatically after `mins`. Not saved to flash. Example: `tempradio 869.525,250,10,5,30` |
 | `get rx.duty` | — | Show whether RX duty cycle is on, and the listening windows in use |
 | `set rx.duty <on\|off>` | `on` \| `off` | Sleep the receiver between short listening windows to cut idle current by 2-3 mA. `on` uses the windows computed for the spreading factor in use; if none fit the current SF/BW the request is refused and duty cycling stays off. Saved; applied immediately. Default: `off`. |
 | `get agc.resets` | — | Show how many times the AGC has been auto-reset since boot or last `clear agc.resets`. Returns `n/a (not supported on LR1121)` on LR1121 boards. |
@@ -33,6 +36,8 @@ For the full upstream command reference see [docs/cli_commands.md](https://githu
 | `set bridge.channel <n>` | `n`: `1..14` | Set the WiFi channel. Must match on both sides of the bridge. Default: `1`. |
 | `get bridge.secret` | — | Show the shared secret used to obfuscate bridge traffic |
 | `set bridge.secret <text>` | `text` | Set the shared secret used to obfuscate bridge traffic. Must match on both sides of the bridge. |
+| `get bridge.tx` | — | Show the ESP-NOW bridge 2.4 GHz TX power in dBm, with the accepted range |
+| `set bridge.tx <dbm>` | `dbm`: `2..20` | Set the ESP-NOW bridge TX power. Rounded to the nearest hardware step (`2, 5, 7, 8, 11, 13, 14, 15, 16, 18, 20` dBm); `0` or less = minimum. Applied immediately — no reboot. Also settable on the config portal. Default: `20`. |
 | `get bridge.delay` | — | Show the delay applied to packets arriving over the bridge |
 | `set bridge.delay <ms>` | `ms`: `0..10000` | Delay before a bridged packet is handed to the mesh, guarding against collision with the original LoRa packet. Set `0` when the two segments cannot hear each other, which is the usual case. Default: `500`. |
 | `get bridge.source` | — | Show which packets get bridged: `logTx` (transmitted) or `logRx` (received) |
