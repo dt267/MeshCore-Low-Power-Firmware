@@ -31,6 +31,14 @@ MeshCore firmware with deep power optimization, a full companion display UI with
 
 ## What's New
 
+### v1.17_0920
+
+- **New: configurable low-battery thresholds and pack voltage, with a Battery section on the config portal.** *(Companion, Repeater, Room Server)*
+
+  - **`set bat.cfg <cutoff>,<max>` / `get bat.cfg`:** to support batteries other than Li-ion / LiPo. Note that the boards' on-board charger only handles those two chemistries; anything else must be charged externally, and running the board on another chemistry is at your own risk. With Li-ion / LiPo the cutoff default stays at the board's 3.4 V: that keeps about 10 % of the charge in reserve so the battery check keeps running during deep sleep. `set bat.cfg` allows lowering it to 2.9 V, leaving headroom for other battery chemistries whose safe discharge floor sits lower than Li-ion's. Apply the same rule to any other chemistry — set the cutoff where that pack still has a reserve below it — or the board will never wake up on its own. Values are in volts; `max` goes up to 5.5 V. `0` in either slot keeps the board default. The wake-up point is derived from the cutoff by the firmware.
+  - **Battery section on the config portal:** every battery setting in one place — ADC multiplier, cutoff and max voltage — with the voltage and charge level as the node reads them right now. The settings are included in the portal's backup / restore file.
+  - **Safety check on `adc.multiplier` and cutoff:** a value that would read below the current battery level (50 mV margin) is now refused instead of applied — previously it could trip an immediate low-battery deep sleep.
+
 ### v1.17_0914
 
 - **Fix: Companion could crash on `start ota` and then stay in a boot loop.** *(Companion — ESP32 boards)*
@@ -66,7 +74,6 @@ MeshCore firmware with deep power optimization, a full companion display UI with
 - **Changed: `radio.rxgain` on Heltec V4.3 / T096 is now `off` / `int` / `ext`.** *(Companion, Repeater, Room Server)*
 
   `off` = KCT8103L LNA bypassed and SX1262 Rx power saving gain (lowest RX current). `int` = SX1262 Rx boosted gain only. `ext` = KCT8103L LNA only. Default is `off`. Same names on the display and the config portal. Other boards keep `off` / `on`. After upgrading, an old `on` comes up as `int`, an old `off` as `off`.
-
 
 ### v1.17_0906
 

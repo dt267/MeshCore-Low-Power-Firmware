@@ -53,6 +53,8 @@ Setup: In the MeshCore app, create a channel named "TerminalCLI". It will now ac
   | `del repeat.freq <MHz>` | `MHz`: frequency to remove | Remove a frequency from the repeat allowed list |
   | `get adc.multiplier` | — | Show the battery voltage calibration multiplier |
   | `set adc.multiplier <value>` | `value`: decimal, e.g. `2.000` | Set battery voltage calibration multiplier. Use `0` to reset to default. |
+  | `get bat.cfg` | — | Show the battery thresholds in effect as `<cutoff>,<max>` in volts. |
+  | `set bat.cfg <cutoff>,<max>` | two values in volts (decimal point, e.g. `3.4`), **comma-separated**; `0` in either slot = board default | `cutoff`: the node deep-sleeps below it (default `3.4` on most boards, keeps ~10 % of the charge in reserve so deep sleep can keep checking the battery; settable down to `2.9` for headroom on other battery chemistries) and wakes on its own once the battery has recovered above it; `max`: the pack's full-charge voltage, up to `5.5`. Batteries other than Li-ion / LiPo are used at your own risk. Example for 2S LTO: `set bat.cfg 4.4,5.4`. |
   | `get txdelay` | — | Show flood relay jitter window scale factor (default `0.50`) |
   | `set txdelay <value>` | `value`: decimal `0..10`, e.g. `2.0` | Set flood relay jitter window scale. Higher = wider window = fewer collisions but higher latency. |
   | `get direct.txdelay` | — | Show direct relay jitter window scale factor (default `0.20`) |

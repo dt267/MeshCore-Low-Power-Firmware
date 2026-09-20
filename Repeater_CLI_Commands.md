@@ -20,6 +20,10 @@ For the full upstream command reference see [docs/cli_commands.md](https://githu
 | `set rx.duty <on\|off>` | `on` \| `off` | Sleep the receiver between short listening windows to cut idle current by 2-3 mA. `on` uses the windows computed for the spreading factor in use; if none fit the current SF/BW the request is refused and duty cycling stays off. Saved; applied immediately. Default: `off`. |
 | `get agc.resets` | — | Show how many times the AGC has been auto-reset since boot or last `clear agc.resets`. Returns `n/a (not supported on LR1121)` on LR1121 boards. |
 | `clear agc.resets` | — | Reset the AGC auto-reset counter to zero. No-op on LR1121 boards (replies `not applicable on LR1121`). |
+| `get adc.multiplier` | — | Show the battery voltage calibration multiplier in effect. |
+| `set adc.multiplier <value>` | `value`: decimal, e.g. `5.100`; `0` = board default | Fine-tune the battery voltage reading against a meter on the battery terminals. Saved; applied immediately. |
+| `get bat.cfg` | — | Show the battery thresholds in effect as `<cutoff>,<max>` in volts. |
+| `set bat.cfg <cutoff>,<max>` | two values in volts (decimal point, e.g. `3.4`), **comma-separated**; `0` in either slot = board default | `cutoff`: the node deep-sleeps below it (default `3.4` on most boards, keeps ~10 % of the charge in reserve so deep sleep can keep checking the battery; settable down to `2.9` for headroom on other battery chemistries) and wakes on its own once the battery has recovered above it; `max`: the pack's full-charge voltage, up to `5.5`. Batteries other than Li-ion / LiPo are used at your own risk. Example for 2S LTO: `set bat.cfg 4.4,5.4`. |
 | `get gps.interval` | — | Show GPS update interval. Returns `always on` if `0`. |
 | `set gps.interval <s>` | `s`: seconds `1..86400`, or `0` = GPS always on (no sleep) | Set how often the GPS wakes up to update location. Applied immediately and saved. Default: `10`. |
 | `get gps.minsat` | — | Show how many satellites GPS needs before it reports a valid fix |
