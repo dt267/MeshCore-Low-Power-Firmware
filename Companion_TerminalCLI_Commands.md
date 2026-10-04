@@ -3,6 +3,8 @@
 ## Command Line Interface for Companion.
 Setup: In the MeshCore app, create a channel named "TerminalCLI". It will now act as a Terminal CLI for Companion; everything typed here is a command.
 
+The same commands also work on the app's **Command Line** screen. That screen shows one reply per command, so a long reply (`help all`, `get quick`, `get loc`, `ch.hops status`, `ch.msgs status`) comes a page at a time, ending with `mm: more`; type `mm` for the next page. The TerminalCLI channel shows every page at once.
+
 <img height="600" alt="Screenshot 2026-03-19 at 9 38 13 PM" src="https://github.com/user-attachments/assets/c1df229f-5eed-43b8-abdb-906c3c864a62" />
 
 
@@ -10,10 +12,13 @@ Setup: In the MeshCore app, create a channel named "TerminalCLI". It will now ac
 
 | Command | Parameters | Notes |
   |---|---|---|
-  | `help` | — | List every command this board supports, grouped into sections. Only works over the app link; a remote CLI request replies `help is local-only`. |
+  | `help` | — | List the keywords to look up with `help <keyword>`, one line per section. Only works over the app link; a remote CLI request replies `help is local-only`. |
+  | `help <keyword>` | `keyword`: a word of the command, or its start, e.g. `gps`, `wifi`, `rx`, `set` | List the commands this board supports that have a word starting with `keyword` (not case-sensitive). Example: `help ch` lists the `ch.hops` and `ch.msgs` commands. |
+  | `help all` | — | List every command this board supports, grouped into sections |
+  | `mm` | — | Command Line screen only: show the next page of the last long reply. Replies `no more` when there is none. |
   | `stats` | — | Show battery voltage (mV), uptime (s), noise floor, last RSSI/SNR, and RX/TX/error packet counts |
   | `reboot` | — | Reboot the device |
-  | `poweroff` | — | Power off the device |
+  | `poweroff` | — | Power off the device. Alias: `shutdown` |
   | `ver` | — | Show firmware version and build date |
   | `board` | — | Show the board/manufacturer name this firmware was built for |
   | `get name` | — | Show the node name |
@@ -52,7 +57,7 @@ Setup: In the MeshCore app, create a channel named "TerminalCLI". It will now ac
   | `add repeat.freq <MHz>` | `MHz`: e.g. `915` or `915.125` | Add a frequency to the repeat allowed list (max 5). Saved after reboot. |
   | `del repeat.freq <MHz>` | `MHz`: frequency to remove | Remove a frequency from the repeat allowed list |
   | `get adc.multiplier` | — | Show the battery voltage calibration multiplier |
-  | `set adc.multiplier <value>` | `value`: decimal, e.g. `2.000` | Set battery voltage calibration multiplier. Use `0` to reset to default. |
+  | `set adc.multiplier <value>` | `value`: decimal, e.g. `2.000` | Set battery voltage calibration multiplier. Use `0` to reset to default (HT-CT62, XIAO S3 Wio: no default, `0` turns battery reading off). |
   | `get bat.cfg` | — | Show the battery thresholds in effect as `<cutoff>,<max>` in volts. |
   | `set bat.cfg <cutoff>,<max>` | two values in volts (decimal point, e.g. `3.4`), **comma-separated**; `0` in either slot = board default | `cutoff`: the node deep-sleeps below it (default `3.4` on most boards, keeps ~10 % of the charge in reserve so deep sleep can keep checking the battery; settable down to `2.9` for headroom on other battery chemistries) and wakes on its own once the battery has recovered above it; `max`: the pack's full-charge voltage, up to `5.5`. Batteries other than Li-ion / LiPo are used at your own risk. Example for 2S LTO: `set bat.cfg 4.4,5.4`. |
   | `get txdelay` | — | Show flood relay jitter window scale factor (default `0.50`) |
@@ -85,10 +90,11 @@ Setup: In the MeshCore app, create a channel named "TerminalCLI". It will now ac
   | `set conn.mode <mode>` | `ble` \| `usb` \| `wifi` | Switch transport mode. Saves to flash and reboots immediately. In USB mode the node connects via USB serial; BLE is not started. In WiFi mode the node connects as a STA to the configured network and listens for TCP connections on port 5000. |
   | `get wifi.ssid` | — | Show the WiFi SSID configured for WiFi mode |
   | `set wifi.ssid <ssid>` | `ssid`: network name (max 32 chars) | Set the WiFi SSID for WiFi mode. Saved to flash. |
-  | `get wifi.password` | — | Returns `***` (password is write-only) |
-  | `set wifi.password <password>` | `password`: max 64 chars | Set the WiFi password for WiFi mode. Saved to flash. Leave blank or omit for open networks. |
+  | `get wifi.password` | — | Show the WiFi password configured for WiFi mode. Alias: `get wifi.pwd` |
+  | `set wifi.password <password>` | `password`: max 64 chars | Set the WiFi password for WiFi mode. Saved to flash. Leave blank or omit for open networks. Alias: `set wifi.pwd` |
   | `get wifi.ip` | — | Show static IP and subnet configured for WiFi mode, or `DHCP` if none is set |
   | `set wifi.ip <ip> [subnet]` | `ip`: e.g. `192.168.1.100`; `subnet`: e.g. `255.255.255.0` (optional, default `255.255.255.0`) | Set a static IP for WiFi mode. Saved to flash; takes effect after next reboot into WiFi mode. If subnet is omitted, the previously saved subnet is kept. Example: `set wifi.ip 192.168.1.100` or `set wifi.ip 192.168.1.100 255.255.255.0` |
   | `clear wifi.ip` | — | Remove static IP; the node will use DHCP on next boot in WiFi mode. |
-  | `set portal.password <password>` | `password`: max 32 chars | Set the config portal login password. When set, the browser must log in before accessing the portal. Saved to flash. |
-  | `clear portal.password` | — | Remove the portal password; the portal becomes accessible without login. |
+  | `get portal.password` | — | Show the config portal login password, or `(none)` if none is set. Alias: `get portal.pwd` |
+  | `set portal.password <password>` | `password`: max 32 chars | Set the config portal login password. When set, the browser must log in before accessing the portal. Saved to flash. Alias: `set portal.pwd` |
+  | `clear portal.password` | — | Remove the portal password; the portal becomes accessible without login. Alias: `clear portal.pwd` |

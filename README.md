@@ -8,10 +8,11 @@ MeshCore firmware with deep power optimization, a full companion display UI with
 - Heltec Vision Master E290 (2.9" e-ink) — not yet tested on hardware
 - Heltec Wireless Paper (2.13" e-ink) — V1.1.1 / V1.2 only (SSD1680 panel; see note below)
 - Heltec Mesh Node T096
-- Seeed Studio XIAO ESP32S3 & Wio-SX1262 Kit
+- Seeed Studio XIAO ESP32S3 & Wio-SX1262 Kit (with or without OLED display)
 - RAK4631 WisBlock
-- Waveshare ESP32-S3-LR1121-XF (dual-band sub-GHz + 2.4 GHz)
+- Waveshare ESP32-S3-LR1121-XF (dual-band sub-GHz + 2.4 GHz, with or without OLED display)
 - EBYTE EoRa-HUB-xxxTB (dual-band sub-GHz + 2.4 GHz)
+- Heltec HT-CT62 (ESP32-C3 + SX1262 module), and DIY ESP32-C3 + SX1262 boards wired the same way (with or without OLED display)
 - ...
 
 
@@ -30,6 +31,66 @@ MeshCore firmware with deep power optimization, a full companion display UI with
 - [License](#license)
 
 ## What's New
+
+### v1.17_1004
+
+- **New device: Heltec HT-CT62 — ESP32-C3 + SX1262 module, and DIY ESP32-C3 + SX1262 boards.** *(Companion, Repeater, Room Server)*
+
+  The first ESP32-C3 board. Companion is the unified BLE / USB / WiFi image; repeater includes the ESP-NOW bridge. The same images run on a DIY ESP32-C3 board wired to an SX1262 on the CT62 pins (see Wiring): the SX1262 module must switch its RF path with DIO2 and use a 1.8 V TCXO on DIO3, as the CT62 does, and NSS needs a 10k pull-up to 3.3 V (built into the CT62) to keep the radio asleep in deep sleep. There are two image sets; pick the one that matches how the board's USB port reaches the chip:
+
+  - **`Heltec_ct62_*`** — USB goes through a USB-to-serial chip (CH340K / CP2102) on UART0, as on Heltec's HT-CT62 reference design.
+  - **`Heltec_ct62_*_cdc`** — USB is wired straight to the ESP32-C3 (GPIO18/19), as on the reference design with R4/R10 fitted and no USB-to-serial chip.
+
+  **Wiring:**
+
+  | | `Heltec_ct62_*` | `Heltec_ct62_*_cdc` |
+  | :--- | :--- | :--- |
+  | USB | via USB-to-serial chip: its RXD ← **GPIO21** (U0TXD), its TXD → **GPIO20** (U0RXD) | D- → **GPIO18**, D+ → **GPIO19** |
+  | I2C sensors, OLED | SDA **GPIO18**, SCL **GPIO19** | SDA **GPIO20**, SCL **GPIO21** |
+  | SX1262 (DIY) | NSS **GPIO8**, SCK **GPIO10**, MOSI **GPIO7**, MISO **GPIO6**, RESET **GPIO5**, BUSY **GPIO4**, DIO1 **GPIO3** | same |
+  | User button | **GPIO9** (BOOT) to GND | same |
+  | Battery divider output | **GPIO2** | **GPIO2** |
+  | 32.768 kHz crystal | **GPIO0** (XTAL_32K_P) / **GPIO1** (XTAL_32K_N), load capacitor from each pin to GND | same |
+
+  The module and the reference design have no voltage divider on the battery pin (GPIO2), so battery reading and low-battery protection stay off until you wire a divider and `set adc.multiplier <ratio>`. No GPS: the C3 has no pins left for one.
+
+  **Optional OLED:** a 128×64 I2C OLED at address 0x3C on the I2C pins and 3.3 V is detected at boot, so the same image runs with or without one. Both common modules work: the 0.96" SSD1306 and the 1.3" SH1106. The firmware tells the two controllers apart at boot, so there is no setting to choose. With the display, Companion shows the full display UI, and Repeater and Room Server show their status screen. The display is turned off before power-off and before low-battery deep sleep. Without a display, Companion's BLE PIN stays at 123456; with one, a new random PIN is shown on the display at every boot. A PIN set with `set pin` is used either way.
+
+  The 32.768 kHz crystal is optional, but recommended: it keeps the RTC more accurate and lowers Companion's current over BLE.
+
+  The firmware uses its own partition table, so flash the `_merged.bin` image the first time (see [Installation](#installation)).
+
+- **New: optional OLED display on XIAO ESP32S3 & Wio-SX1262 Kit.** *(Companion, Repeater, Room Server)*
+
+  Wire a 0.96" SSD1306 or 1.3" SH1106 OLED (128×64, I2C address 0x3C) to SDA **GPIO5** (D4), SCL **GPIO6** (D5) and 3.3 V. Works the same as the HT-CT62's optional OLED (see above).
+
+- **New: optional OLED display and battery reading on Waveshare ESP32-S3-LR1121-XF.** *(Companion, Repeater, Room Server)*
+
+  **OLED:** wire a 0.96" SSD1306 or 1.3" SH1106 OLED (128×64, I2C address 0x3C) to header J5: SDA **IO8** (pin 11), SCL **IO9** (pin 12), GND (pin 13) and 3.3 V (pin 28). Works the same as the HT-CT62's optional OLED (see above); the BOOT button is the display's button.
+
+  **Battery:** the module has no battery voltage divider of its own. Wire one from the battery to header J5: divider output to **IO1** (pin 2), divider ground to GND (pin 3), then `set adc.multiplier <ratio>`. Until it is set, battery reading and low-battery protection stay off.
+
+- **Change: I2C sensor pins on EBYTE EoRa-HUB moved to header J5.** *(Companion, Repeater, Room Server)*
+
+  Wire I2C sensors to SDA **GPIO6** (J5 pin 17), SCL **GPIO7** (J5 pin 18), GND (J5 pin 1) and 3.3 V (J5 pin 2 or 3). The pins given in v1.17_0913 (SDA GPIO18, SCL GPIO17) carry only the onboard OLED and are not brought out to any header.
+
+- **New: `help <keyword>`, and long CLI replies now page on the official app's Command Line screen.** *(Companion)*
+
+  `help` now lists the keywords to look up; `help <keyword>` lists the commands with a word starting with it, e.g. `help gps` or `help wifi`; `help all` gives the full list. The Command Line screen exists only in the official app 1.50 and later; it used to show only the first part of a long reply; it now shows one page at a time, ending with `mm: more` — type `mm` for the next page. The TerminalCLI channel still shows every page at once. See [Companion TerminalCLI Commands](Companion_TerminalCLI_Commands.md).
+
+- **Fix: restoring a backup on the config portal did nothing.** *(Companion, Repeater, Room Server — ESP32 boards)*
+
+  On Companion the page said "Import done", but after the reboot every setting was unchanged. The portal now also shows "Import failed" with the error code whenever an import fails.
+
+- **Fix: merged images for Waveshare ESP32-S3-LR1121-XF and EBYTE EoRa-HUB were built for the wrong flash size.** *(Companion, Repeater, Room Server)*
+
+- **Fix: "Failed to fetch device info" on the official iOS MeshCore app after pairing a node for the first time.** *(Companion — all ESP32 boards)*
+
+  After the PIN was entered, the app could stop with `writeCharacteristic ... Timed out after 15s` and only connected after a disconnect and reconnect. It now connects straight away — as long as you type the PIN within 15 seconds, which is how long the app waits.
+
+- **Fix: with RX Duty Cycle on, long messages were often lost.** *(All roles — SX1262 and LR1121 boards, RX Duty Cycle on)*
+
+  Packets close to the maximum size are now received in full. Since v1.17_0906 they could be cut off mid-reception, so the message was lost or a DM needed several retries.
 
 ### v1.17_0920
 
@@ -953,7 +1014,7 @@ MeshCore firmware with deep power optimization, a full companion display UI with
 
 ## Installation
 
-### ESP32-S3
+### ESP32-S3 / ESP32-C3
 
 > **Unified binary:** A single firmware file runs on both OLED and no-display hardware variants — no separate build required. The display is detected automatically at boot via I2C probe. The device name shown in the MeshCore app reflects the actual hardware detected (e.g. *Heltec V4.3 No Display* vs *Heltec V4.3 OLED*).
 
@@ -964,12 +1025,27 @@ Two binary formats are provided for each firmware variant:
 | `<name>.bin` | Application only | Update / OTA — preserves existing partitions |
 | `<name>_merged.bin` | Bootloader + partition table + application | First-time install or full recovery |
 
+> **Custom partition table on 4 MB boards — flash the merged image first.** Waveshare ESP32-S3-LR1121-XF, EBYTE EoRa-HUB and Heltec HT-CT62 use this firmware's own partition table:
+>
+> | Partition | Offset | Size |
+> | :--- | :--- | :--- |
+> | nvs | `0x9000` | 20 KB |
+> | otadata | `0xE000` | 8 KB |
+> | app0 (OTA slot 0) | `0x10000` | 1.6875 MB |
+> | app1 (OTA slot 1) | `0x1C0000` | 1.6875 MB |
+> | spiffs (settings, contacts) | `0x370000` | 512 KB |
+> | coredump | `0x3F0000` | 64 KB |
+>
+> It differs from other firmware for these boards, so the first time you install this firmware — on a new board, or one coming from any other firmware — flash the `_merged.bin` image (Option 1). It writes the bootloader, this partition table and the application in one go. Option 2 and Wi-Fi OTA only work once this partition table is on the board.
+
 **Option 1: Full flash (merged binary) — recommended for first-time install**
 
 Flash the `_merged.bin` file starting at address `0x0`. This is self-contained and requires no prior MeshCore installation.
 ```
 python -m esptool --chip esp32s3 write_flash 0x0 <name>_merged.bin
 ```
+For Heltec HT-CT62 (ESP32-C3) use `--chip esp32c3` here and in Option 2. If esptool cannot connect, hold **BOOT** (GPIO9) while pressing **RESET** to enter download mode.
+
 > **Note:** Full flash erases the NVS partition, which stores BLE pairing keys — you will need to re-pair BLE devices after flashing. Settings stored in the SPIFFS filesystem partition are beyond the merged binary range and are **not** affected.
 
 **Option 2: Application update via esptool**

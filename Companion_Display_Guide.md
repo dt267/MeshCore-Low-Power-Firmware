@@ -1,6 +1,6 @@
 # Companion Radio — Display & Button Guide
 
-How to use the display and button on your Companion Radio node. Applies to all supported hardware — OLED (Heltec V3, V4), color TFT (Heltec T096), and e-ink (Heltec E213, Wireless Paper, E290).
+How to use the display and button on your Companion Radio node. Applies to all supported hardware — OLED (Heltec V3, V4, and the optional 0.96" SSD1306 / 1.3" SH1106 OLED on HT-CT62, XIAO ESP32S3 & Wio-SX1262 Kit and Waveshare ESP32-S3-LR1121-XF), color TFT (Heltec T096), and e-ink (Heltec E213, Wireless Paper, E290).
 
 ---
 
