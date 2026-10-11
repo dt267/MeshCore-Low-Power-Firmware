@@ -23,6 +23,7 @@ MeshCore firmware with deep power optimization, a full companion display UI with
 - [What's New](#whats-new)
 - [Installation](#installation)
 - [Idle Battery Life Estimation](#idle-battery-life-estimation-2000-mah-battery)
+- [Hardware Wiring Guide](Hardware_Wiring_Guide.md) — I2C sensors, OLED, GPS, battery divider, DIY boards
 - [Detailed Power Profiles by Device](Power-Profiles-Detailed.md)
 - [Bypass External LNA on Heltec V4.2](Bypass-External-LNA-on-Heltec-V4.md)
 - [Stock Antennas SWR Testing](Stock_Antennas_SWR_Testing.md)
