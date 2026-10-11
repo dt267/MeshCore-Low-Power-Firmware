@@ -13,6 +13,7 @@ MeshCore firmware with deep power optimization, a full companion display UI with
 - Waveshare ESP32-S3-LR1121-XF (dual-band sub-GHz + 2.4 GHz, with or without OLED display)
 - EBYTE EoRa-HUB-xxxTB (dual-band sub-GHz + 2.4 GHz)
 - Heltec HT-CT62 (ESP32-C3 + SX1262 module), and DIY ESP32-C3 + SX1262 boards wired the same way (with or without OLED display)
+- ProMicro nRF52840 on a fakeTec board with a Heltec HT-RA62 or Ai-Thinker Ra-01SH radio module, and DIY ProMicro + SX1262 boards wired the same way (with or without OLED display)
 - ...
 
 
@@ -32,6 +33,54 @@ MeshCore firmware with deep power optimization, a full companion display UI with
 
 ## What's New
 
+### v1.17_1011
+
+- **New: compressed messages from Meshcore Open and MeshCore Open Advanced (MCOa) are now readable on the node's display and in the official app.** *(Companion)*
+
+  These apps can send text in compressed formats the official app cannot read: SMAZ (`s:...`) and MCOtxt (`mct:...`) showed up as strings of random characters, and MCOtxt sent in MCOa's binary mode did not show up at all. The node now recognises these formats by itself, with no setting: its display and every connected app except MCOa show the plain text. A message too long for one app frame arrives in the official app as several consecutive messages from the same sender. Formats the node cannot render are shown as one line with the sender's name: `<MCMP v3 message>`, `<MCOimg v4 image>`, or `<AEIC image>` once per image. MCOa still receives every message in its original form.
+
+- **New device: ProMicro nRF52840 on a fakeTec board with a Heltec HT-RA62 or Ai-Thinker Ra-01SH, and DIY ProMicro + SX1262 boards.** *(Companion, Repeater, Room Server)*
+
+  The ProMicro is a nice!nano-style nRF52840 board; the fakeTec is a carrier PCB that takes a ProMicro and an SX1262 radio module. Companion is the unified BLE / USB image, as on the RAK4631. Flash the `ProMicro_*.uf2` files like the other nRF52 boards (see [Installation](#installation)). The same images run on a DIY ProMicro wired to an SX1262 module on the same pins (see Wiring): the module must switch its RF path with DIO2 and have the SX1262 DC-DC inductor fitted, as the HT-RA62 and Ra-01SH do, and be powered from the ProMicro's 3.3 V (VCC) pin, which the firmware switches off at power off.
+
+  **Idle current:** the Companion with BLE on idles at **2.7 mA** with RX Duty Cycle on and SX1262 Boosted Gain off, about **26 days** on a 2000 mAh battery. The Repeater idles at **2.64 mA** under the same conditions, about **27 days**.
+
+  **Wiring (fakeTec V4 silkscreen labels):**
+
+  | | Pin |
+  | :--- | :--- |
+  | LoRa module | NSS **D15** (P1.13), SCK **D14** (P1.11), MOSI **D18** (P1.15), MISO **D19** (P0.02), RESET **D10** (P0.09), BUSY **D20** (P0.29), DIO1 **D16** (P0.10), RXEN **RXEN** pad (P0.17) |
+  | I2C sensors, OLED | SDA **D8** (P1.04), SCL **D7** (P0.11) |
+  | User button | **D6** (P1.00) to GND |
+  | GPS | GPS TX → **D4** (P0.22), GPS RX ← **D3** (P0.20), GPS EN ← **D5** (P0.24), optional |
+  | Battery divider | **D21** (P0.31), fakeTec R1/R2 |
+  | Buzzer, optional (Companion) | fakeTec MOSFET switched by **D0** (P0.08) |
+  | Vibration motor, optional (Companion) | fakeTec MOSFET switched by **D1** (P0.06) |
+
+  **Optional OLED:** a 0.96" SSD1306 or 1.3" SH1106 OLED (128×64, I2C address 0x3C) on the I2C pins and the fakeTec 3.3 V pin. Works the same as the HT-CT62's optional OLED (see v1.17_1004).
+
+  **GPS:** any NMEA module at 9600 or 115200 baud. The firmware finds the baud rate at boot, and also checks whether the module's enable pin is wired to D5. If it is, the module is switched off while GPS is off or sleeping between fixes; if it is not, the module stays powered.
+
+  **Buzzer and vibration motor (Companion, optional):** a passive buzzer on the fakeTec MOSFET switched by D0, a vibration motor on the one switched by D1. The node beeps and vibrates when a message arrives while no app is connected, and when you send a message or an advert. The buzzer can be muted in Settings; the vibra has no off switch.
+
+  **Battery:** battery reading and low-battery protection stay off until you `set adc.multiplier <ratio>` for your divider. Once it is set, the cutoff defaults to 3400 mV: the fakeTec's 3.3 V pin (radio, OLED, GPS) comes from an LDO fed by the battery, and 3400 mV leaves it headroom. `set bat.cfg` accepts a cutoff down to 2900 mV.
+
+  **32.768 kHz crystal:** the firmware is built for a ProMicro, or equivalent nRF52840 hardware, with the 32.768 kHz crystal fitted on P0.00/P0.01, and runs the clock from that crystal, which keeps it accurate.
+
+- **New: `help` command on the repeater and room server.** *(Repeater, Room Server)*
+
+  Type `help` in the app's remote CLI or on the serial console to list the command sections: `name clock password radio repeat flood advert region bat sensor`, plus `neighbor` on a repeater, and `gps` and `bridge` on nodes that have them. `help <section>` shows that section, e.g. `help radio`, and `help <word>` finds the commands containing a word you remember, e.g. `help flood` or `help txdelay`. Long sections such as `help region` list only the command names; `help region put` shows that command's arguments. Only commands the node accepts are listed: GPS commands only when a GPS was found at boot, and serial-only commands such as `erase` and `get prv.key` only on the serial console.
+
+- **New: type messages on the node with an M5Stack CardKB keyboard.** *(Companion)*
+
+  Connect an M5Stack Unit CardKB v1.1 to the node's I2C sensor pins: SDA, SCL, 3.3 V and GND. The node looks for it while running, so it can be plugged in and unplugged at any time: keep it unplugged and connect it only when you want to type. The display shows "Keyboard ready" when it is found. While the keyboard is attached, **Reply** on a message and **Send message** on a contact open a text editor instead of the Quick Reply screen: type up to 151 characters, Enter sends, Esc leaves without sending, Left / Right move the cursor, Up / Down jump to the start / end, and Del deletes the character before the cursor. On the other screens, Down and Right move to the next item, Up to the previous one, Enter selects and Esc goes back; from any screen, Fn + 1 … 9 goes straight to that Home screen page, counted as the page dots show them (1 Home, 2 Quick Send, 3 Contacts,...). Without the keyboard the node works as before. Available on every supported device with a display except the Heltec Wireless Paper.
+
+  **Low-power CardKB firmware (optional):** with its original firmware the CardKB adds about 5.6 mA to the node's current. With [`M5Stack_CardKB_v1.1_low_power.hex`](https://github.com/dt267/MeshCore-Low-Power-Firmware/releases/download/MeshCore-low-power-v1.17.dev_1011/M5Stack_CardKB_v1.1_low_power.hex), included in this release for the CardKB's ATmega8A, it draws about 0.32 mA at 3.3 V. The node works with either firmware. Keep the CardKB's fuses as shipped: low 0x84, high 0xD9. Differences from the original firmware: a key is sent when pressed rather than when released, up to 16 keys are buffered, and Shift, Sym and Fn work as on a computer keyboard: hold one while pressing other keys, or tap it on its own to lock it and tap it again to unlock. The LED lights while a modifier is locked.
+
+- **New: uptime on the Battery page, and live radio stats in the Radio page's sub-level.** *(Companion)*
+
+  The Battery view of the Sensors page shows how long the node has been running since its last restart, under the 14-day chart: `Uptime 5h 12m`, then `Uptime 3d 04h` from the first day on. Long press on the Radio page now also shows the last received packet's RSSI and SNR, and the number of packets the radio has received and sent since the last restart, below RxGain and RxDuty. See the [Display Guide](Companion_Display_Guide.md#radio-page).
+
 ### v1.17_1004
 
 - **New device: Heltec HT-CT62 — ESP32-C3 + SX1262 module, and DIY ESP32-C3 + SX1262 boards.** *(Companion, Repeater, Room Server)*
@@ -40,6 +89,8 @@ MeshCore firmware with deep power optimization, a full companion display UI with
 
   - **`Heltec_ct62_*`** — USB goes through a USB-to-serial chip (CH340K / CP2102) on UART0, as on Heltec's HT-CT62 reference design.
   - **`Heltec_ct62_*_cdc`** — USB is wired straight to the ESP32-C3 (GPIO18/19), as on the reference design with R4/R10 fitted and no USB-to-serial chip.
+
+  **Idle current:** a DIY ESP32-C3 Super Mini + SX1262 Companion with the 32.768 kHz crystal fitted and BLE on idles at **4.7 mA** with RX Duty Cycle on (`set rx.duty on`) and SX1262 Boosted Gain off, about **15 days** on a 2000 mAh battery. The Repeater idles at **3.33 mA** under the same conditions, about **21 days**.
 
   **Wiring:**
 
@@ -1098,6 +1149,10 @@ Ways to enter DFU mode:
 | XIAO S3 Wio Room Server, SX1262 Boosted Gain on | 8.7 | 195.4 | 8.14 |
 | RAK4631 Companion BLE, SX1262 Boosted Gain on | 6.61 | 257.18 | 10.71 |
 | RAK4631 Repeater, SX1262 Boosted Gain on | 5.79 | 293.6 | 12.23 |
+| ProMicro fakeTec Companion BLE, SX1262 Boosted Gain off, RX Duty Cycle on | 2.7 | 629.6 | 26.23 |
+| ProMicro fakeTec Repeater, SX1262 Boosted Gain off, RX Duty Cycle on | 2.64 | 643.9 | 26.83 |
+| DIY ESP32-C3 Super Mini + SX1262 Companion BLE, 32.768 kHz crystal, SX1262 Boosted Gain off, RX Duty Cycle on | 4.7 | 361.7 | 15.07 |
+| DIY ESP32-C3 Super Mini + SX1262 Repeater, 32.768 kHz crystal, SX1262 Boosted Gain off, RX Duty Cycle on | 3.33 | 510.5 | 21.27 |
 
 ---
 

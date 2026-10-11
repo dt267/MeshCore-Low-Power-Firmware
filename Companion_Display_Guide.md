@@ -71,6 +71,7 @@ Single click cycles forward; double click and triple click both cycle backward.
   - **USB connected**: replaced by a USB connector glyph whenever Connection Mode is set to USB and a live USB connection is detected — takes priority over the charging glyph if both apply at once. *(Heltec V4, E213, E290, T096 only — V3 and Wireless Paper's USB chip has no way to detect this.)* On V4 / E213 / E290 this means the cable is plugged into a powered host (PC); on T096 it means an app has actually opened the connection — just plugging into a PC without opening anything won't show it.
 - **Header**: when messages are stored in memory, shows count + envelope icon (`5✉`) where the clock used to be; empty when count is zero
 - **GPS-on icon**: a small circle-with-center-dot glyph appears just left of the battery icon whenever GPS is turned on — an easy thing to forget about and leave draining the battery. *(Only on the Home page for OLED, since header space is tight there; shown on every page on T096 and e-ink, which have more header room.)*
+- **Muted icon**: while the buzzer is muted in Settings, a small muted-speaker glyph sits left of the clock or the envelope, or right next to the battery / GPS icon when neither is shown (Home page with no stored messages). *(ProMicro fakeTec with a buzzer fitted)*
 - Page indicator dots below the header (filled dot = current page)
 - **Large clock** (`HH:MM`) always centered — shows current local time once synced; shows uptime (`00:00` counting up) before first sync
 - **OLED / T096**: date on the middle-bottom row, connection status at the very bottom
@@ -447,6 +448,49 @@ After sending, an alert confirms success or failure and the screen returns to th
 
 ---
 
+## CardKB keyboard
+
+An M5Stack Unit CardKB v1.1 connected to the node's I2C sensor pins (SDA, SCL, 3.3 V, GND) lets you type messages. Plug it in only when you want to type and unplug it afterwards; no restart is needed. The display shows **Keyboard ready** when it is found. Without the keyboard, everything works with the button as described above.
+
+**Navigating.** The keyboard works alongside the button on every screen:
+
+| Key | Same as |
+|---|---|
+| Down, Right | Single click (next) |
+| Up | Triple click (previous) |
+| Enter | Long press (select / send) |
+| Esc | Double click (back) |
+| Fn + 1 … 9 | Go straight to that Home screen page, from any screen, counted as the page dots show them: 1 Home, 2 Quick Send, 3 Contacts, 4 Saved Locations, 5 Recent, 6 Radio, then GPS *(only when a GPS is found)*, Sensors and Settings |
+
+While the display is off, the first key only turns it on.
+
+**Typing a message.** While the keyboard is attached, **Reply** on a message and **Send message** on a contact open the text editor instead of the Quick Reply screen. If you plug the keyboard in while the Quick Reply screen is open, a `>> Type...` item at the end of the list opens the editor.
+
+```
+┌──────────────────────────────┐
+│ To: Alien                    │
+│──────────────────────────────│
+│ On my way, ETA 10 min|       │
+│                              │
+│                              │
+└──────────────────────────────┘
+```
+
+The header shows who the message will go to, as on the Quick Reply screen. The `|` marks the cursor.
+
+| Key | Action |
+|---|---|
+| Letters, digits, symbols, Space | Insert at the cursor |
+| Del | Delete the character before the cursor |
+| Left / Right | Move the cursor |
+| Up / Down | Jump to the start / end |
+| Enter | Send |
+| Esc | Leave without sending |
+
+A message can be up to 151 characters. Shift gives capitals and Sym gives symbols. With the [low-power CardKB firmware](https://github.com/dt267/MeshCore-Low-Power-Firmware/releases/download/MeshCore-low-power-v1.17.dev_1011/M5Stack_CardKB_v1.1_low_power.hex) (see the v1.17_1011 notes in the README), hold Shift or Sym while pressing keys, or tap it on its own to lock it and tap it again to unlock; the CardKB's original firmware applies a single tap to the next key and locks on a double tap. A direct message shows **Sending...** until the recipient confirms it, then **Delivered!** or **Not delivered**; Esc while waiting stops waiting. A channel message shows **Sent!** right away. The screen then returns to where you came from.
+
+---
+
 ## Saving a GPS location
 
 When viewing a message that contains GPS coordinates, long press opens the popup and select **Save location**:
@@ -612,8 +656,12 @@ LoRa radio parameters. Long press opens a sub-level holding the two settings thi
 │         · · · · · • ·        │
 │ RxGain                    ON │
 │ RxDuty                   OFF │
+│ RSSI: -87          SNR: 7.5  │
+│ RX: 1234             TX: 567 │
 └──────────────────────────────┘
 ```
+
+The two bottom rows are read-only: last received packet's RSSI (dBm) and SNR (dB), and packets received / sent since the last restart. They refresh every 5 seconds, so the effect of an RxGain or RxDuty change shows right next to it. On T096 they are drawn in yellow.
 
 **In sub-level:**
 
@@ -682,12 +730,14 @@ Two views in one page — **Battery** is always first; long press cycles through
 │ BATTERY 14D             3.82V │
 │         · · · · · · •        │
 │ ▂▃▄▅▆▇█▇▆▅▄▃▂▁          │
+│ Uptime 3d 04h                │
 └──────────────────────────────┘
 ```
 
 - 14-day rolling battery-percentage history, one bar per day, scrolling in as the days go
 - Dashed lines mark the 100% and 50% levels for a quick read on trend
 - Header top-right shows precise Vbat voltage (the battery icon elsewhere only shows a rough %)
+- Bottom row shows uptime since the last restart: `Uptime 5h 12m` for the first day, `Uptime 3d 04h` after that
 
 **Attached sensor readings** *(only shown if an environment sensor is detected)*:
 ```
@@ -741,6 +791,7 @@ Two views in one page — **Battery** is always first; long press cycles through
 | **RxGain** | Cycle RX gain: OFF → ON — on Heltec V4.3 / T096 OFF → INT → EXT |
 | **RxDuty** | Toggle RX duty cycle on/off — sleeps the receiver to save 2-3 mA. Only works at SF5-SF8. |
 | **Brightness** | Cycle backlight intensity: `25` → `50` → `75` → `100` *(Heltec T096 only)* |
+| **Buzzer** | Toggle the buzzer `ON` / `MUTED`; a beep confirms when it is turned back on. *(ProMicro fakeTec with a buzzer fitted)* |
 | **Units** | Toggles between Metric and Imperial |
 | **Pos. Format** | Cycle GPS coordinate display: `DD` → `UTM` → `MGRS` |
 | **GPS Privacy** | Toggle ON to hide GPS coords from Quick Send messages |
