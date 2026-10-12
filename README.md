@@ -1116,6 +1116,7 @@ Type `start ota` via TerminalCLI (Companion) or Command Line (Repeater / Room Se
 Double-tap the Reset button → a USB drive appears → copy the `.uf2` file onto it. The device reboots automatically when done.
 - **RAK4631:** drive is named `RAK4631`
 - **Heltec T096:** drive is typically named `HT-n5262G`
+- **ProMicro:** drive is typically named `NICENANO`. If the first line of `INFO_UF2.TXT` on the drive reads `UF2 Bootloader 0.6.0`, the Companion `.uf2` does not install: after the copy the LED keeps blinking fast and the board never reboots (Repeater and Room Server install fine). Update the bootloader first: copy `update-nice_nano_bootloader-0.11.0_nosd.uf2` from the [Adafruit nRF52 Bootloader releases](https://github.com/adafruit/Adafruit_nRF52_Bootloader/releases/tag/0.11.0) onto the drive, wait until the drive comes back with `0.11.0` in `INFO_UF2.TXT`, then copy the firmware again. The bootloader update erases the installed firmware.
 
 **Option 2: BLE DFU** *(requires v1.14_0320 or later)*
 Enter DFU mode, then use the **nRF Device Firmware Update** app (iOS/Android) to upload the `.zip` DFU package.
