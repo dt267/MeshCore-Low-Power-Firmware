@@ -34,6 +34,52 @@ MeshCore firmware with deep power optimization, a full companion display UI with
 
 ## What's New
 
+### v1.18_1018
+
+- **New: messages stay on the node after the app syncs them, and the messages you send are shown too.** *(Companion)*
+
+  Syncing with an app no longer clears the node's messages. Everything received stays on the node, together with everything you send from the app, the CardKB editor or Quick Send, so each conversation reads in full on the display and a second app can still get it. The node keeps up to 256 messages (128 on the HT-CT62); when it is full, the oldest go first, following each channel's priority (`none` / `low` / `normal` / `high`). The messages live in RAM. They survive a restart with the `reboot` command, from the app, from **Reboot** in the Home menu, after changing the connection mode and after a firmware update over the air, unless the new version changes how messages are stored. Everything else clears them: **Power off**, the low-battery deep sleep, removing power, and the RESET button on ESP32 boards. In all these cases **Message Persist** still keeps the ones no app has received yet.
+
+- **New: every app on every paired device gets every message over Bluetooth.** *(Companion)*
+
+  Until now the first app to sync took the messages off the node, so a second phone, a PC or another app on the same phone never got them. Over a paired Bluetooth connection the node now remembers, for each device and each app, which messages it has already sent there (up to 10), so each of them receives everything it has not had yet. USB and WiFi connections share one record. A device the node does not recognise, after pairing it again or when it is not among the last 10 seen, receives every stored message on its first connection.
+
+- **New: CHATS page.** *(Companion)*
+
+  The second Home page lists the most recent conversations, each with its number of messages and the age of its newest one. Long press opens the full conversation list, whose header shows how full the store is (e.g. `12/256`). Long press on the Home page now opens the Home menu instead of the messages. See [Display Guide](Companion_Display_Guide.md#chats-page).
+
+- **New: Home menu: Sync to app, Reboot, Shutdown.** *(Companion)*
+
+  Long press on the Home page opens a menu with **Sync to app** selected:
+
+  - **Sync to app** (manual sync): while an app is connected, sends every received message stored on the node to that app again: for example after reinstalling the app, or to a second app over USB or WiFi.
+  - **Reboot**: restarts the node.
+  - **Shutdown**: powers the node off without going through Settings.
+
+  See [Display Guide](Companion_Display_Guide.md#home-page).
+
+- **New: set a channel's priority on the display.** *(Companion)*
+
+  The popup on a channel message has **Priority**, which opens the four priorities (`none` / `low` / `normal` / `high`), the same setting as `set ch.msgs`. A channel set to `none` is marked `blocked` in the conversation list; once its last message is gone it stays listed at the end, where long press opens its priority. Choosing `low` now trims the channel's older messages at once, from the display or the Command Line. See [Display Guide](Companion_Display_Guide.md#channel-priority).
+
+- **New: contact lists show when each contact was last heard, and a contact's menu opens its messages.** *(Companion)*
+
+  The Contacts page and the contact list show the time since each contact was last heard (`2m`, `5h`, `3d`) at the right of its name. When there are messages with a contact or room server, its action menu starts with **Chat (n)**, which opens the conversation at the newest message; paging past either end goes back to the menu. See [Display Guide](Companion_Display_Guide.md#contacts-page).
+
+- **Change: AEIC images no longer appear on the node's display.** *(Companion)*
+
+  The node cannot decode these images, so it no longer shows a `<AEIC image>` line for them. While an app is connected an image passes through as before: MeshCore Open Advanced receives the image, other apps one `<AEIC image>` line per image. An image received with no app connected is not kept.
+
+- **New: Dark / Light theme and your own display colors on color TFT displays.** *(Companion, Heltec T096)*
+
+  **Settings → Theme**, or `set theme dark|light` from the TerminalCLI channel, switches between the default dark background and a white background with dark text. The choice is saved. Colors now follow the regions of the screen: the header row, the navigation marks (page dots, scroll arrows, selection), the bottom status line, the big clock, the readings on the data pages and the Low Battery screen. Each of them, the remaining text and the background can be set from the TerminalCLI channel with `set color.<region> <rrggbb>`; the screen redraws at once and the colors are saved. Dark and Light keep their own colors, and `set color.reset` brings back the defaults. See [TerminalCLI Commands](Companion_TerminalCLI_Commands.md).
+
+- **New: the GPS page shows which GPS chip is fitted.** *(Companion)*
+
+  With GPS off, the bottom line of the GPS page shows the chip ID the module reports at startup, such as `AT6558R-5N-32-1C580901` (L76K), `UC6580I-00` (T096) or `AT6668-6N-74-00000A30` (ATGM336H-6N), so you can tell which module is plugged into the GPS header. A module that does not report one shows `chip unknown`. See [Display Guide](Companion_Display_Guide.md#gps-page-optional).
+
+- **New: WiFi mode can now be set up from the official app's WiFi Settings screen, and the home screen shows the node's network name (`meshcore-xxxx.local`) with the IP.** *(Companion, ESP32 boards)*
+
 ### v1.17_1011
 
 - **New: compressed messages from Meshcore Open and MeshCore Open Advanced (MCOa) are now readable on the node's display and in the official app.** *(Companion)*
@@ -1128,33 +1174,22 @@ Ways to enter DFU mode:
 
 ## Idle Battery Life Estimation (2000 mAh battery)
 
-| Device | Idle Current (mA) | Estimated Idle Runtime (Hours) | Estimated Idle Runtime (Days) |
-| :--- | :--- | :---: | :---: |
-| Heltec T096 Companion BLE, KCT8103L LNA off, SX1262 Boosted Gain on | 7.4 | 229.7 | 9.6 |
-| Heltec T096 Repeater, KCT8103L LNA off, SX1262 Boosted Gain on | 7.4 | 229.7 | 9.6 |
-| Heltec V4.3 Companion BLE, KCT8103L LNA on, SX1262 Boosted Gain off | 22.9 | 74.2 | 3.1 |
-| Heltec V4.3 Companion BLE, KCT8103L LNA off, SX1262 Boosted Gain on | 15.4 | 110.4 | 4.6 |
-| Heltec V4.3 Companion, BLE off, KCT8103L LNA off, SX1262 Boosted Gain on | 11.5 | 147.8 | 6.2 |
-| Heltec V4.3 Repeater, KCT8103L LNA on, SX1262 Boosted Gain off | 16.1 | 105.6 | 4.4 |
-| Heltec V4.3 Repeater, KCT8103L LNA off, SX1262 Boosted Gain on | 8 | 212.5 | 8.6 |
-| Heltec V3 Companion BLE, SX1262 Boosted Gain on | 10 | 170.0 | 7.08 |
-| Heltec V3 Repeater, SX1262 Boosted Gain on | 7.8 | 217.9 | 9.08 |
-| Heltec V3 Room Server, SX1262 Boosted Gain on | 8.0 | 212.5 | 8.85 |
-| Heltec WSL3 Companion BLE, SX1262 Boosted Gain on | 10 | 170.0 | 7.08 |
-| Heltec WSL3 Repeater, SX1262 Boosted Gain on | 7.7 | 220.8 | 9.20 |
-| Heltec WSL3 Room Server, SX1262 Boosted Gain on | 7.9 | 215.2 | 8.97 | 
-| Heltec V4.2 Companion BLE, SX1262 Boosted Gain off | 20 | 85.0 | 3.54 |
-| Heltec V4.2 Repeater, SX1262 Boosted Gain off | 13.3 | 127.8 | 5.33 | 
-| Heltec V4.2 Room Server, SX1262 Boosted Gain off | 13.4 | 126.9 | 5.29 |
-| XIAO S3 Wio Companion BLE, SX1262 Boosted Gain on | 11 | 154.5 | 6.44 |
-| XIAO S3 Wio Repeater, SX1262 Boosted Gain on | 8.7 | 195.4 | 8.14 |
-| XIAO S3 Wio Room Server, SX1262 Boosted Gain on | 8.7 | 195.4 | 8.14 |
-| RAK4631 Companion BLE, SX1262 Boosted Gain on | 6.61 | 257.18 | 10.71 |
-| RAK4631 Repeater, SX1262 Boosted Gain on | 5.79 | 293.6 | 12.23 |
-| ProMicro fakeTec Companion BLE, SX1262 Boosted Gain off, RX Duty Cycle on | 2.7 | 629.6 | 26.23 |
-| ProMicro fakeTec Repeater, SX1262 Boosted Gain off, RX Duty Cycle on | 2.64 | 643.9 | 26.83 |
-| DIY ESP32-C3 Super Mini + SX1262 Companion BLE, 32.768 kHz crystal, SX1262 Boosted Gain off, RX Duty Cycle on | 4.7 | 361.7 | 15.07 |
-| DIY ESP32-C3 Super Mini + SX1262 Repeater, 32.768 kHz crystal, SX1262 Boosted Gain off, RX Duty Cycle on | 3.33 | 510.5 | 21.27 |
+| Device | Idle Current (mA) | Estimated Idle Runtime (Hours) | Estimated Idle Runtime (Days) | Firmware |
+| :--- | :--- | :---: | :---: | :---: |
+| Heltec T096 Companion BLE, KCT8103L LNA off, SX1262 Boosted Gain off, RX Duty Cycle on | 3.68 | 462.0 | 19.25 | v1.18_1018 |
+| Heltec T096 Repeater, KCT8103L LNA off, SX1262 Boosted Gain off, RX Duty Cycle on | 3.64 | 467.0 | 19.46 | v1.18_1018 |
+| Heltec V4.3 Companion BLE, KCT8103L LNA off, SX1262 Boosted Gain off, RX Duty Cycle on | 11 | 154.5 | 6.4 | v1.18_1018 |
+| Heltec V4.3 Companion BLE, KCT8103L LNA on, SX1262 Boosted Gain off, RX Duty Cycle on | 19.4 | 87.6 | 3.7 | v1.18_1018 |
+| Heltec V4.3 Repeater, KCT8103L LNA off, SX1262 Boosted Gain off, RX Duty Cycle on | 4.52 | 376.1 | 15.7 | v1.18_1018 |
+| Heltec V4.3 Repeater, KCT8103L LNA on, SX1262 Boosted Gain off, RX Duty Cycle on | 12.78 | 133.0 | 5.5 | v1.18_1018 |
+| Heltec V3 Companion BLE, SX1262 Boosted Gain off, RX Duty Cycle on | 6.15 | 276.4 | 11.52 | v1.18_1018 |
+| Heltec V3 Repeater, SX1262 Boosted Gain off, RX Duty Cycle on | 3.82 | 445.0 | 18.54 | v1.18_1018 |
+| RAK4631 Companion BLE, SX1262 Boosted Gain off, RX Duty Cycle on | 2.25 | 755.6 | 31.48 | v1.18_1018 |
+| RAK4631 Repeater, SX1262 Boosted Gain off, RX Duty Cycle on | 2.21 | 769.2 | 32.05 | v1.18_1018 |
+| ProMicro fakeTec Companion BLE, SX1262 Boosted Gain off, RX Duty Cycle on | 2.7 | 629.6 | 26.23 | v1.18_1018 |
+| ProMicro fakeTec Repeater, SX1262 Boosted Gain off, RX Duty Cycle on | 2.64 | 643.9 | 26.83 | v1.18_1018 |
+| DIY ESP32-C3 Super Mini + SX1262 Companion BLE, 32.768 kHz crystal, SX1262 Boosted Gain off, RX Duty Cycle on | 4.7 | 361.7 | 15.07 | v1.18_1018 |
+| DIY ESP32-C3 Super Mini + SX1262 Repeater, 32.768 kHz crystal, SX1262 Boosted Gain off, RX Duty Cycle on | 3.33 | 510.5 | 21.27 | v1.18_1018 |
 
 ---
 

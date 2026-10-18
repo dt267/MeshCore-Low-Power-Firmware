@@ -122,7 +122,7 @@ Use the `ProMicro_*` images. Pins are given as fakeTec V4 silkscreen labels, wit
 | Vibration motor, optional (Companion) | fakeTec MOSFET switched by D1 (P0.06) |
 
 The SX1262 module must:
-- switch its RF path with DIO2,
+- switch its RF path with DIO2; a module whose switch also needs an RX enable line takes it from the RXEN pad (P0.17),
 - have the SX1262 DC-DC inductor fitted (the Heltec HT-RA62 and Ai-Thinker Ra-01SH do),
 - be powered from the ProMicro's 3.3 V (VCC) pin, which the firmware switches off at power off.
 

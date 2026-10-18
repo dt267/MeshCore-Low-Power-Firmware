@@ -13,7 +13,7 @@ One button does everything:
 | **Single click** | Next page / next item / scroll down |
 | **Double click** | Previous page / exit sub-level |
 | **Triple click** | Previous item in most lists and sub-levels — falls back to double click's action on screens with no separate "previous" step |
-| **Long press** | Open message preview (Home) · Enter sub-level (Quick Send / Settings / Radio) · Open menu (Recent page) · Toggle GPS (GPS page) |
+| **Long press** | Open menu (Home) · Open conversation list (Chats) · Enter sub-level (Quick Send / Settings / Radio) · Open menu (Recent page) · Toggle GPS (GPS page) |
 
 > **Heltec E213 and E290 — second button (GPIO21):** Sends the same signal as triple-clicking the main button — previous item in a list or sub-level, or double click's action on screens with no separate "previous" step. The Wireless Paper has a single button only.
 
@@ -26,6 +26,7 @@ Single click cycles forward; double click and triple click both cycle backward.
 | Page | What it shows |
 |---|---|
 | **Home** | Current time (large), date, connection status, battery |
+| **Chats** | Most recent conversations |
 | **Quick Send** | Send a preset message over LoRa |
 | **Contacts** | List of known contacts for direct messaging |
 | **Saved Locations** | Preview of saved map locations |
@@ -39,7 +40,7 @@ Single click cycles forward; double click and triple click both cycle backward.
 
 ## Home page
 
-**OLED / T096:**
+**OLED / TFT:**
 ```
 ┌──────────────────────────────┐
 │ MyNodeName        5✉ [=]    │
@@ -69,25 +70,52 @@ Single click cycles forward; double click and triple click both cycle backward.
 - **Battery icon**: shows charge percentage as a fill bar in normal use.
   - **Charging**: replaced by a lightning-bolt glyph whenever the device detects external power — the percentage isn't meaningful mid-charge. *(V3, Wireless Paper, T096 only — other boards don't have charger detection yet.)*
   - **USB connected**: replaced by a USB connector glyph whenever Connection Mode is set to USB and a live USB connection is detected — takes priority over the charging glyph if both apply at once. *(Heltec V4, E213, E290, T096 only — V3 and Wireless Paper's USB chip has no way to detect this.)* On V4 / E213 / E290 this means the cable is plugged into a powered host (PC); on T096 it means an app has actually opened the connection — just plugging into a PC without opening anything won't show it.
-- **Header**: when messages are stored in memory, shows count + envelope icon (`5✉`) where the clock used to be; empty when count is zero
+- **Header**: when there are unread messages, shows their count + envelope icon (`5✉`) where the clock used to be; empty when there are none
 - **GPS-on icon**: a small circle-with-center-dot glyph appears just left of the battery icon whenever GPS is turned on — an easy thing to forget about and leave draining the battery. *(Only on the Home page for OLED, since header space is tight there; shown on every page on T096 and e-ink, which have more header room.)*
 - **Muted icon**: while the buzzer is muted in Settings, a small muted-speaker glyph sits left of the clock or the envelope, or right next to the battery / GPS icon when neither is shown (Home page with no stored messages). *(ProMicro fakeTec with a buzzer fitted)*
 - Page indicator dots below the header (filled dot = current page)
 - **Large clock** (`HH:MM`) always centered — shows current local time once synced; shows uptime (`00:00` counting up) before first sync
-- **OLED / T096**: date on the middle-bottom row, connection status at the very bottom
-- **E-ink**: connection status / pairing pin at the bottom-left, date at the bottom-right
-- **Long press** → open message preview
+- **OLED / TFT**: date on the middle-bottom row, connection status at the very bottom. In WiFi mode *(ESP32 boards only)* the date row shows the node's network name instead, e.g. `meshcore-d267.local`.
+- **E-ink**: connection status / pairing pin at the bottom-left, date at the bottom-right. In WiFi mode, once the node has an IP address and no app is connected yet, the bottom row shows the bare IP on the left and the network name without `.local` on the right, e.g. `192.168.1.83` and `meshcore-d267`.
+- **Long press** → **Home menu**, opened with **Sync to app** selected. Single click moves down, long press runs the selected item, double click leaves.
+  - **Sync to app** (manual sync): sends every received message stored on the node to the connected app again (alert `Syncing N msgs`). Works only while an app is connected: the item reads `Sync (no app)` otherwise. Usually not needed over a paired Bluetooth connection, where each app on each device already gets every message once; use it after reinstalling an app, or for a second app over USB or WiFi.
+  - **Reboot**: restarts the node.
+  - **Shutdown**: powers the node off, the same as **Settings → Shutdown**.
+
+  Reboot and Shutdown run once the button is released.
 
 Connection status values:
 - `< BLE Connected >` — app connected via BLE
 - `< USB >` — USB transport mode active
 - `< WiFi Connected >` — app connected via WiFi TCP
-- `IP:192.168.1.x:5000` — WiFi mode, waiting for TCP connection (shows IP once router connection is up)
+- `IP:192.168.1.x` — WiFi mode, waiting for TCP connection on port 5000 (shows IP once router connection is up; e-ink drops the `IP:` prefix)
 - `WiFi: connecting...` — WiFi mode, not yet connected to router
+
+> **Finding the node on WiFi**: the IP address comes from the router and can change, and the app can only show it once it is already connected. The network name `meshcore-xxxx.local` (`xxxx` = first 4 hex digits of the node's public key) stays the same, and can be used instead of the IP on devices that resolve `.local` names.
 - `BLE: OFF` — Bluetooth disabled
 - `Pin: 123456` — waiting for BLE pairing *(BLE mode only)*
 
 > **Time and date** show local time once the timezone offset is set. Default is UTC. Configure once via TerminalCLI: `set tz.offset 7` (for UTC+7). Time is synced from the app on connect, or from GPS if hardware is present.
+
+---
+
+## Chats page
+
+```
+┌──────────────────────────────┐
+│ CHATS             14:32 [=]  │
+│         · • · · · · ·        │
+│ Alien                   5 2m │
+│ ▐G▌ Public             12 1h │
+│ ▐R▌ Dev                 1 3d │
+│                              │
+└──────────────────────────────┘
+```
+
+The most recent conversations, newest first: a contact, a channel (marked **G**) or a room server (marked **R**), with its number of messages and the age of its newest one (`blocked` for a channel set to `none`). The G or R badge before the name is the letter cut out of a small filled box. Messages stay on the node after an app syncs them, and messages you send (from the app, the CardKB editor or Quick Send) are part of their conversation. The node keeps up to 256 messages (128 on the HT-CT62); when full, the oldest go first, following each channel's priority. They live in RAM and survive a restart with the `reboot` command, from the app, from **Reboot** in the Home menu, after changing the connection mode and after a firmware update over the air, unless the new version changes how messages are stored. Power off, the low-battery deep sleep, removing power and the RESET button on ESP32 boards clear them. **Message Persist** (Settings) still keeps the ones no app has received yet.
+
+- **Long press** → the full conversation list ([Level 0 — Group list](#level-0--group-list))
+- Shows `No messages` when the store is empty
 
 ---
 
@@ -171,14 +199,14 @@ Opened from **Qk.Ch.** in Settings. Lists every configured channel so the Quick 
 ┌──────────────────────────────┐
 │ CONTACTS          14:32 [=]  │
 │         · · · • · · ·        │
-│ Alien                        │
-│ Big Boy                      │
+│ Alien                     2m │
+│ Big Boy                   3d │
 │                              │
 │                              │
 └──────────────────────────────┘
 ```
 
-Shows how many chat contacts are known. **Long press** to open the contact list.
+Shows the most recently heard chat contacts, with the time since each was last heard on the right. **Long press** to open the contact list.
 
 ---
 
@@ -188,14 +216,14 @@ Shows how many chat contacts are known. **Long press** to open the contact list.
 ┌──────────────────────────────┐
 │ CONTACTS  4                  │
 │──────────────────────────────│
-│ > Alien                      │
-│   Big Boy                    │
-│   [R] Base Camp Room         │
+│ > Alien                   2m │
+│   Big Boy                 3d │
+│   ▐R▌ Base Camp Room      5d │
 │                              │
 └──────────────────────────────┘
 ```
 
-Chat nodes and room servers are listed. Room servers are tagged `[R]`. Repeaters and sensors are excluded.
+Chat nodes and room servers are listed, most recently heard first. Room servers are marked **R**. Repeaters and sensors are excluded. The right column shows the time since each contact was last heard (`s`, `m`, `h`, `d`). Editing a contact in the app also counts as an update.
 
 | Press | Action |
 |---|---|
@@ -214,9 +242,9 @@ After selecting a contact and long pressing, an action menu appears:
 ┌──────────────────────────────┐
 │ Alien                        │
 │──────────────────────────────│
-│ > Send message               │
+│ > Chat (3)                   │
+│   Send message               │
 │   Request telemetry          │
-│                              │
 │                              │
 └──────────────────────────────┘
 ```
@@ -228,6 +256,7 @@ After selecting a contact and long pressing, an action menu appears:
 | Triple click | Move arrow to previous item |
 | Long press | Execute selected item |
 
+- **Chat (n)** — the conversation with this contact, messages you sent included; shown only when there are any; opens like [Level 1 — Group detail](#level-1--group-detail). Double click, or paging past the first or last message, returns to this menu.
 - **Send message** — opens Quick Reply screen to send a direct message
 - **Request telemetry** — sends a telemetry request and opens the Telemetry Result screen
 
@@ -285,15 +314,15 @@ GPS coordinates follow the **Pos. Format** selected in Settings (DD, UTM, or MGR
 
 ## Reading messages
 
-Long press on the **Home** page opens message preview. Messages are shown in three levels:
+A new message opens on its own when it arrives, and long press on the **Chats** page opens the conversation list. Messages are shown in three levels:
 
 ### Level 2 — New messages
 
-When there are new messages, you go straight to a linear view of all unread messages across all senders and channels.
+When there are new messages, you go straight to a linear view of all unread messages across all senders and channels, in the order they arrived, starting with the first one.
 
 ```
 ┌──────────────────────────────┐
-│ (2) Alien:         1/3  42s  │
+│ Alien · 42s              1/3 │
 │──────────────────────────────│
 │ I need help                  │
 │ can you come?                │
@@ -303,49 +332,53 @@ When there are new messages, you go straight to a linear view of all unread mess
 └──────────────────────────────┘
 ```
 
-- **Top row**: who sent it (left), message number + age (right)
-- **`▲`** top-right: more text above — double click to scroll up
+- **Top row**: the conversation and the age of the message (left), the message number (right). A direct message shows who sent it, your own node name for one you sent; a channel or room shows its name after its **G** or **R** badge and the text starts with the sender's name, yours included
+- **`▲`** top-right: more text above — triple click to scroll up
 - **`▼`** bottom-right: more text below — single click to scroll down
 
 | Press | Action |
 |---|---|
-| Single click | Scroll down one page (5 lines); at end of message → next new message |
-| Double click | Scroll up one page; at top → previous new message |
-| At last new message, single click | Return to home (all new messages seen) |
+| Single click | Scroll down one page; at end of message → next new message; after the last one → return to Home |
+| Double click | Return to Home |
+| Triple click | Scroll up one page; at top → previous new message, shown from its last page; before the first one → return to Home |
 | Long press | Open popup menu |
+
+Returning to Home counts every new message as seen.
 
 ### Level 0 — Group list
 
-After reading all new messages (or double click at the start), you land on the group list — a summary of all senders and channels.
+Long press on the **Chats** page opens the group list — a summary of all senders and channels.
 
 ```
 ┌──────────────────────────────┐
-│ MSGS  *3 new                 │
+│ CHATS *3 new          12/256 │
 │──────────────────────────────│
-│ > Alien                    5 │
-│   [G] Public               2 │
-│   [R] Dev                  1 │
-│   [G] #SOS                 8 │
+│ > Alien                 5 2m │
+│   ▐G▌ Public            2 1h │
+│   ▐R▌ Dev               1 3d │
+│   ▐G▌ #SOS              8 5d │
 └──────────────────────────────┘
 ```
 
-- Groups sorted by most recently active; number on the right = total messages
-- `>` marks the selected group; `*N new` shown when unread messages exist
-- `[G]` prefix = group/channel; `[R]` prefix = room server; no prefix = direct contact
+- Groups sorted by most recently active; on the right, the number of messages and the age of the newest one
+- `>` marks the selected group; `*N new` shown when unread messages exist; top right, messages stored / how many the node keeps
+- **G** badge = channel; **R** badge = room server; no badge = direct contact
+- A channel set to `none` shows `blocked` on the right instead of its message count. Its old messages still open with long press; once it has no message left on the node, it comes after the conversations, and long press opens its priority so it can be changed back.
 
 | Press | Action |
 |---|---|
 | Single click | Move arrow to next group |
 | Double click | Return to home |
-| Long press | Open selected group (Level 1) |
+| Triple click | Move arrow to previous group |
+| Long press | Open selected group (Level 1); on a `blocked` row, open its [priority](#channel-priority) |
 
 ### Level 1 — Group detail
 
-Shows all messages from one sender or channel, including older history.
+Shows all messages from one sender or channel, including older history, oldest first. It opens on the first message you have not read yet, or on the newest one when you have read them all; the number top right counts from the oldest, so the newest of five is `5/5`.
 
 ```
 ┌──────────────────────────────┐
-│ (2) Alien:         1/5  3h   │
+│ Alien · 3h               5/5 │
 │──────────────────────────────│
 │ where are you?               │
 │                              │
@@ -357,8 +390,9 @@ Shows all messages from one sender or channel, including older history.
 
 | Press | Action |
 |---|---|
-| Single click | Scroll down / next older message |
-| Double click | Scroll up / next newer message; at newest → group list |
+| Single click | Scroll down / next newer message; after the newest → group list |
+| Double click | Return to the group list |
+| Triple click | Scroll up / next older message, shown from its last page; before the oldest → group list |
 | Long press | Open popup menu |
 
 ---
@@ -369,7 +403,7 @@ Long press any message to open the popup:
 
 ```
 ┌──────────────────────────────┐
-│ (2) Alien:         1/5  3h   │
+│ Alien · 3h               5/5 │
 │──────────────────────────────│
 │ I need help @10.77,106.70    │
 │ ┌──────────────────────┐     │
@@ -389,13 +423,38 @@ Long press any message to open the popup:
 | Long press | Confirm selected item |
 | Double click | Dismiss menu (cancel) |
 
-- **Reply** — opens Quick Reply screen; sends back to the same contact (DM), the same channel, or the room server (`[R]`) — room replies are posted to the whole room and visible to all subscribers
+- **Reply** — opens Quick Reply screen; sends back to the same contact (DM), the same channel, or the room server (**R**) — room replies are posted to the whole room and visible to all subscribers
 - **Save location** — only shown if the message contains GPS coordinates
 - **Delete** — removes the message on screen
 - **Delete all** — removes every message from that sender or channel; only shown in **Level 1**, where the messages on screen really are one conversation, and only when there is more than one of them
 - **Home** — go home immediately
+- **Priority** — last, only on a channel message; shows the channel's current priority and opens the [priority screen](#channel-priority)
 
-Reply and Save location depend on the message, but Delete and Home are always there, so a long press always opens the menu.
+Reply, Save location and Priority depend on the message, but Delete and Home are always there, so a long press always opens the menu. When the items do not all fit on the screen, the menu scrolls with the arrow.
+
+### Channel priority
+
+Opened from **Priority** in the popup, or from a `blocked` row in the group list. It lists the four priorities, the current one marked `*`.
+
+```
+┌──────────────────────────────┐
+│ ▐G▌ Public          Priority │
+│──────────────────────────────│
+│ > none                       │
+│   low                        │
+│   normal                   * │
+│   high                       │
+└──────────────────────────────┘
+```
+
+| Priority | Effect |
+|---|---|
+| `none` | Nothing from the channel is kept, sent to the app or notified. Messages already on the node stay, and are the first to go when the store is full. |
+| `low` | The channel keeps at most 12 messages (6 on the HT-CT62); older ones are removed, at once when you choose it. |
+| `normal` | Default. No limit; when the store is full, the oldest channel messages go first. |
+| `high` | Kept like a direct message: never removed to make room. |
+
+Long press sets the selected priority and returns; double click returns without a change. It is the same setting as `set ch.msgs` on the [Command Line](Companion_TerminalCLI_Commands.md).
 
 ### Confirming a delete
 
@@ -403,7 +462,7 @@ Both delete items ask first, starting on **No** — a deleted message cannot be 
 
 ```
 ┌──────────────────────────────┐
-│ (2) Alien:         1/5  3h   │
+│ Alien · 3h               5/5 │
 │──────────────────────────────│
 │ I need help @10.77,106.70    │
 │ ┌──────────────────────┐     │
@@ -456,11 +515,14 @@ An M5Stack Unit CardKB v1.1 connected to the node's I2C sensor pins (SDA, SCL, 3
 
 | Key | Same as |
 |---|---|
-| Down, Right | Single click (next) |
-| Up | Triple click (previous) |
+| Down | Single click: next item in a list or menu, next message |
+| Up | Triple click: previous item, previous message |
+| Right / Left | Next / previous Home screen page |
 | Enter | Long press (select / send) |
 | Esc | Double click (back) |
-| Fn + 1 … 9 | Go straight to that Home screen page, from any screen, counted as the page dots show them: 1 Home, 2 Quick Send, 3 Contacts, 4 Saved Locations, 5 Recent, 6 Radio, then GPS *(only when a GPS is found)*, Sensors and Settings |
+| Fn + 1 … 9, Fn + 0 | Go straight to that Home screen page, from any screen, counted as the page dots show them: 1 Home, 2 Chats, 3 Quick Send, 4 Contacts, 5 Saved Locations, 6 Recent, 7 Radio, then GPS *(only when a GPS is found)*, Sensors and Settings; Fn + 0 is the 10th page |
+
+The arrows follow the screen: Up and Down do nothing on the Home screen pages, Right and Left do nothing anywhere else (lists, menus, settings, messages). Unlike a triple click, Up never goes back on a screen that has no previous item; Esc does.
 
 While the display is off, the first key only turns it on.
 
@@ -661,7 +723,7 @@ LoRa radio parameters. Long press opens a sub-level holding the two settings thi
 └──────────────────────────────┘
 ```
 
-The two bottom rows are read-only: last received packet's RSSI (dBm) and SNR (dB), and packets received / sent since the last restart. They refresh every 5 seconds, so the effect of an RxGain or RxDuty change shows right next to it. On T096 they are drawn in yellow.
+The two bottom rows are read-only: last received packet's RSSI (dBm) and SNR (dB), and packets received / sent since the last restart. They refresh every 5 seconds, so the effect of an RxGain or RxDuty change shows right next to it.
 
 **In sub-level:**
 
@@ -705,6 +767,7 @@ Only shown if GPS hardware is present. On E213, V3, and E290's free-GPIO GPS hea
 │ gps off                      │
 │ intv                  always │
 │ mode             GPS+BDS+GLO │
+│ AT6558R-5N-32-1C580901       │
 └──────────────────────────────┘
 ```
 *(mode line: Heltec V4 / T096 / E213 / V3 / E290 only)*
@@ -715,6 +778,7 @@ Only shown if GPS hardware is present. On E213, V3, and E290's free-GPIO GPS hea
 - `sat / hdop` — number of satellites used in the fix, and current HDOP (`--` if not yet available); see `gps.minsat` / `gps.hdop` in [TerminalCLI Commands](Companion_TerminalCLI_Commands.md) to adjust how many satellites / how accurate a fix needs to be before GPS reports it as valid
 - `intv` — GPS update interval: `always` if GPS stays on continuously (`gps.interval 0`), otherwise interval in seconds; shown only when GPS is off
 - `mode` — active GNSS constellation (Heltec V4 / T096 / E213 / V3 / E290 only; see `gps.mode` in [TerminalCLI Commands](Companion_TerminalCLI_Commands.md))
+- Bottom line (GPS off) — the GPS chip as the module reports it at startup, e.g. `AT6558R-5N-32-1C580901` (L76K on Heltec V4), `UC6580I-00` (T096), `AT6558F-5N-32-…` / `AT6668-6N-74-…` (ATGM336H 5N / 6N); `chip unknown` if the module does not report one. Long IDs are cut with `…` on narrow screens.
 - `pos` — current position (DD by default; UTM or MGRS if selected via **Pos. Format** in Settings)
 - `alt` — altitude
 
@@ -790,7 +854,8 @@ Two views in one page — **Battery** is always first; long press cycles through
 | **Repeat** | Toggle packet repeat on/off |
 | **RxGain** | Cycle RX gain: OFF → ON — on Heltec V4.3 / T096 OFF → INT → EXT |
 | **RxDuty** | Toggle RX duty cycle on/off — sleeps the receiver to save 2-3 mA. Only works at SF5-SF8. |
-| **Brightness** | Cycle backlight intensity: `25` → `50` → `75` → `100` *(Heltec T096 only)* |
+| **Brightness** | Cycle backlight intensity: `25` → `50` → `75` → `100` *(color TFT: Heltec T096)* |
+| **Theme** | Toggle `Dark` / `Light`. Dark is the default. *(color TFT: Heltec T096)* |
 | **Buzzer** | Toggle the buzzer `ON` / `MUTED`; a beep confirms when it is turned back on. *(ProMicro fakeTec with a buzzer fitted)* |
 | **Units** | Toggles between Metric and Imperial |
 | **Pos. Format** | Cycle GPS coordinate display: `DD` → `UTM` → `MGRS` |
@@ -804,22 +869,3 @@ Two views in one page — **Battery** is always first; long press cycles through
 | **Start OTA** | OTA update mode. On ESP32: connect to WiFi `MeshCore-OTA`, go to `192.168.4.1`. The page includes a firmware upload section and a **WiFi credentials form** to set the SSID/password for WiFi mode and optionally switch to it immediately. On nRF52 (T096 / RAK4631): enters BLE DFU mode — use the **nRF Device Firmware Update** app to upload the `.zip` package. |
 | **Shutdown** | Power off the device |
 | **About** | Show device name, firmware version and build date |
-
----
-
-## Message origin labels
-
-| Label | Meaning |
-|---|---|
-| `(0) Alien:` | Message from Alien, arrived directly (0 hops) |
-| `(2) Alien:` | Message from Alien, relayed through 2 nodes |
-| `(D) Alien:` | Message routed directly to this node via a known path |
-| `[G] Public` | Public channel broadcast |
-| `[G] #SOS` | #SOS channel broadcast |
-| `[G] MyGroup` | Private channel "MyGroup" |
-| `[R] DevRoom` | Message pushed from room server "DevRoom" |
-
-For direct messages, the hop count in parentheses tells you how many nodes relayed the message — useful for gauging link quality. Channel and room server messages omit the hop count since it varies per relay and doesn't reflect your own connectivity.
-
-The `#` prefix on a channel name indicates a public hashtag channel; channels without `#` may be private groups.
-

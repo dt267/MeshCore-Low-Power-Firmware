@@ -77,24 +77,31 @@ The same commands also work on the app's **Command Line** screen. That screen sh
   | `set loc.<N> <name> <lat> <lon>` | `N`: 0–9; name may contain spaces; lat/lon come last | Save a GPS location to slot N (0-based, display shows 1–10). Example: `set loc.0 Base camp 10.7769 106.7009` |
   | `del loc.<N>` | `N`: 0–9 | Clear saved location at slot N (0-based) |
   | `del loc.all` | — | Clear all saved location slots |
+  | `get theme` | — | Show the display theme: `dark` or `light`. *(color TFT: Heltec T096)* |
+  | `set theme <theme>` | `dark` \| `light` | Switch the display theme, same as **Settings → Theme**. Applied immediately and saved. *(color TFT: Heltec T096)* |
+  | `get color` | — | Show the color of each screen region in the theme on screen. A `*` marks a color you set; the others are the theme's defaults. Example: `> light: header 008000* nav f88000 footer f88000 clock 0000ff data f88000 alert ff0000 text 000000 bg ffffff` *(color TFT: Heltec T096)* |
+  | `set color.<region> <color>` | `region`: `header` (top row) · `nav` (page dots, scroll arrows, selection) · `footer` (bottom status line) · `clock` (big clock on the Home page) · `data` (readings on the Radio, GPS and Sensors pages) · `alert` (Low Battery screen) · `text` (all other text) · `bg` (background); `color`: hex `rrggbb`, e.g. `ff6400` (a leading `#` is accepted), or `default` | Set the color of one region in the theme on screen; Dark and Light keep their own colors. Applied immediately and saved. `default` returns that region to the theme's color. The T096 screen shows mid-level colors much darker than a computer monitor does (`800000` looks almost black), so choose colors by looking at the device. *(color TFT: Heltec T096)* |
+  | `set color.reset` | — | Return every region of the theme on screen to its default color *(color TFT: Heltec T096)* |
   | `set ch.hops <channel> <N>` | `channel`: channel name; `N`: 1..max | Limit outgoing messages on the channel to at most N hops. Channel names with spaces are supported. |
   | `set ch.hops <channel> off` | `channel`: channel name | Remove the hop limit for the channel |
   | `get ch.hops <channel>` | `channel`: channel name (spaces allowed) | Show current hop limit for the channel |
   | `ch.hops status` | — | List all channels that have an active hop limit |
   | `ch.hops clear` | — | Remove all channel hop limits |
-  | `set ch.msgs <channel> <tier>` | `channel`: channel name (spaces allowed); `tier`: `none` \| `low` \| `normal` \| `high` | Set how many unsynced offline messages the channel is allowed to keep. `none` = completely blocked — never delivered to the app, never shown on-screen, no notification of any kind. `low` = capped at 12 unsynced offline messages, oldest trimmed first once over the cap — except the message currently on screen, which is never trimmed. `normal` (default) = unlimited, unchanged behavior. `high` = unlimited and never dropped to make room — same protected standing as a direct message. |
+  | `set ch.msgs <channel> <tier>` | `channel`: channel name (spaces allowed); `tier`: `none` \| `low` \| `normal` \| `high` | Set how many messages the channel may keep in the node's message store. `none` = completely blocked — never delivered to the app, never shown on-screen, no notification of any kind. `low` = capped at 5% of the store (12 messages; 6 on the HT-CT62), oldest trimmed first once over the cap — except the message currently on screen, which is never trimmed. `normal` (default) = unlimited, unchanged behavior. `high` = unlimited and never dropped to make room — same protected standing as a direct message. |
   | `get ch.msgs <channel>` | `channel`: channel name (spaces allowed) | Show current message priority tier for the channel |
   | `ch.msgs status` | — | List all channels not set to `normal` (the default) |
   | `ch.msgs clear` | — | Reset all channels to `normal` |
   | `get conn.mode` | — | Show current connection transport: `ble`, `usb`, or `wifi` |
-  | `set conn.mode <mode>` | `ble` \| `usb` \| `wifi` | Switch transport mode. Saves to flash and reboots immediately. In USB mode the node connects via USB serial; BLE is not started. In WiFi mode the node connects as a STA to the configured network and listens for TCP connections on port 5000. |
+  | `set conn.mode <mode>` | `ble` \| `usb` \| `wifi` | Switch transport mode. Saves to flash and reboots immediately. In USB mode the node connects via USB serial; BLE is not started. In WiFi mode the node connects as a STA to the configured network and listens for TCP connections on port 5000. The official app's WiFi Settings screen toggles WiFi mode through `wifi.enabled`; turning WiFi off there returns the node to BLE. |
+  | `get wifi.status` | — | Show `connected` or `disconnected` for the WiFi network |
+  | `get wifi.ip` | — | Show the node's current IP address, or `(not connected)` |
   | `get wifi.ssid` | — | Show the WiFi SSID configured for WiFi mode |
   | `set wifi.ssid <ssid>` | `ssid`: network name (max 32 chars) | Set the WiFi SSID for WiFi mode. Saved to flash. |
   | `get wifi.password` | — | Show the WiFi password configured for WiFi mode. Alias: `get wifi.pwd` |
   | `set wifi.password <password>` | `password`: max 64 chars | Set the WiFi password for WiFi mode. Saved to flash. Leave blank or omit for open networks. Alias: `set wifi.pwd` |
-  | `get wifi.ip` | — | Show static IP and subnet configured for WiFi mode, or `DHCP` if none is set |
-  | `set wifi.ip <ip> [subnet]` | `ip`: e.g. `192.168.1.100`; `subnet`: e.g. `255.255.255.0` (optional, default `255.255.255.0`) | Set a static IP for WiFi mode. Saved to flash; takes effect after next reboot into WiFi mode. If subnet is omitted, the previously saved subnet is kept. Example: `set wifi.ip 192.168.1.100` or `set wifi.ip 192.168.1.100 255.255.255.0` |
-  | `clear wifi.ip` | — | Remove static IP; the node will use DHCP on next boot in WiFi mode. |
+  | `get wifi.static` | — | Show static IP and subnet configured for WiFi mode, or `DHCP` if none is set |
+  | `set wifi.static <ip> [subnet]` | `ip`: e.g. `192.168.1.100`; `subnet`: e.g. `255.255.255.0` (optional, default `255.255.255.0`) | Set a static IP for WiFi mode. Saved to flash; takes effect after next reboot into WiFi mode. If subnet is omitted, the previously saved subnet is kept. Example: `set wifi.static 192.168.1.100` or `set wifi.static 192.168.1.100 255.255.255.0`. Alias: `set wifi.ip` |
+  | `clear wifi.static` | — | Remove static IP; the node will use DHCP on next boot in WiFi mode. Alias: `clear wifi.ip` |
   | `get portal.password` | — | Show the config portal login password, or `(none)` if none is set. Alias: `get portal.pwd` |
   | `set portal.password <password>` | `password`: max 32 chars | Set the config portal login password. When set, the browser must log in before accessing the portal. Saved to flash. Alias: `set portal.pwd` |
   | `clear portal.password` | — | Remove the portal password; the portal becomes accessible without login. Alias: `clear portal.pwd` |
