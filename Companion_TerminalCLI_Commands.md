@@ -51,8 +51,6 @@ The same commands also work on the app's **Command Line** screen. That screen sh
   | `get repeat` | — | Show whether repeat mode is `on` or `off`, and the current frequency |
   | `set repeat on` | — | Enable repeat mode |
   | `set repeat off` | — | Disable repeat mode |
-  | `get msg.persist` | — | Show whether unsynced messages are saved to flash: `on` or `off` (default `off`) |
-  | `set msg.persist <mode>` | `on` \| `off` | Persist unsynced messages to flash so they survive a crash, reboot, or dead battery before the app syncs them. Turning off immediately clears any already-persisted copy from flash. |
   | `get repeat.freqs` | — | List all frequencies (MHz) allowed for repeat mode |
   | `add repeat.freq <MHz>` | `MHz`: e.g. `915` or `915.125` | Add a frequency to the repeat allowed list (max 5). Saved after reboot. |
   | `del repeat.freq <MHz>` | `MHz`: frequency to remove | Remove a frequency from the repeat allowed list |
@@ -66,8 +64,8 @@ The same commands also work on the app's **Command Line** screen. That screen sh
   | `set direct.txdelay <value>` | `value`: decimal `0..10` | Set direct relay jitter window scale. |
   | `get int.thresh` | — | Show RSSI interference threshold in dB above noise floor (`0` = disabled) |
   | `set int.thresh <dB>` | `dB`: integer `0..200` | Set RSSI interference threshold. `0` disables the check. |
-  | `get tz.offset` | — | Show UTC offset in hours used for display (`0` = UTC) |
-  | `set tz.offset <hours>` | `hours`: integer `-12..14` | Set local timezone offset. Example: `set tz.offset 7` for UTC+7. Applied to the clock and date on the display only — all internal timestamps remain UTC. |
+  | `get tz.offset` | — | Show the UTC offset used for display, e.g. `+7:00` (`+0:00` = UTC) |
+  | `set tz.offset <offset>` | `offset`: `[+\|-]H[:MM]`, minutes `00` / `15` / `30` / `45`, `-12:00..+14:00` | Set local timezone offset. Examples: `set tz.offset 7` for UTC+7, `set tz.offset 5:30` for UTC+5:30, `set tz.offset -3:30` for UTC-3:30. Applied to the clock and date on the display only — all internal timestamps remain UTC. |
   | `get quick` | — | List all Quick Send presets with their index numbers |
   | `set quick.<N> <text>` | `N`: 0–9, `text`: message | Set preset at index N. Example: `set quick.2 Meet me at the park` |
   | `set quick.reset` | — | Restore all 10 presets to built-in defaults |

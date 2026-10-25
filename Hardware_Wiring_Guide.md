@@ -17,14 +17,14 @@ GPIO numbers are ESP32 GPIOs; `P0.xx` / `P1.xx` are nRF52840 port pins.
 
 | Device | I2C sensors (SDA / SCL) | GPS (to module RX / to module TX) | Display |
 | :--- | :--- | :--- | :--- |
-| Heltec V3, WSL3 | GPIO17 / GPIO18 (shared with the onboard OLED) | GPIO47 / GPIO48 | Onboard OLED |
+| Heltec V3, WSL3 | GPIO17 / GPIO18 (shared with the OLED) | GPIO47 / GPIO48 | Onboard OLED (V3), optional OLED (WSL3) |
 | Heltec V4.2, V4.3 | GPIO4 / GPIO3 | onboard GPS port | Onboard OLED |
 | Heltec Vision Master E213 | GPIO39 / GPIO38 | GPIO43 / GPIO44 | E-ink |
 | Heltec Vision Master E290 | GPIO39 / GPIO38 | GPIO43 / GPIO44 | E-ink |
 | Heltec Wireless Paper | none | none | E-ink |
 | Heltec Mesh Node T096 | P0.07 / P0.08 | onboard UC6580 | Color TFT |
 | XIAO ESP32S3 & Wio-SX1262 | GPIO5 / GPIO6 | none | Optional OLED |
-| RAK4631 (RAK19003) | P0.13 / P0.14 | P0.16 / P0.15 | none |
+| RAK4631 (RAK19003) | P0.13 / P0.14 | P0.16 / P0.15 | Optional OLED |
 | Waveshare ESP32-S3-LR1121-XF | GPIO8 / GPIO9 | GPIO43 / GPIO44 | Optional OLED |
 | EBYTE EoRa-HUB | GPIO6 / GPIO7 | GPIO47 / GPIO48 | Onboard OLED |
 | Heltec HT-CT62, DIY ESP32-C3 (`Heltec_ct62_*`) | GPIO18 / GPIO19 | none | Optional OLED |
@@ -33,7 +33,7 @@ GPIO numbers are ESP32 GPIOs; `P0.xx` / `P1.xx` are nRF52840 port pins.
 
 ## I2C sensors and CardKB
 
-Connect sensors to the device's I2C sensor pins in the table above, plus 3.3 V and GND. The firmware scans the bus at boot and reports what it finds in telemetry. Supported sensors:
+Connect sensors to the device's I2C sensor pins in the table above, plus 3.3 V and GND. The firmware scans the bus at boot and reports what it finds in telemetry; on a Companion with a display, a **Detected:** alert at startup lists them. Supported sensors:
 
 | Type | Sensors |
 | :--- | :--- |
@@ -41,17 +41,32 @@ Connect sensors to the device's I2C sensor pins in the table above, plus 3.3 V a
 | Temperature / pressure | BMP280, BMP085/BMP180, LPS22HB |
 | Temperature / humidity / pressure | BME280, BME680 |
 | Voltage / current | INA219, INA226, INA260, INA3221 |
+| Compass | HMC5883L (tested with GY-271 and GY-273 modules), QMC5883L (not yet tested on hardware) |
 | Other | MLX90614 (IR temperature), VL53L0X (distance) |
+
+For a compass module:
+
+- Point the X arrow printed on the module to the front of the device.
+- A strong magnet held close saturates the sensor and the compass shows **No data** until it is taken away.
 
 The M5Stack Unit CardKB v1.1 keyboard goes on the same pins (Companion only). It can be plugged in and unplugged while the node is running. It works on every device with a display except the Heltec Wireless Paper, which has no I2C pins.
 
 ## Optional OLED display
 
-On the XIAO ESP32S3 & Wio-SX1262, the Waveshare ESP32-S3-LR1121-XF, the HT-CT62 / DIY ESP32-C3 and the ProMicro, a 128×64 I2C OLED is optional. Wire it to the I2C pins in the table above and 3.3 V. Both common modules work: the 0.96" SSD1306 and the 1.3" SH1106, at I2C address 0x3C. The firmware detects the display and its controller at boot, so the same image runs with or without one and there is no setting to choose.
+Three I2C OLED modules work, at I2C address 0x3C: the 0.96" SSD1306 and the 1.3" SH1106 (128×64), and the 1.12" or 1.5" SH1107 (128×128). The firmware detects the display and its controller at boot, so the same image runs with or without one and there is no setting to choose. The 1.5" SH1107 module (GME128128-01-IIC) has its own voltage booster that stays powered while the display is off, so its idle current is about 0.3 mA higher than with the other modules.
+
+| Device | Where to connect the OLED |
+| :--- | :--- |
+| Heltec V3, V4 with the onboard display | Nothing to wire. The onboard 0.96" panel can be replaced with any of the three. |
+| Heltec WSL3 | Header JP3: pin 12 (GPIO17) to SDA, pin 9 (GPIO18) to SCL. |
+| Heltec V4 bought without a display | Header P5 (SDA GPIO17, SCL GPIO18). |
+| XIAO ESP32S3 & Wio-SX1262, RAK4631, Waveshare ESP32-S3-LR1121-XF, HT-CT62 / DIY ESP32-C3, ProMicro | The I2C sensor pins in the table above. |
+
+Power the module from 3.3 V and GND.
 
 With a display, Companion shows the full display UI, and Repeater and Room Server show their status screen. Without a display, Companion's BLE PIN stays at 123456; with one, a new random PIN is shown at every boot. A PIN set with `set pin` is used either way.
 
-The display's button is the board's BOOT button, except on the XIAO ESP32S3 & Wio-SX1262, where it is the user button on the Wio-SX1262 board, and on the ProMicro, where it is D6 (P1.00) to GND.
+The display's button is the board's BOOT button, except on the XIAO ESP32S3 & Wio-SX1262, where it is the user button on the Wio-SX1262 board, on the ProMicro, where it is D6 (P1.00) to GND, and on the RAK4631, where it is IO5 (P0.09) to GND. On the RAK4631 only Companion reads this button; the Repeater and Room Server firmware have no button option there.
 
 ## GPS
 

@@ -34,6 +34,52 @@ MeshCore firmware with deep power optimization, a full companion display UI with
 
 ## What's New
 
+### v1.18_1025
+
+- **New: conversations read like a chat.** *(Companion)*
+
+  A conversation shows its messages like a chat, oldest at the top: received ones on the left with the sender's name, yours on the right. See [Display Guide](Companion_Display_Guide.md#level-1--group-detail).
+
+- **Changed: a new message raises an alert instead of opening on its own.** *(Companion)*
+
+  An alert shows where new messages are, e.g. `New messages from: Alien, Public`: single click opens the conversation list, double click closes it. The list and the Chats page show unread messages as `*2`. See [Display Guide](Companion_Display_Guide.md#new-message-alert).
+
+- **Changed: stored messages are kept through power off and low battery; Message Persist is removed.** *(Companion)*
+
+  Messages are now kept through **Power off**, the low-battery sleep and an OTA update. This replaces **Message Persist** (the setting and `msg.persist` are removed). On ESP32 boards, a power cut or the RESET button still deletes them, unless you used **Save messages** in the Home menu before. See [Display Guide](Companion_Display_Guide.md#chats-page).
+
+- **New: run TerminalCLI commands on the node with the CardKB keyboard.** *(Companion)*
+
+  With a CardKB attached, the Home menu (long press on the Home page) has **TerminalCLI**: type a command, press Enter, and the reply appears under it. Settings such as `set ch.hops`, `set ch.msgs` or `set tx` can be changed without the app. See [TerminalCLI Commands](Companion_TerminalCLI_Commands.md).
+
+- **New: run commands on a repeater or room server from the node with the CardKB keyboard.** *(Companion)*
+
+  With a CardKB attached, the menu of a repeater or room server has **TerminalCLI**: enter its admin password, then type commands. See [Display Guide](Companion_Display_Guide.md#terminalcli-on-a-repeater-or-room-server) and [Repeater CLI Commands](Repeater_CLI_Commands.md).
+
+- **New: repeaters in the contact list, Trace position, every telemetry reading.** *(Companion)*
+
+  Repeaters now appear in the contact list, marked with a repeater icon. Contacts and DM conversations are marked with a person icon. **Trace position** in a contact's menu shows where the contact is, when it shares its position. **Request telemetry** works on repeaters too and now shows every reading (`VBAT`, `#2`, `#3`...), not only battery and GPS. See [Display Guide](Companion_Display_Guide.md#contact-action-screen).
+
+- **New: compass on the Sensors page.** *(Companion)*
+
+  An HMC5883L compass (tested with GY-271 and GY-273 modules; QMC5883L support is not yet tested on hardware) on the I2C sensor pins shows on the Sensors page as a dial with the heading. Calibrate it in Settings → **Compass Calib.**: hold the device level and turn it slowly through a full circle. The heading is also sent in telemetry, and on the GPS Trace screen an arrow points to the target. See [Display Guide](Companion_Display_Guide.md#compass-calibration) and, for wiring, [Hardware Wiring Guide](Hardware_Wiring_Guide.md#i2c-sensors-and-cardkb).
+
+- **New: startup alert listing what was found.** *(Companion)*
+
+  At startup a **Detected:** alert lists the GPS and the I2C sensors found.
+
+- **Changed: time zones with half-hour and 45-minute offsets.** *(Companion)*
+
+  `set tz.offset` now takes minutes too, e.g. `set tz.offset 5:30` for UTC+5:30 or `set tz.offset 5:45` for UTC+5:45; `set tz.offset 7` works as before. The web portal's timezone field takes the same format. See [TerminalCLI Commands](Companion_TerminalCLI_Commands.md).
+
+- **New: 128×128 SH1107 OLED detected at boot.** *(Companion, Repeater, Room Server — V3, WSL3, V4, RAK4631, ProMicro, HT-CT62, XIAO S3, Waveshare LR1121)*
+
+  Besides the 0.96" SSD1306 and the 1.3" SH1106 (128×64), a 128×128 SH1107 OLED (1.12" or 1.5") at I2C address 0x3C now works too. The firmware tells the three controllers apart at boot, so there is no setting to choose.
+
+  The Heltec V3 and V4, which until now worked only with their own 0.96" SSD1306, can use any of the three. Boards without a display can take an external module on the same OLED bus (SDA **GPIO17**, SCL **GPIO18**), plus 3.3 V and GND:
+  - **WSL3:** header JP3, pin 12 (GPIO17) and pin 9 (GPIO18).
+  - **V4 bought without a display:** header P5.
+
 ### v1.18_1018
 
 - **New: messages stay on the node after the app syncs them, and the messages you send are shown too.** *(Companion)*
