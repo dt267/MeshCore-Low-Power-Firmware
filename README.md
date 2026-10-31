@@ -1,5 +1,5 @@
 # MeshCore Low Power Firmware
-MeshCore firmware with deep power optimization, a full companion display UI with multi-transport connectivity, and advanced radio and network controls — built for multi-day off-grid operation.
+MeshCore firmware with deep power optimization, a full companion display UI with multi-transport connectivity that also runs standalone with no phone, and advanced radio and network controls — built for multi-day off-grid operation.
 
 **Supported devices:** 
 - Heltec WiFi LoRa 32 V3, WSL3
@@ -23,6 +23,7 @@ MeshCore firmware with deep power optimization, a full companion display UI with
 - [What's New](#whats-new)
 - [Installation](#installation)
 - [Idle Battery Life Estimation](#idle-battery-life-estimation-2000-mah-battery)
+- [RX Duty Cycle](#rx-duty-cycle)
 - [Hardware Wiring Guide](Hardware_Wiring_Guide.md) — I2C sensors, OLED, GPS, battery divider, DIY boards
 - [Detailed Power Profiles by Device](Power-Profiles-Detailed.md)
 - [Bypass External LNA on Heltec V4.2](Bypass-External-LNA-on-Heltec-V4.md)
@@ -33,6 +34,67 @@ MeshCore firmware with deep power optimization, a full companion display UI with
 - [License](#license)
 
 ## What's New
+
+### v1.18_1031
+
+- **New: most of what the app sets can now be done on the node.** *(Companion)*
+
+  - **Contacts:** favourites, **Remove contact**, **Reset path**, **Share contact**, and a person's **Permissions** (Telemetry, Location, Environment, Remote CLI). See [Display Guide](Companion_Display_Guide.md#contact-action-screen).
+  - **Channels:** **+ Add channel** at the end of the conversation list (Public, and with the CardKB hashtag and private channels), **Share** and **Invite** in a channel's menu, **Join channel** on a received invite and **Join #sos** on a message naming a hashtag channel. See [Display Guide](Companion_Display_Guide.md#channels).
+  - **Settings:** now in groups, with **Auto-add** and the telemetry settings added. Changes are saved when you leave Settings. See [Display Guide](Companion_Display_Guide.md#settings-page).
+  - **TerminalCLI:** commands for the rest (auto-add, telemetry, position, flood scope, radio tuning, `erase`), and **TerminalCLI** in a person's menu for a node that allows you Remote CLI. See [Companion TerminalCLI Commands](Companion_TerminalCLI_Commands.md).
+
+- **New: warning before messages or contacts run out of room.** *(Companion)*
+
+  The node warns once when 20 places are left, counting places an older entry can give up, and alerts each message or contact lost once it is full.
+
+- **New: radio presets on the node.** *(Companion)*
+
+  Settings → Radio → **Preset** lists the region presets of the MeshCore app, then up to five of your own saved with `set radio.custom.<N>`; the header shows the selected one's frequency, bandwidth, SF and CR, and long press uses it. TX power stays as it is; Settings → Radio → **TX Power** picks it from a list in 3 dB steps. The config portal has the same **Preset** list in its Radio section and a **Custom Radio Presets** section for C1 to C5, which are included in backup/restore. See [Display Guide](Companion_Display_Guide.md#radio-preset-screen).
+
+- **Changed: the Radio page shows the link instead of the settings.** *(Companion)*
+
+  One row for the preset and TX power, then noise floor, RSSI / SNR of the last packet, packets received / sent, airtime and receive errors. Long press opens Preset, TX Power, RxGain and RxDuty. See [Display Guide](Companion_Display_Guide.md#radio-page).
+
+- **New: GPS interval and mode on the node.** *(Companion)*
+
+  Long press on the GPS page opens **GPS** on/off, **Interval** (`Always`, `30s` up to `1h`) and **Mode** (which satellite systems are used). Mode is shown only when the GPS takes it: the built-in GPS of boards such as Heltec V4 and T096, or an ATGM336H on the GPS header. See [Display Guide](Companion_Display_Guide.md#gps-page-optional).
+
+- **Changed: the HT-CT62 keeps up to 250 contacts (was 350).** *(Companion, HT-CT62)*
+
+  This leaves enough memory for Bluetooth. If your node has more than 250 contacts, remove the ones you don't need before updating. Otherwise, on the first start the node keeps your favourites, then the most recently heard contacts, and removes the rest together with their messages. Restoring a backup with more than 250 contacts does the same.
+
+- **New: LoRa radio off.** *(Companion)*
+
+  Settings → **LoRa Radio** or `radio off`; an icon in the Home header shows it, and a restart turns the radio back on.
+
+- **New: repeater and room server tools.** *(Companion)*
+
+  A repeater's menu has **Ping (zero hop)** and **Trace path**, a repeater's or room server's menu **Request status**. A login with no reply over the stored path is retried once by flood. See [Display Guide](Companion_Display_Guide.md#path-trace-screen).
+
+- **New: sensor contacts.** *(Companion)*
+
+  Sensors appear in the contact list with a pulse trace icon; their menu has **Request telemetry** and, with the CardKB, **TerminalCLI**. A sensor answers telemetry only after you have logged in to it once with its admin password.
+
+- **New: Refresh Frequency for e-ink screens.** *(Companion, e-ink)*
+
+  Settings → Display → **Refresh Frequency** sets after how many screen changes a full refresh cleans the screen, done once you stop pressing keys: `1`, `5`, `10` (default), `15` or `30`. Leaving Settings no longer does a full refresh of its own; opening the CardKB message composer does one. Switching pages is also faster.
+
+- **Fix: text on e-ink screens faded.** *(Companion, Repeater, Room Server — E213, E290, Wireless Paper)*
+
+  Text that stays on screen, such as the header and battery icon, no longer turns faint after a while, and new text is no longer darker than the rest.
+
+- **New: type messages in other languages with the CardKB.** *(Companion)*
+
+  Settings → **Input Languages** adds Belarusian, Kazakh, Russian, Ukrainian, US-International (accented letters for French, German, Spanish and other Latin-script languages) and Vietnamese (Telex) to English. In the message editor, Tab switches between them. On an OLED, set **Message Font** to `Large` to see accents and non-Latin letters. See [Display Guide](Companion_Display_Guide.md#typing-in-other-languages).
+
+- **New: Delete all messages.** *(Companion)*
+
+  The Home menu has **Delete all messages**: it deletes every message on the node, in RAM and in flash. Contacts, channels and settings are kept. See [Display Guide](Companion_Display_Guide.md#home-page).
+
+- **Fix: the app got no reply to CLI commands once the node's message store was full.** *(Companion)*
+
+  When the node held as many messages as it can keep, replies to TerminalCLI commands from the app, and to commands sent from the app to a repeater or room server, never reached the app.
 
 ### v1.18_1025
 
@@ -1236,6 +1298,23 @@ Ways to enter DFU mode:
 | ProMicro fakeTec Repeater, SX1262 Boosted Gain off, RX Duty Cycle on | 2.64 | 643.9 | 26.83 | v1.18_1018 |
 | DIY ESP32-C3 Super Mini + SX1262 Companion BLE, 32.768 kHz crystal, SX1262 Boosted Gain off, RX Duty Cycle on | 4.7 | 361.7 | 15.07 | v1.18_1018 |
 | DIY ESP32-C3 Super Mini + SX1262 Repeater, 32.768 kHz crystal, SX1262 Boosted Gain off, RX Duty Cycle on | 3.33 | 510.5 | 21.27 | v1.18_1018 |
+
+## RX Duty Cycle
+
+RX duty cycle (`set rx.duty on`, or **RxDuty** on the Companion display) lets the receiver sleep between short listening windows. It runs only with some SF and bandwidth combinations. The table shows where it runs and the share of the time the receiver still listens, the figure `get rx.duty` shows (lower saves more):
+
+| SF | BW 62.5 kHz | BW 125 kHz | BW 250 kHz | BW 500 kHz |
+|---|---|---|---|---|
+| SF5 | – | – | – | – |
+| SF6 | 55% | – | – | – |
+| SF7 | 47% | 55% | – | – |
+| SF8 | 41% | 47% | 55% | – |
+| SF9 | 72% | 77% | – | – |
+| SF10 | 72% | 72% | 77% | – |
+| SF11 | 72% | 72% | 72% | 77% |
+| SF12 | 72% | 72% | 72% | 72% |
+
+– = does not run, the receiver listens all the time.
 
 ---
 
