@@ -19,11 +19,13 @@ The same commands also work on the app's **Command Line** screen. That screen sh
   | `stats` | — | Show battery voltage (mV), uptime (s), noise floor, last RSSI/SNR, and RX/TX/error packet counts |
   | `reboot` | — | Reboot the device |
   | `poweroff` | — | Power off the device. Alias: `shutdown` |
+  | `erase` | — | Factory reset: erase everything stored on the node and restart. Not accepted from remote CLI. |
   | `ver` | — | Show firmware version and build date |
   | `board` | — | Show the board/manufacturer name this firmware was built for |
   | `get name` | — | Show the node name |
   | `set name <text>` | `text`: max 31 chars | Set the node name. The characters `[` `]` `\` `:` `,` `?` `*` are rejected. Saved to flash. |
   | `set pin <n>` | `n`: 6-digit BLE pairing pin, or `0` for the built-in default | Set the BLE pairing pin. Saved to flash; takes effect on the next reboot. `0` restores the compiled-in default, which on a board with a display is a new random pin each session. |
+  | `get buzzer` / `set buzzer on\|off` | `on` \| `off` | Boards with a buzzer only. `off` mutes the notification tones. Saved to flash, applies at once. Same as Settings → **Buzzer**. |
   | `clock` | — | Show the current UTC date and time |
   | `clock sync` | — | Set the clock from the timestamp of the command itself, i.e. the clock of the phone that sent it. Refused if that clock is older than the firmware build date. |
   | `gps` | — | Show GPS status: enabled/disabled, fix status, satellite count |
@@ -39,14 +41,17 @@ The same commands also work on the app's **Command Line** screen. That screen sh
   | `set gps.mode <n>` | **Heltec V4:** `1`=GPS `2`=GPS+BDS `3`=GPS+GLO `4`=GPS+BDS+GLO (default `4`) · **T096:** `1`=GPS-L1 `2`=All-sys-L1 `3`=All-sys+QZSS-dual (default `3`) · **E213 / V3 / E290:** `1`=GPS `2`=GPS+BDS `3`=GPS+BDS+GLO+GAL `4`=GPS+BDS+GLO+GAL+QZSS (default `4`; only takes effect on a confirmed ATGM336H-6N module, tested via M5Stack's Unit GPS v1.1) | Select GNSS constellation preset. Saved to flash; takes effect on next GPS on. |
   | `get radio` | — | Show current radio parameters as `freq,bw,sf,cr` — frequency (MHz), bandwidth (kHz), spreading factor, coding rate |
   | `set radio <freq>,<bw>,<sf>,<cr>` | `freq`: MHz `150..2500`; `bw`: kHz, exact chip step only — **SX1262:** `7.8` `10.4` `15.6` `20.8` `31.25` `41.7` `62.5` `125` `250` `500` · **LR1121:** `62.5` `125` `250` `500`, plus `203.125` `406.25` `812.5` above 1 GHz; `sf`: `5..12`; `cr`: `5..8` | Set all four at once, **comma-separated** (no spaces). Saved and applied without a reboot. Example: `set radio 869.525,250,10,5` |
+  | `get radio.custom` | — | List your radio presets C1..C5 as `C1: freq,bw,sf,cr name`; an unused slot shows `C1: empty` |
+  | `set radio.custom.<N> <freq>,<bw>,<sf>,<cr> [name]` | `N`: `1..5`; values as in `set radio`; `name`: optional, up to 16 bytes, spaces allowed | Save a radio preset in slot N, replacing what was there. It shows as `C<N>: name` at the end of the [Preset list](Companion_Display_Guide.md#radio-preset-screen), where a long press uses it. Does not change the radio. Example: `set radio.custom.1 868.731,62.5,7,7 Moscow` |
   | `get radio.rxgain` | — | Show the RX gain state, worded like the `set` reply, e.g. `> RX gain on` or `> External FEM LNA on` |
   | `set radio.rxgain <mode>` | `off` \| `on` · Heltec V4.3 / T096: `off` \| `int` \| `ext` | `off` = SX1262 Rx power saving gain (lowest RX current). `on` = SX1262 Rx boosted gain. Heltec V4.3 / T096: `off` also bypasses the KCT8103L LNA, `int` = SX1262 Rx boosted gain only, `ext` = KCT8103L LNA only; `on` is another spelling of `int`. Saved and applied immediately. Default: `off` on Heltec V4.3 / T096, `on` elsewhere. |
   | `get rx.duty` | — | Show whether RX duty cycle is on, and the listening windows in use |
-  | `set rx.duty <on\|off>` | `on` \| `off` | Sleep the receiver between short listening windows to cut idle current by 2-3 mA. `on` uses the windows computed for the spreading factor in use; if none fit the current SF/BW the request is refused and duty cycling stays off. Saved; applied immediately. Default: `off`. |
+  | `set rx.duty <on\|off>` | `on` \| `off` | Sleep the receiver between short listening windows to cut idle current by 2-3 mA. `on` uses the windows computed for the spreading factor in use; if none fit the current SF/BW the request is refused and duty cycling stays off. Saved; applied immediately. Default: `off`. See [RX Duty Cycle](README.md#rx-duty-cycle). |
   | `get agc.resets` | — | Show how many times the AGC has been auto-reset since boot or last `clear agc.resets`. Returns `n/a (not supported on LR1121)` on LR1121 boards. |
   | `clear agc.resets` | — | Reset the AGC auto-reset counter to zero. No-op on LR1121 boards (replies `not applicable on LR1121`). |
   | `get tx` | — | Show current transmit power (dBm) |
   | `set tx <dBm>` | `dBm`: integer | Set transmit power in dBm. Saved and applied immediately. |  
+  | `radio on` / `radio off` | — | Turn the LoRa radio on or off, same as **Settings → LoRa Radio**. Off: nothing is sent or received. A restart turns it back on. |
   | `start ota` | — | Start OTA firmware update. On ESP32: connect to Wi-Fi `MeshCore-OTA`, then go to `192.168.4.1` (opens the config portal). On nRF52: enters BLE DFU mode. |
   | `get repeat` | — | Show whether repeat mode is `on` or `off`, and the current frequency |
   | `set repeat on` | — | Enable repeat mode |
@@ -62,6 +67,23 @@ The same commands also work on the app's **Command Line** screen. That screen sh
   | `set txdelay <value>` | `value`: decimal `0..10`, e.g. `2.0` | Set flood relay jitter window scale. Higher = wider window = fewer collisions but higher latency. |
   | `get direct.txdelay` | — | Show direct relay jitter window scale factor (default `0.20`) |
   | `set direct.txdelay <value>` | `value`: decimal `0..10` | Set direct relay jitter window scale. |
+  | `get af` / `set af <value>` | `value`: decimal `0..9` | Airtime factor, as in the app's settings |
+  | `get rxdelay` / `set rxdelay <value>` | `value`: decimal `0..20` | Rx delay base, as in the app's settings |
+  | `get multi.acks` / `set multi.acks <n>` | `0` \| `1` | Multi-ACKs, as in the app's settings |
+  | `get path.hash.mode` / `set path.hash.mode <n>` | `0` = 1 byte, `1` = 2 bytes, `2` = 3 bytes | Path hash size, as in the app's settings |
+  | `get flood.scope` | — | Show the default flood scope (region), or `off` |
+  | `set flood.scope <name>` | `name`: 1-30 chars, with or without the leading `#`, or `off` | Set the default flood scope, the same as the app's default region |
+  | `get contacts.autoadd` / `set contacts.autoadd on\|off` | `on` \| `off` | `on`: add every new contact heard. `off`: add only the types in `contacts.autoadd.types`. Same as Settings → Contacts → **Auto-add**. |
+  | `get contacts.autoadd.types` | — | Show which contact types are still added while `contacts.autoadd` is `off` |
+  | `set contacts.autoadd.types <types>` | comma-separated `chat`, `repeater`, `room`, `sensor`, or `none` | Example: `set contacts.autoadd.types chat,room` |
+  | `get contacts.autoadd.hops` / `set contacts.autoadd.hops <n>` | `n`: `0..64` | Add a new contact only when heard within this many hops: `1` = direct only, `0` = no limit |
+  | `get contacts.overwrite` / `set contacts.overwrite on\|off` | `on` \| `off` | When the contact list is full, replace the oldest contact that is not a favourite |
+  | `get telemetry.base` / `set telemetry.base <mode>` | `no` \| `yes` \| `contacts` | Who may request your telemetry. `contacts`: the contacts allowed in their **Permissions** on the node or in the app. Same as Settings → Contacts → **Telemetry**. |
+  | `get telemetry.loc` / `set telemetry.loc <mode>` | `no` \| `yes` \| `contacts` | Whether telemetry includes your location |
+  | `get telemetry.env` / `set telemetry.env <mode>` | `no` \| `yes` \| `contacts` | Whether telemetry includes environment sensors |
+  | `get lat` / `set lat <deg>` | `deg`: `-90..90` | Your latitude, for a node without GPS. A GPS fix replaces it. |
+  | `get lon` / `set lon <deg>` | `deg`: `-180..180` | Your longitude, for a node without GPS. A GPS fix replaces it. |
+  | `get advert.loc` / `set advert.loc on\|off` | `on` \| `off` | Whether your adverts carry your position |
   | `get int.thresh` | — | Show RSSI interference threshold in dB above noise floor (`0` = disabled) |
   | `set int.thresh <dB>` | `dB`: integer `0..200` | Set RSSI interference threshold. `0` disables the check. |
   | `get tz.offset` | — | Show the UTC offset used for display, e.g. `+7:00` (`+0:00` = UTC) |
