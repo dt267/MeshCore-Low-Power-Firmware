@@ -10,6 +10,7 @@ GPIO numbers are ESP32 GPIOs; `P0.xx` / `P1.xx` are nRF52840 port pins.
 - [Optional OLED display](#optional-oled-display)
 - [GPS](#gps)
 - [Battery reading](#battery-reading)
+- [5-way joystick](#5-way-joystick)
 - [DIY ESP32-C3 + SX1262](#diy-esp32-c3--sx1262)
 - [DIY ProMicro nRF52840 + SX1262](#diy-promicro-nrf52840--sx1262)
 
@@ -99,6 +100,19 @@ The XIAO ESP32S3 & Wio-SX1262, the Waveshare ESP32-S3-LR1121-XF, the HT-CT62 / D
 
 On the ProMicro, the cutoff defaults to 3400 mV once the ratio is set, and `set bat.cfg` accepts a cutoff down to 2900 mV.
 
+## 5-way joystick
+
+Companion only, on a device with a display: the WSL3 and the ProMicro need an [OLED](#optional-oled-display) fitted. Connect each switch between its pin and GND. Four separate push buttons work the same way, with the display's button as Center. To turn the joystick on, see the [Display Guide](Companion_Display_Guide.md#5-way-joystick). For the ProMicro pins, see [DIY ProMicro](#diy-promicro-nrf52840--sx1262).
+
+| Button | Heltec V3 | Heltec WSL3 | EBYTE EoRa-HUB | Heltec T096 |
+| :--- | :--- | :--- | :--- | :--- |
+| Up | GPIO4 (JP3 pin 15) | GPIO4 (JP3 pin 20) | GPIO2 (J5 pin 13) | P1.03 (P2 pin 13) |
+| Down | GPIO5 (JP3 pin 16) | GPIO5 (JP3 pin 19) | GPIO3 (J5 pin 14) | P1.05 (P2 pin 14) |
+| Left | GPIO6 (JP3 pin 17) | GPIO6 (JP3 pin 18) | GPIO4 (J5 pin 15) | P1.07 (P2 pin 15) |
+| Right | GPIO7 (JP3 pin 18) | GPIO7 (JP3 pin 17) | GPIO5 (J5 pin 16) | P1.06 (P2 pin 16) |
+| Center | GPIO0 (JP2 pin 8), together with the BOOT button | GPIO0 (JP3 pin 6), together with the BOOT button | GPIO0 (J2 pin 8), together with the BOOT button | P1.10 (P3 pin 10), together with the user button |
+| GND | JP3 pin 1 | JP3 pin 3 | J5 pin 1 | P2 pin 1 |
+
 ## DIY ESP32-C3 + SX1262
 
 Use the `Heltec_ct62_*` images. Pick the image set by how the board's USB port reaches the chip:
@@ -135,6 +149,7 @@ Use the `ProMicro_*` images. Pins are given as fakeTec V4 silkscreen labels, wit
 | Battery divider output | D21 (P0.31) |
 | Buzzer, optional (Companion) | fakeTec MOSFET switched by D0 (P0.08) |
 | Vibration motor, optional (Companion) | fakeTec MOSFET switched by D1 (P0.06) |
+| 5-way joystick, optional (Companion) | each switch to GND: Up pad `101` (P1.01), Down pad `102` (P1.02), Left pin `106` (P1.06), Right pad `107` (P1.07), Center D6 (P1.00), together with the user button |
 
 The SX1262 module must:
 - switch its RF path with DIO2; a module whose switch also needs an RX enable line takes it from the RXEN pad (P0.17),

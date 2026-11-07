@@ -36,6 +36,40 @@ MeshCore firmware built for multi-day off-grid operation. Deep power optimizatio
 
 ## What's New
 
+### v1.18_1107
+
+- **New: 5-way joystick and on-screen keyboard on ProMicro, Heltec V3, WSL3, T096 and EoRa-HUB.** *(Companion)*
+
+  A joystick moves through the screens directly, and without a CardKB an on-screen keyboard types messages in every input language, with accented letters right on the screen. Turn it on with **Joystick** in Settings → General. See [Display Guide](Companion_Display_Guide.md#5-way-joystick) and [wiring](Hardware_Wiring_Guide.md#5-way-joystick).
+
+- **New: path hash size and default region on the node.** *(Companion)*
+
+  Settings → Radio has **PathHash** (`1 byte` → `2 bytes` → `3 bytes`) and **Region**; long press on the Radio page now opens the same list as Settings → Radio, Repeat included. Region opens a list: **None**, **Discover**, which asks the repeaters in direct range for their regions as the app's "Fetch regions from repeaters" does, and with the CardKB **Type name...**. See [Display Guide](Companion_Display_Guide.md#region-screen).
+
+- **New: Location Radar.** *(Companion)*
+
+  **Location Radar** at the top of the saved locations list shows your saved locations and contacts around you, so you can see where a contact is next to places you know. Long press picks the zoom, the source or **Trace**. Saved locations are now numbered from 0, as in `set loc.<N>`. See [Display Guide](Companion_Display_Guide.md#location-radar-screen).
+
+- **Fix: compass mounted upside down.** *(Companion)*
+
+  A compass module mounted upside down now gives the right heading: calibration detects it, so turn the device clockwise while calibrating, and calibrate once more after updating. Before, east and west were swapped and the GPS Trace arrow pointed the wrong way.
+
+- **New: one `help` for every node.** *(Companion, Repeater, Room Server)*
+
+  Companion, repeater and room server now share the same `help`, also over the companion's Remote CLI (**TerminalCLI** in a person's menu). `help` lists the sections, `help <section>` shows one, e.g. `help gps`, and `help <word>` finds commands by word, e.g. `help wifi`; this replaces `help all`. See [Companion TerminalCLI Commands](Companion_TerminalCLI_Commands.md).
+
+- **New: Reply names the author.** *(Companion)*
+
+  **Reply** on someone else's message in a channel or room now mentions its author, as the apps do, and messages show mentions as `@name`. With the CardKB the mention is already typed in and you can edit it; with presets the title shows `@name`.
+
+- **New: emoji in messages and names.** *(Companion)*
+
+  Emoji from the app now show on TFT and e-ink displays and with the OLED large font. With the OLED normal font the common ones show as text, e.g. 😜 as `;P`.
+
+- **Fix: overlapping text in messages with a line break.** *(Companion)*
+
+  A line break in a message now starts a new line on TFT and e-ink displays and with the OLED large font. Before, the text after it was drawn over by the next line on TFT and e-ink, and ran into the previous sentence on OLED.
+
 ### v1.18_1031
 
 - **New: most of what the app sets can now be done on the node.** *(Companion)*
@@ -142,52 +176,6 @@ MeshCore firmware built for multi-day off-grid operation. Deep power optimizatio
   The Heltec V3 and V4, which until now worked only with their own 0.96" SSD1306, can use any of the three. Boards without a display can take an external module on the same OLED bus (SDA **GPIO17**, SCL **GPIO18**), plus 3.3 V and GND:
   - **WSL3:** header JP3, pin 12 (GPIO17) and pin 9 (GPIO18).
   - **V4 bought without a display:** header P5.
-
-### v1.18_1018
-
-- **New: messages stay on the node after the app syncs them, and the messages you send are shown too.** *(Companion)*
-
-  Syncing with an app no longer clears the node's messages. Everything received stays on the node, together with everything you send from the app, the CardKB editor or Quick Send, so each conversation reads in full on the display and a second app can still get it. The node keeps up to 256 messages (128 on the HT-CT62); when it is full, the oldest go first, following each channel's priority (`none` / `low` / `normal` / `high`). The messages live in RAM. They survive a restart with the `reboot` command, from the app, from **Reboot** in the Home menu, after changing the connection mode and after a firmware update over the air, unless the new version changes how messages are stored. Everything else clears them: **Power off**, the low-battery deep sleep, removing power, and the RESET button on ESP32 boards. In all these cases **Message Persist** still keeps the ones no app has received yet.
-
-- **New: every app on every paired device gets every message over Bluetooth.** *(Companion)*
-
-  Until now the first app to sync took the messages off the node, so a second phone, a PC or another app on the same phone never got them. Over a paired Bluetooth connection the node now remembers, for each device and each app, which messages it has already sent there (up to 10), so each of them receives everything it has not had yet. USB and WiFi connections share one record. A device the node does not recognise, after pairing it again or when it is not among the last 10 seen, receives every stored message on its first connection.
-
-- **New: CHATS page.** *(Companion)*
-
-  The second Home page lists the most recent conversations, each with its number of messages and the age of its newest one. Long press opens the full conversation list, whose header shows how full the store is (e.g. `12/256`). Long press on the Home page now opens the Home menu instead of the messages. See [Display Guide](Companion_Display_Guide.md#chats-page).
-
-- **New: Home menu: Sync to app, Reboot, Shutdown.** *(Companion)*
-
-  Long press on the Home page opens a menu with **Sync to app** selected:
-
-  - **Sync to app** (manual sync): while an app is connected, sends every received message stored on the node to that app again: for example after reinstalling the app, or to a second app over USB or WiFi.
-  - **Reboot**: restarts the node.
-  - **Shutdown**: powers the node off without going through Settings.
-
-  See [Display Guide](Companion_Display_Guide.md#home-page).
-
-- **New: set a channel's priority on the display.** *(Companion)*
-
-  The popup on a channel message has **Priority**, which opens the four priorities (`none` / `low` / `normal` / `high`), the same setting as `set ch.msgs`. A channel set to `none` is marked `blocked` in the conversation list; once its last message is gone it stays listed at the end, where long press opens its priority. Choosing `low` now trims the channel's older messages at once, from the display or the Command Line. See [Display Guide](Companion_Display_Guide.md#channel-priority).
-
-- **New: contact lists show when each contact was last heard, and a contact's menu opens its messages.** *(Companion)*
-
-  The Contacts page and the contact list show the time since each contact was last heard (`2m`, `5h`, `3d`) at the right of its name. When there are messages with a contact or room server, its action menu starts with **Chat (n)**, which opens the conversation at the newest message; paging past either end goes back to the menu. See [Display Guide](Companion_Display_Guide.md#contacts-page).
-
-- **Change: AEIC images no longer appear on the node's display.** *(Companion)*
-
-  The node cannot decode these images, so it no longer shows a `<AEIC image>` line for them. While an app is connected an image passes through as before: MeshCore Open Advanced receives the image, other apps one `<AEIC image>` line per image. An image received with no app connected is not kept.
-
-- **New: Dark / Light theme and your own display colors on color TFT displays.** *(Companion, Heltec T096)*
-
-  **Settings → Theme**, or `set theme dark|light` from the TerminalCLI channel, switches between the default dark background and a white background with dark text. The choice is saved. Colors now follow the regions of the screen: the header row, the navigation marks (page dots, scroll arrows, selection), the bottom status line, the big clock, the readings on the data pages and the Low Battery screen. Each of them, the remaining text and the background can be set from the TerminalCLI channel with `set color.<region> <rrggbb>`; the screen redraws at once and the colors are saved. Dark and Light keep their own colors, and `set color.reset` brings back the defaults. See [TerminalCLI Commands](Companion_TerminalCLI_Commands.md).
-
-- **New: the GPS page shows which GPS chip is fitted.** *(Companion)*
-
-  With GPS off, the bottom line of the GPS page shows the chip ID the module reports at startup, such as `AT6558R-5N-32-1C580901` (L76K), `UC6580I-00` (T096) or `AT6668-6N-74-00000A30` (ATGM336H-6N), so you can tell which module is plugged into the GPS header. A module that does not report one shows `chip unknown`. See [Display Guide](Companion_Display_Guide.md#gps-page-optional).
-
-- **New: WiFi mode can now be set up from the official app's WiFi Settings screen, and the home screen shows the node's network name (`meshcore-xxxx.local`) with the IP.** *(Companion, ESP32 boards)*
 
 See [CHANGELOG.md](CHANGELOG.md) for all earlier releases.
 

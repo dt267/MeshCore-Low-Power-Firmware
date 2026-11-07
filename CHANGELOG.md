@@ -1,5 +1,39 @@
 # Changelog
 
+### v1.18_1107
+
+- **New: 5-way joystick and on-screen keyboard on ProMicro, Heltec V3, WSL3, T096 and EoRa-HUB.** *(Companion)*
+
+  A joystick moves through the screens directly, and without a CardKB an on-screen keyboard types messages in every input language, with accented letters right on the screen. Turn it on with **Joystick** in Settings → General. See [Display Guide](Companion_Display_Guide.md#5-way-joystick) and [wiring](Hardware_Wiring_Guide.md#5-way-joystick).
+
+- **New: path hash size and default region on the node.** *(Companion)*
+
+  Settings → Radio has **PathHash** (`1 byte` → `2 bytes` → `3 bytes`) and **Region**; long press on the Radio page now opens the same list as Settings → Radio, Repeat included. Region opens a list: **None**, **Discover**, which asks the repeaters in direct range for their regions as the app's "Fetch regions from repeaters" does, and with the CardKB **Type name...**. See [Display Guide](Companion_Display_Guide.md#region-screen).
+
+- **New: Location Radar.** *(Companion)*
+
+  **Location Radar** at the top of the saved locations list shows your saved locations and contacts around you, so you can see where a contact is next to places you know. Long press picks the zoom, the source or **Trace**. Saved locations are now numbered from 0, as in `set loc.<N>`. See [Display Guide](Companion_Display_Guide.md#location-radar-screen).
+
+- **Fix: compass mounted upside down.** *(Companion)*
+
+  A compass module mounted upside down now gives the right heading: calibration detects it, so turn the device clockwise while calibrating, and calibrate once more after updating. Before, east and west were swapped and the GPS Trace arrow pointed the wrong way.
+
+- **New: one `help` for every node.** *(Companion, Repeater, Room Server)*
+
+  Companion, repeater and room server now share the same `help`, also over the companion's Remote CLI (**TerminalCLI** in a person's menu). `help` lists the sections, `help <section>` shows one, e.g. `help gps`, and `help <word>` finds commands by word, e.g. `help wifi`; this replaces `help all`. See [Companion TerminalCLI Commands](Companion_TerminalCLI_Commands.md).
+
+- **New: Reply names the author.** *(Companion)*
+
+  **Reply** on someone else's message in a channel or room now mentions its author, as the apps do, and messages show mentions as `@name`. With the CardKB the mention is already typed in and you can edit it; with presets the title shows `@name`.
+
+- **New: emoji in messages and names.** *(Companion)*
+
+  Emoji from the app now show on TFT and e-ink displays and with the OLED large font. With the OLED normal font the common ones show as text, e.g. 😜 as `;P`.
+
+- **Fix: overlapping text in messages with a line break.** *(Companion)*
+
+  A line break in a message now starts a new line on TFT and e-ink displays and with the OLED large font. Before, the text after it was drawn over by the next line on TFT and e-ink, and ran into the previous sentence on OLED.
+
 ### v1.18_1031
 
 - **New: most of what the app sets can now be done on the node.** *(Companion)*

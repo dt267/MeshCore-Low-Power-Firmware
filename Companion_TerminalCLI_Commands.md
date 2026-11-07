@@ -3,7 +3,7 @@
 ## Command Line Interface for Companion.
 Setup: In the MeshCore app, create a channel named "TerminalCLI". It will now act as a Terminal CLI for Companion; everything typed here is a command.
 
-The same commands also work on the app's **Command Line** screen. That screen shows one reply per command, so a long reply (`help all`, `get quick`, `get loc`, `ch.hops status`, `ch.msgs status`) comes a page at a time, ending with `mm: more`; type `mm` for the next page. The TerminalCLI channel shows every page at once.
+The same commands also work on the app's **Command Line** screen. That screen shows one reply per command, so a long reply (`get quick`, `get loc`, `ch.hops status`, `ch.msgs status`) comes a page at a time, ending with `mm: more`; type `mm` for the next page. The TerminalCLI channel shows every page at once.
 
 <img height="600" alt="Screenshot 2026-03-19 at 9 38 13 PM" src="https://github.com/user-attachments/assets/c1df229f-5eed-43b8-abdb-906c3c864a62" />
 
@@ -12,9 +12,9 @@ The same commands also work on the app's **Command Line** screen. That screen sh
 
 | Command | Parameters | Notes |
   |---|---|---|
-  | `help` | — | List the keywords to look up with `help <keyword>`, one line per section. Only works over the app link; a remote CLI request replies `help is local-only`. |
-  | `help <keyword>` | `keyword`: a word of the command, or its start, e.g. `gps`, `wifi`, `rx`, `set` | List the commands this board supports that have a word starting with `keyword` (not case-sensitive). Example: `help ch` lists the `ch.hops` and `ch.msgs` commands. |
-  | `help all` | — | List every command this board supports, grouped into sections |
+  | `help` | — | List the command sections this board has, e.g. `node contacts location mesh radio repeat channel`. Also works over the companion's Remote CLI (**TerminalCLI** in a person's menu), which does not list local-only commands such as `erase`. |
+  | `help <section>` | `section`: a name from `help` | Show that section's commands. A section too long for one reply lists only the command names; look one up with `help <word>`. |
+  | `help <word>` | `word`: a word of the command, or its start, e.g. `wifi`, `rx`, `tx` | List the commands this board supports that have a word starting with `word` (not case-sensitive). Example: `help ch` lists the `ch.hops` and `ch.msgs` commands. |
   | `mm` | — | Command Line screen only: show the next page of the last long reply. Replies `no more` when there is none. |
   | `stats` | — | Show battery voltage (mV), uptime (s), noise floor, last RSSI/SNR, and RX/TX/error packet counts |
   | `reboot` | — | Reboot the device |
@@ -26,6 +26,7 @@ The same commands also work on the app's **Command Line** screen. That screen sh
   | `set name <text>` | `text`: max 31 chars | Set the node name. The characters `[` `]` `\` `:` `,` `?` `*` are rejected. Saved to flash. |
   | `set pin <n>` | `n`: 6-digit BLE pairing pin, or `0` for the built-in default | Set the BLE pairing pin. Saved to flash; takes effect on the next reboot. `0` restores the compiled-in default, which on a board with a display is a new random pin each session. |
   | `get buzzer` / `set buzzer on\|off` | `on` \| `off` | Boards with a buzzer only. `off` mutes the notification tones. Saved to flash, applies at once. Same as Settings → **Buzzer**. |
+  | `get joystick` / `set joystick on\|off` | `on` \| `off` | ProMicro, Heltec V3, WSL3, T096 and EoRa-HUB only. Turns the [5-way joystick](Companion_Display_Guide.md#5-way-joystick) on or off. Saved to flash, applies at once, without the five-button check of Settings → **Joystick**. Without a display, replies `ERR: no display on this board`. |
   | `clock` | — | Show the current UTC date and time |
   | `clock sync` | — | Set the clock from the timestamp of the command itself, i.e. the clock of the phone that sent it. Refused if that clock is older than the firmware build date. |
   | `gps` | — | Show GPS status: enabled/disabled, fix status, satellite count |
@@ -94,7 +95,7 @@ The same commands also work on the app's **Command Line** screen. That screen sh
   | `get quick.channel` | — | Show the channel Quick Send currently targets |
   | `set quick.channel <channel>` | `channel`: channel name (spaces allowed) | Set the channel Quick Send sends to. Must be an existing, named channel. |
   | `get loc` | — | List occupied saved location slots, one per line: `N:lat,lon:name` (N is 0-based) |
-  | `set loc.<N> <name> <lat> <lon>` | `N`: 0–9; name may contain spaces; lat/lon come last | Save a GPS location to slot N (0-based, display shows 1–10). Example: `set loc.0 Base camp 10.7769 106.7009` |
+  | `set loc.<N> <name> <lat> <lon>` | `N`: 0–9; name may contain spaces; lat/lon come last | Save a GPS location to slot N (0-based, the same number the display shows). Example: `set loc.0 Base camp 10.7769 106.7009` |
   | `del loc.<N>` | `N`: 0–9 | Clear saved location at slot N (0-based) |
   | `del loc.all` | — | Clear all saved location slots |
   | `get theme` | — | Show the display theme: `dark` or `light`. *(color TFT: Heltec T096)* |

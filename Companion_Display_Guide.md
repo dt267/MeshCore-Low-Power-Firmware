@@ -17,6 +17,8 @@ One button does everything:
 
 > **Heltec E213 and E290 — second button (GPIO21):** works like a triple click. The Wireless Paper has only one button.
 
+> **With a joystick (ProMicro, Heltec V3, WSL3, T096, EoRa-HUB):** see [5-way joystick](#5-way-joystick).
+
 ---
 
 ## Home screen pages
@@ -494,12 +496,12 @@ An M5Stack Unit CardKB v1.1 on the node's I2C sensor pins (SDA, SCL, 3.3 V, GND)
 | Fn + 1 … 9, Fn + 0 | Jump to that Home page from any screen: 1 Home, 2 Chats, 3 Quick Send, 4 Contacts, 5 Saved Locations, 6 Recent, 7 Radio, then GPS *(when there is one)*, Sensors and Settings |
 
 - **On a Home page**, Up or Down opens the page's list, like Enter. On Sensors they switch between the views.
-- **In a list opened from a page**, Right or Left goes to the next or previous page.
-- **On other screens**, Left goes back, like Esc.
+- **In a menu or list, and on other screens**, Left goes back, like Esc.
+- **On a Settings row marked `>`**, Right opens it, like Enter.
 
 While the display is off, the first key only turns it on.
 
-**Typing a message.** With the keyboard attached, **Reply** on a message and **Send message** on a contact open the text editor instead of the Quick Reply screen. On an open Quick Reply screen, `>> Type...` at the end of the list opens the editor.
+**Typing a message.** With the keyboard attached, **Reply** on a message and **Send message** on a contact open the text editor instead of the Quick Reply screen. On an open Quick Reply screen, `>> Type...` at the top of the list opens the editor.
 
 ![Typing a message](images/display_guide/compose_oled.png)
 
@@ -601,6 +603,54 @@ Type a command and press Enter: the reply appears under it, or `(no reply)`. Up 
 
 ---
 
+## 5-way joystick
+
+A 5-way joystick on a ProMicro, Heltec V3, WSL3, T096 or EoRa-HUB moves through the screens directly and types on an on-screen keyboard. See the [wiring](Hardware_Wiring_Guide.md#5-way-joystick).
+
+**Turning it on.** Select **Joystick** in Settings → General, then press all five buttons. Each one leaves the list as you press it. A name that does not clear, or the wrong one clearing, means a wire to check. If 10 seconds pass without a new button, the joystick stays off.
+
+![Confirming the joystick](images/display_guide/joystick_confirm_oled.png)
+
+| Press | Action |
+|---|---|
+| Up / Down | Previous / next item in a list or menu |
+| Left | Back; on a Home page, the previous page |
+| Right | On a Home page, the next page; on a Settings row marked `>`, open it |
+| Center or the user button | Open / select |
+
+The user button no longer takes double or triple clicks, so a press acts at once. Turn **Joystick** off in Settings to get them back.
+
+### On-screen keyboard
+
+With the joystick on and no keyboard attached, `>> Type...` at the top of the [Quick Reply screen](#quick-reply-screen) opens the keyboard. The screens that need the CardKB, such as TerminalCLI and adding a channel, open it too.
+
+![Quick Reply with the keyboard row](images/display_guide/quick_reply_type_oled.png)
+
+![On-screen keyboard](images/display_guide/keyboard_oled.png)
+
+Move with the joystick and press Center to type. Until you type, the top line shows who it goes to.
+
+| Key | Action |
+|---|---|
+| ← | Delete the character before the cursor |
+| ↑ | Capital for the next letter |
+| `?12` / `abc` | Symbols and digits / back to letters |
+| `EN`, `VI` | Next language; shown when more than one is on in [Input Languages](#typing-in-other-languages) |
+| ◄ ► | Move the cursor |
+| ⎵ | Space |
+| ✕ | Leave without sending |
+| ✓ | Send |
+
+**Accented letters.** In Vietnamese and US-International, pressing a letter that has accents opens its row: Left and Right choose, Center types, Up or Down closes the row. Symbols such as `(`, `/`, `?` and `!` open a row of related ones.
+
+![Choosing an accented letter](images/display_guide/keyboard_variants_oled.png)
+
+**Russian, Ukrainian, Belarusian, Kazakh.** Each letter has its own key. Letters without one open from a similar letter: `ё` from `е`, `ґ` from `г`, and the Kazakh `ә ғ і қ ң ө ү ұ һ` from `а г и к н о у х`.
+
+![Cyrillic keyboard](images/display_guide/keyboard_cyrillic_oled.png)
+
+---
+
 ## Saving a GPS location
 
 On a message with a GPS position, long press and choose **Save location**:
@@ -628,14 +678,40 @@ Long press the **SAVED LOCS** page to open the full list:
 
 ![Saved locations list](images/display_guide/saved_list_oled.png)
 
-Each entry shows the sender and the start of the message.
+**Location Radar** comes first. Each saved location shows its slot number (the `N` of `set loc.<N>` in [TerminalCLI](Companion_TerminalCLI_Commands.md)), the sender and the start of the message.
 
 | Press | Action |
 |---|---|
 | Single click | Move arrow to next entry |
 | Triple click | Move arrow to previous entry |
-| Long press | Open GPS trace screen for the selected entry |
+| Long press | Open the [Location Radar screen](#location-radar-screen), or the GPS trace screen for the selected entry |
 | Double click | Return to home |
+
+---
+
+## Location Radar screen
+
+Shows your saved locations and contacts around you, north up, with you in the middle. The number at the top right is the distance to the circle.
+
+![Location Radar screen](images/display_guide/radar_oled.png)
+
+- **Dot**: a saved location, with its name or slot number beside it
+- **Square**: a contact that shares its position
+- **Bottom line**: the selected point and its distance
+- With a compass attached, an arrow in the middle shows the way you face.
+
+| Press | Action |
+|---|---|
+| Single click | Select the next point |
+| Triple click | Select the previous point |
+| Long press | Open the menu |
+| Double click | Back to the list |
+
+![Location Radar menu](images/display_guide/radar_menu_oled.png)
+
+- **Zoom**: pick the distance to the circle, from `200m` to `50km`. **Auto** fits all points.
+- **Trace**: open the [GPS Trace screen](#gps-trace-screen) for the selected point
+- **Source**: show **Saved** locations, **Contacts** or **All**
 
 ---
 
@@ -694,8 +770,8 @@ The radio's settings on one row, then the link and traffic. Long press for the r
 |---|---|
 | First row | The [preset](#radio-preset-screen) in use (`C1: name` for your own), or `freq/bw/sf/cr`, and the TX power |
 | NF | Noise floor: background noise in dBm |
-| Last | RSSI / SNR of the last packet received |
-| RX / TX | Packets received / sent since start-up |
+| `-95/7.5` | RSSI / SNR of the last packet received, `--` before the first one |
+| TX / RX | Packets sent / received since start-up |
 | Air | Share of time transmitting / receiving since start-up, in % |
 | Err | Packets received with errors since start-up |
 
@@ -712,10 +788,39 @@ The radio's settings on one row, then the link and traffic. Long press for the r
 |---|---|
 | **Preset** | Opens the [preset list](#radio-preset-screen) |
 | **TX Power** | Lowers it 3 dB per long press, then back to the maximum |
-| **RxGain** | RX gain: OFF → ON (Heltec V4.3 / T096: OFF → INT → EXT) |
+| **RxGain** | RX gain `OFF` / `ON`; on Heltec V4.3 / T096 opens a list: `OFF`, `INT`, `EXT` |
 | **RxDuty** | RX duty cycle on/off: lets the receiver sleep between listening windows, saving 2-3 mA at SF8. It runs only with some SF and bandwidth combinations, see [RX Duty Cycle](README.md#rx-duty-cycle); with the others the radio keeps listening all the time. |
+| **Repeat** | Pass on other nodes' packets, on/off |
+| **PathHash** | Path hash size for the packets you send; opens a list: `1 byte`, `2 bytes`, `3 bytes` |
+| **Region** | Opens the [region list](#region-screen) |
 
-All four are also in [Settings](#settings-page).
+All seven are also in [Settings](#settings-page).
+
+---
+
+## Region screen
+
+Opened from Settings → Radio → **Region**: the default region your flood messages are scoped with, the same as the app's default region and `set flood.scope` in [TerminalCLI](Companion_TerminalCLI_Commands.md).
+
+![Region screen](images/display_guide/region_oled.png)
+
+- `*` marks the region in use
+- **None**: messages go without a region
+- **Discover**: asks the repeaters in direct range for their regions, as the app's "Fetch regions from repeaters" does. It takes about 10 seconds to find them, then asks one repeater at a time (`Asking 2/5...`). When it finishes, the regions found open on their own screen. Private (`$`) regions are not listed.
+- **Type name...**: with a keyboard, type a region name
+
+| Press | Action |
+|---|---|
+| Single click | Next item |
+| Double click | Back, nothing changed |
+| Triple click | Previous item |
+| Long press | Use the selected region, or start Discover |
+
+### Regions found
+
+![Regions found](images/display_guide/region_found_oled.png)
+
+The header shows how many regions were found, and `*` marks the one in use. Long press uses the selected region. Double click goes back to the Region screen; the results are not kept, so run **Discover** again to see them.
 
 ---
 
@@ -830,7 +935,7 @@ At startup, a **Detected:** alert lists the GPS and the sensors found.
 | Single click | Next item |
 | Double click | Back: from a group to the list, from the list to the page |
 | Triple click | Previous item |
-| Long press | Open the group, or change the item |
+| Long press | Open the group, or change the item. An item with more than two values opens a list: `*` marks the current one, long press picks, double click goes back. |
 
 **At the top**
 
@@ -846,8 +951,9 @@ At startup, a **Detected:** alert lists the GPS and the sensors found.
 |---|---|
 | **Qk.Ch.** | The channel Quick Send uses; opens the [channel list](#quick-send-channel-screen) |
 | **Buzzer** | `ON` / `MUTED`; it beeps when turned back on *(ProMicro fakeTec with a buzzer)* |
+| **Joystick** | Turn the [5-way joystick](#5-way-joystick) on or off *(ProMicro, Heltec V3, WSL3, T096, EoRa-HUB)* |
 | **Units** | Metric / Imperial |
-| **Pos. Format** | How positions are shown: `DD` → `UTM` → `MGRS` |
+| **Pos. Format** | How positions are shown; opens a list: `DD`, `UTM`, `MGRS` |
 | **GPS Privacy** | ON: Quick Send messages go without your position |
 | **Compass Calib.** | Calibrate the [compass](#compass-calibration) *(when there is one)* |
 
@@ -857,21 +963,23 @@ At startup, a **Detected:** alert lists the GPS and the sensors found.
 |---|---|
 | **Preset** | The preset in use (`C1: name` for your own), or `Custom`; opens the [preset list](#radio-preset-screen) |
 | **TX Power** | The radio chip's setting, as `get tx` shows it; opens a list in 3 dB steps down from the board's maximum (e.g. `22`, `19`, `16` …), long press uses one. On boards with a front-end amplifier the antenna gets more than this. |
-| **Repeat** | Pass on other nodes' packets, on/off |
-| **RxGain** | RX gain: OFF → ON (Heltec V4.3 / T096: OFF → INT → EXT) |
+| **RxGain** | RX gain `OFF` / `ON`; on Heltec V4.3 / T096 opens a list: `OFF`, `INT`, `EXT` |
 | **RxDuty** | RX duty cycle on/off: lets the receiver sleep, saving 2-3 mA at SF8. Runs only with some SF and bandwidth combinations, see [RX Duty Cycle](README.md#rx-duty-cycle). |
+| **Repeat** | Pass on other nodes' packets, on/off |
+| **PathHash** | Path hash size for the packets you send, as `set path.hash.mode` and the app's setting; opens a list: `1 byte`, `2 bytes`, `3 bytes` |
+| **Region** | The default region (`#name`), or `None`; opens the [region list](#region-screen) |
 
 **Display**
 
 | Item | Action |
 |---|---|
-| **Screen Off** | Screen timeout: `15s` → `3min` → `Never` |
-| **Brightness** | Backlight: `25` → `50` → `75` → `100` *(Heltec T096)* |
+| **Screen Off** | Screen timeout; opens a list: `15s`, `3min`, `Never` |
+| **Brightness** | Backlight; opens a list: `100%`, `75%`, `50%`, `25%` *(Heltec T096)* |
 | **Theme** | `Dark` / `Light`. Dark is the default. *(Heltec T096)* |
 | **Flip Screen** | Turn the display upside down |
 | **Font Weight** | `Thin` / `Bold` *(e-ink only)* |
 | **Message Font** | Message text size: `Normal` / `Large` |
-| **Refresh Frequency** | Full refresh after this many screen changes, done once you stop pressing keys: `1` → `5` → `10` → `15` → `30`. `10` is the default. *(e-ink only)* |
+| **Refresh Frequency** | Full refresh after this many screen changes, done once you stop pressing keys; opens a list: `1`, `5`, `10`, `15`, `30`. `10` is the default. *(e-ink only)* |
 | **Clear Ghost** | A deeper clean of a ghosted screen *(e-ink only)* |
 
 **Contacts**
@@ -880,7 +988,7 @@ At startup, a **Detected:** alert lists the GPS and the sensors found.
 |---|---|
 | **Contact Display** | `All` / `Favs`: the contact list shows everyone or only favourites |
 | **Auto-add** | `All`: add every new contact heard. `Off`: add none. `Custom`: the types chosen in the app or with `contacts.autoadd.types`; long press goes back to `All`. |
-| **Telemetry** | Who may request your telemetry: `No` → `Yes` → `Contacts` (those allowed in their [Permissions](#contact-permissions)) |
+| **Telemetry** | Who may request your telemetry; opens a list: `No`, `Yes`, `Contacts` (those allowed in their [Permissions](#contact-permissions)) |
 | **Telem. Loc.** | Whether telemetry includes your location, same three choices |
 | **Telem. Env.** | Whether telemetry includes environment sensors, same three choices |
 
@@ -905,7 +1013,7 @@ At startup, a **Detected:** alert lists the GPS and the sensors found.
 
 Opened from Settings → **Compass Calib.**
 
-Hold the device level and turn it slowly through a full circle. The dial is split into 12 slices, which fill in as you turn through them; the right side shows how many are done and the seconds left.
+Hold the device level, screen up, and turn it slowly clockwise through a full circle. The dial is split into 12 slices, which fill in as you turn through them; the right side shows how many are done and the seconds left.
 
 - When all 12 are done, **Compass calibrated** is shown and you are back in Settings.
 - After 30 seconds without all 12, **Calibration failed** is shown.
