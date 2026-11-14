@@ -1,6 +1,39 @@
 # Companion Radio — Display & Button Guide
 
-How to use the display and button on your Companion Radio node. Applies to all supported hardware — OLED (Heltec V3, V4, and the optional 0.96" SSD1306 / 1.3" SH1106 OLED on HT-CT62, XIAO ESP32S3 & Wio-SX1262 Kit and Waveshare ESP32-S3-LR1121-XF), color TFT (Heltec T096), and e-ink (Heltec E213, Wireless Paper, E290).
+How to use the display and button on your Companion Radio node. Applies to all supported hardware — OLED (Heltec V3, V4, Seeed Wio Tracker L1 and L1 Pro, and the optional 0.96" SSD1306 / 1.3" SH1106 OLED on HT-CT62, XIAO ESP32S3 & Wio-SX1262 Kit and Waveshare ESP32-S3-LR1121-XF), color TFT (Heltec T096), and e-ink (Heltec E213, Wireless Paper, E290).
+
+## Contents
+
+- [Button basics](#button-basics)
+- [Home screen pages](#home-screen-pages)
+- [Home page](#home-page)
+- [Chats page](#chats-page)
+- [Quick Send page](#quick-send-page)
+- [Quick Send Channel screen](#quick-send-channel-screen)
+- [Contacts page](#contacts-page)
+- [Contact List screen](#contact-list-screen)
+- [Contact Action screen](#contact-action-screen)
+- [Telemetry Result screen](#telemetry-result-screen)
+- [Path Trace screen](#path-trace-screen)
+- [Reading messages](#reading-messages)
+- [Popup menu (while reading a message)](#popup-menu-while-reading-a-message)
+- [Channels](#channels)
+- [Quick Reply screen](#quick-reply-screen)
+- [CardKB keyboard](#cardkb-keyboard)
+- [5-way joystick](#5-way-joystick)
+- [Saving a GPS location](#saving-a-gps-location)
+- [Saved locations](#saved-locations)
+- [Location Radar screen](#location-radar-screen)
+- [GPS Trace screen](#gps-trace-screen)
+- [Recent page](#recent-page)
+- [Radio page](#radio-page)
+- [Region screen](#region-screen)
+- [Radio Preset screen](#radio-preset-screen)
+- [GPS page *(optional)*](#gps-page-optional)
+- [Sensors page](#sensors-page)
+- [Settings page](#settings-page)
+- [Date and Time screen](#date-and-time-screen)
+- [Compass calibration](#compass-calibration)
 
 ---
 
@@ -15,9 +48,11 @@ One button does everything:
 | **Triple click** | Previous item; where there is none, the same as double click |
 | **Long press** | Open / select: the page's list or menu, the selected item |
 
-> **Heltec E213 and E290 — second button (GPIO21):** works like a triple click. The Wireless Paper has only one button.
+> **Heltec E213 and E290 — second button (GPIO21):** works like a triple click, or as Back with the [joystick](#5-way-joystick) on. The Wireless Paper has only one button.
 
-> **With a joystick (ProMicro, Heltec V3, WSL3, T096, EoRa-HUB):** see [5-way joystick](#5-way-joystick).
+> **Seeed Wio Tracker L1 and L1 Pro:** the [joystick](#5-way-joystick) is built in and always on; the Menu button is Back.
+
+> **With a joystick (ProMicro, Heltec V3, V4, WSL3, E213, E290, T096, EoRa-HUB, Waveshare LR1121, Wio Tracker L1):** see [5-way joystick](#5-way-joystick).
 
 ---
 
@@ -38,6 +73,8 @@ Single click cycles forward; double click and triple click both cycle backward.
 | **Sensors** | Battery history chart, plus attached environment sensor readings and a compass dial *(if any)* |
 | **Settings** | Device settings |
 
+On every page but Home, the top left shows the page's icon instead of its name. The icons on the right are the same as on the [Home page](#home-page).
+
 ---
 
 ## Home page
@@ -55,9 +92,10 @@ Single click cycles forward; double click and triple click both cycle backward.
   - A lightning bolt while charging *(V3, Wireless Paper, T096)*.
   - A USB plug while Connection Mode is USB and the cable is connected *(Heltec V4, E213, E290, T096; on T096 only once an app has opened the connection)*.
 - **Envelope** (`5✉`): unread messages
-- **GPS icon**: shown while GPS is on, so you don't forget it *(on OLED only on this page)*
+- **GPS icon**: shown while GPS is on, so you don't forget it
 - **Muted icon**: shown while the buzzer is muted *(ProMicro fakeTec with a buzzer)*
 - **Radio off icon** (an x beside signal bars): shown while the LoRa radio is off
+- **BLE off icon** (an x beside the Bluetooth sign): shown while Bluetooth is off
 - Dots below the header: which page you are on
 - **Large clock**: local time once the time is set; before that, time since start-up
 - **OLED / TFT**: date and connection status at the bottom. In WiFi mode the node's network name replaces the date, e.g. `meshcore-d267.local`.
@@ -80,7 +118,7 @@ Connection status:
 
 > **Finding the node on WiFi**: the IP address can change. The network name `meshcore-xxxx.local` stays the same and can be used instead, on devices that support `.local` names.
 
-> **Time and date**: set your time zone once with `set tz.offset 7` (for UTC+7, or `set tz.offset 5:30` for UTC+5:30, see [TerminalCLI](Companion_TerminalCLI_Commands.md)); the default is UTC. The time comes from the app when it connects, or from GPS.
+> **Time and date**: set your time zone once in Settings → **Timezone**, or with `set tz.offset 7` (for UTC+7, or `set tz.offset 5:30` for UTC+5:30, see [TerminalCLI](Companion_TerminalCLI_Commands.md)); the default is UTC. The time comes from the app when it connects, from GPS, or from Settings → **Date** and **Time**.
 
 ---
 
@@ -217,7 +255,7 @@ Long press switches the selected line between **No** and **Yes**, double click g
 
 ## Telemetry Result screen
 
-Shows what the contact sends back: `VBAT` (its battery), its sensors (`#2`, `#3`...) and its GPS position if it has one.
+Shows what the contact sends back: `VBAT` (its battery), its sensors (`#2`, `#3`...) and its GPS position if it has one. The GPS position also becomes the contact's position, on the [Location Radar](#location-radar-screen) and in **Trace position**.
 
 On a repeater, room server or sensor, `Logging in...` is shown before `Requesting...`. A sensor answers only a node that has logged in to it with its admin password, from the app or with [TerminalCLI](#terminalcli-on-a-repeater-or-room-server); otherwise `Login: no response` is shown.
 
@@ -446,7 +484,7 @@ Type it without the spaces into **Join Private** on another node, or **Join a Pr
 
 ### Inviting to a channel
 
-**Invite** in the channel menu or in the popup lists your contacts. Long press on one sends them the channel as a message: **Sending...**, then **Delivered!** or **Not delivered**.
+**Invite** in the channel menu or in the popup lists your contacts. Long press on one sends them the channel as a direct message: **Sending direct...** and any **Retry** steps, then **Delivered!** or **Not delivered**.
 
 A received invite reads:
 
@@ -516,11 +554,13 @@ The header shows who it goes to; `|` is the cursor.
 | Enter | Send |
 | Esc | Leave without sending |
 
-A message can be up to 151 characters; an accented or non-Latin letter counts as 2 or 3. Shift gives capitals and Sym gives symbols; with the [low-power CardKB firmware](https://github.com/dt267/MeshCore-Low-Power-Firmware/releases/download/MeshCore-low-power-v1.17.dev_1011/M5Stack_CardKB_v1.1_low_power.hex), tap Shift or Sym once to lock it and again to unlock. A direct message shows **Sending...**, then **Delivered!** or **Not delivered**. A channel message shows **Sent!**.
+A message can be up to 151 characters; an accented or non-Latin letter counts as 2 or 3, an emoji as 4. Shift gives capitals and Sym gives symbols; with the [low-power CardKB firmware](https://github.com/dt267/MeshCore-Low-Power-Firmware/releases/download/MeshCore-low-power-v1.17.dev_1011/M5Stack_CardKB_v1.1_low_power.hex), tap Shift or Sym once to lock it and again to unlock. A direct message shows **Sending direct...** (or **flood** when no path is known) and is tried up to 5 times, the last time by flood: **Retry 2/5 direct...**, and so on. Then it shows **Delivered!** or **Not delivered**. A channel message shows **Sent!**.
 
 ### Typing in other languages
 
 Turn the languages on in Settings → [Input Languages](#settings-page). In the message editor, **Tab** switches between English and them, and the header shows the one in use, e.g. `VI`. TerminalCLI, passwords and channel names are always typed in English. On an OLED, set **Message Font** to `Large` to see accents and non-Latin letters while typing.
+
+**Emoji** — Tab to `EMO` shows the [emoji grid](#on-screen-keyboard) of the on-screen keyboard: the arrows move, Enter types the emoji, Tab goes back to letters. Send with ✓ on the bottom row.
 
 **Vietnamese** — Telex, as with Unikey on a PC:
 
@@ -605,9 +645,9 @@ Type a command and press Enter: the reply appears under it, or `(no reply)`. Up 
 
 ## 5-way joystick
 
-A 5-way joystick on a ProMicro, Heltec V3, WSL3, T096 or EoRa-HUB moves through the screens directly and types on an on-screen keyboard. See the [wiring](Hardware_Wiring_Guide.md#5-way-joystick).
+A 5-way joystick on a ProMicro, Heltec V3, V4, WSL3, E213, E290, T096, EoRa-HUB, Waveshare LR1121 or Wio Tracker L1 moves through the screens directly and types on an on-screen keyboard. See the [wiring](Hardware_Wiring_Guide.md#5-way-joystick).
 
-**Turning it on.** Select **Joystick** in Settings → General, then press all five buttons. Each one leaves the list as you press it. A name that does not clear, or the wrong one clearing, means a wire to check. If 10 seconds pass without a new button, the joystick stays off.
+**Turning it on.** On the Wio Tracker L1 and L1 Pro it is always on. On other boards, select **Joystick** in Settings → General, then press all five buttons. Each one leaves the list as you press it. A name that does not clear, or the wrong one clearing, means a wire to check. If 10 seconds pass without a new button, the joystick stays off.
 
 ![Confirming the joystick](images/display_guide/joystick_confirm_oled.png)
 
@@ -617,8 +657,9 @@ A 5-way joystick on a ProMicro, Heltec V3, WSL3, T096 or EoRa-HUB moves through 
 | Left | Back; on a Home page, the previous page |
 | Right | On a Home page, the next page; on a Settings row marked `>`, open it |
 | Center or the user button | Open / select |
+| Second button (E213, E290), Menu button (Wio Tracker L1) | Back; in the message editor or on-screen keyboard, cancel |
 
-The user button no longer takes double or triple clicks, so a press acts at once. Turn **Joystick** off in Settings to get them back.
+The user buttons no longer take double or triple clicks, so a press acts at once. Turn **Joystick** off in Settings to get them back.
 
 ### On-screen keyboard
 
@@ -635,7 +676,7 @@ Move with the joystick and press Center to type. Until you type, the top line sh
 | ← | Delete the character before the cursor |
 | ↑ | Capital for the next letter |
 | `?12` / `abc` | Symbols and digits / back to letters |
-| `EN`, `VI` | Next language; shown when more than one is on in [Input Languages](#typing-in-other-languages) |
+| `EN`, `VI`, `EMO` | Next language; shown when more than one is on in [Input Languages](#typing-in-other-languages) |
 | ◄ ► | Move the cursor |
 | ⎵ | Space |
 | ✕ | Leave without sending |
@@ -648,6 +689,12 @@ Move with the joystick and press Center to type. Until you type, the top line sh
 **Russian, Ukrainian, Belarusian, Kazakh.** Each letter has its own key. Letters without one open from a similar letter: `ё` from `е`, `ґ` from `г`, and the Kazakh `ә ғ і қ ң ө ү ұ һ` from `а г и к н о у х`.
 
 ![Cyrillic keyboard](images/display_guide/keyboard_cyrillic_oled.png)
+
+**Emoji.** With **Emoji** on in [Input Languages](#settings-page), the language key leads to `EMO`. The top row types at once; each other key opens a row of similar emoji, chosen like accented letters.
+
+![Emoji keyboard](images/display_guide/keyboard_emoji_oled.png)
+
+![Choosing an emoji](images/display_guide/keyboard_emoji_strip_oled.png)
 
 ---
 
@@ -670,11 +717,11 @@ On a message with a GPS position, long press and choose **Save location**:
 
 ## Saved locations
 
-The **SAVED LOCS** page shows your saved GPS points.
+The **Saved Locations** page shows your saved GPS points.
 
 ![Saved Locs page](images/display_guide/saved_page_oled.png)
 
-Long press the **SAVED LOCS** page to open the full list:
+Long press the **Saved Locations** page to open the full list:
 
 ![Saved locations list](images/display_guide/saved_list_oled.png)
 
@@ -691,13 +738,14 @@ Long press the **SAVED LOCS** page to open the full list:
 
 ## Location Radar screen
 
-Shows your saved locations and contacts around you, north up, with you in the middle. The number at the top right is the distance to the circle.
+Shows your saved locations and contacts around you, north up, with you in the middle. The number at the top right is the distance to the outer circle; the dotted circle is half of it.
 
 ![Location Radar screen](images/display_guide/radar_oled.png)
 
 - **Dot**: a saved location, with its name or slot number beside it
 - **Square**: a contact that shares its position
 - **Bottom line**: the selected point and its distance
+- **Top left**: how long ago the selected contact was last heard, e.g. `5m ago`
 - With a compass attached, an arrow in the middle shows the way you face.
 
 | Press | Action |
@@ -709,15 +757,15 @@ Shows your saved locations and contacts around you, north up, with you in the mi
 
 ![Location Radar menu](images/display_guide/radar_menu_oled.png)
 
-- **Zoom**: pick the distance to the circle, from `200m` to `50km`. **Auto** fits all points.
+- **Zoom**: pick the distance to the outer circle, from `200m` to `50km`. **Auto** fits all points.
 - **Trace**: open the [GPS Trace screen](#gps-trace-screen) for the selected point
-- **Source**: show **Saved** locations, **Contacts** or **All**
+- **Source**: show **Saved** locations, favourite contacts (**Faves**), all **Contacts** or **All**
 
 ---
 
 ## GPS Trace screen
 
-Shows live distance and bearing from your current position to a saved location, a contact's advertised position (**Trace position**) or the GPS position in a telemetry reply (**Trace GPS**).
+Shows live distance and bearing from your current position to a saved location, a contact's position from its advert or a telemetry reply (**Trace position**) or the GPS position in a telemetry reply (**Trace GPS**).
 
 ![GPS Trace screen](images/display_guide/trace_oled.png)
 
@@ -893,16 +941,15 @@ Single click goes to the next item, triple click to the previous one, double cli
 
 - Battery level over the last 14 days, one bar per day
 - Dashed lines: 100% and 50%
-- Top right: battery voltage
+- Top left, after the icon: battery voltage
 - Bottom: time since start-up
 
 **Attached sensor readings** *(only shown if an environment sensor is detected)*:
 
 ![Sensor readings](images/display_guide/sensors_grid_oled.png)
 
-- Top right: the sensor's name (e.g. `BME280`)
+- Top left, after the icon: the sensor's name (e.g. `BME280`)
 - Up to 6 readings, each with its unit (`°C`, `%`, `hPa`...)
-- With several sensors, the views are numbered `SENSOR 1`, `SENSOR 2`...
 
 **Compass** *(only shown if an HMC5883L or QMC5883L is detected)*:
 
@@ -941,20 +988,23 @@ At startup, a **Detected:** alert lists the GPS and the sensors found.
 
 | Item | Action |
 |---|---|
+| **BLE** | Bluetooth on/off; `ON, Connected` while an app is connected. *Not shown in USB or WiFi mode.* |
 | **LoRa Radio** | `ON` / `OFF`. Off: nothing is sent or received, and the [radio off icon](#home-page) shows in the header. On again after a restart. |
 | **Connection Mode** | Choose `BLE`, `USB` or `WiFi`; the node restarts in that mode. `*` marks the current one. |
-| **BLE** | Bluetooth on/off; `ON, Connected` while an app is connected. *Not shown in USB or WiFi mode.* |
 
 **General**
 
 | Item | Action |
 |---|---|
 | **Qk.Ch.** | The channel Quick Send uses; opens the [channel list](#quick-send-channel-screen) |
-| **Buzzer** | `ON` / `MUTED`; it beeps when turned back on *(ProMicro fakeTec with a buzzer)* |
-| **Joystick** | Turn the [5-way joystick](#5-way-joystick) on or off *(ProMicro, Heltec V3, WSL3, T096, EoRa-HUB)* |
+| **Buzzer** | `ON` / `MUTED`; it beeps when turned back on *(ProMicro fakeTec with a buzzer, Wio Tracker L1)* |
+| **Joystick** | Turn the [5-way joystick](#5-way-joystick) on or off *(ProMicro, Heltec V3, V4, WSL3, E213, E290, T096, EoRa-HUB, Waveshare LR1121)* |
 | **Units** | Metric / Imperial |
 | **Pos. Format** | How positions are shown; opens a list: `DD`, `UTM`, `MGRS` |
 | **GPS Privacy** | ON: Quick Send messages go without your position |
+| **Timezone** | Your time zone, e.g. `UTC+7:00`; opens a list |
+| **Date** | Today's date, or `Not set`; opens the [Date and Time screen](#date-and-time-screen) |
+| **Time** | The local time, or `Not set`; opens the [Date and Time screen](#date-and-time-screen) |
 | **Compass Calib.** | Calibrate the [compass](#compass-calibration) *(when there is one)* |
 
 **Radio**
@@ -998,14 +1048,33 @@ At startup, a **Detected:** alert lists the GPS and the sensors found.
 |---|---|
 | **English** | Always on (`Default`) |
 | **Belarusian**, **Kazakh**, **Russian**, **Ukrainian**, **US-International**, **Vietnamese** | `ON` / `OFF`: the languages Tab switches between in the [message editor](#typing-in-other-languages) |
+| **Emoji** | `ON` / `OFF`: the [emoji grid](#on-screen-keyboard), reached with Tab like a language |
 
 **At the bottom**
 
 | Item | Action |
 |---|---|
-| **Start OTA** | Update the firmware. On ESP32: connect to the WiFi network `MeshCore-OTA` and open `192.168.4.1`; the page also lets you set the WiFi network for WiFi mode. On nRF52 (T096 / RAK4631): use the **nRF Device Firmware Update** app with the `.zip` file. |
+| **Start OTA** | Update the firmware. On ESP32: connect to the WiFi network `MeshCore-OTA` and open `192.168.4.1` or `meshcore.local`; the page also lets you set the WiFi network for WiFi mode. On nRF52 (T096 / RAK4631): use the **nRF Device Firmware Update** app with the `.zip` file. On ESP32, press any button to leave OTA. |
+| **Start OTA STA** | ESP32 only. Update the firmware over your own WiFi network, the one set for WiFi mode, instead of `MeshCore-OTA`. The screen shows the network with its channel and signal, and the address to open, e.g. `192.168.1.68` and `meshcore-d267.local`. |
 | **Shutdown** | Turn the node off |
 | **About** | Node name, firmware version and build date |
+
+---
+
+## Date and Time screen
+
+Opened from Settings → **Date** or **Time**. Set the **Timezone** first: the date and time you enter are local.
+
+**Date** shows Year, Month and Day; **Time** shows Hour and Minute. The marker is on the one you are setting.
+
+| Press | Action |
+|---|---|
+| Single click | Up one |
+| Triple click | Down one |
+| Long press | Next one; on the last, saves |
+| Double click | Back one; on the first, leaves without saving |
+
+With the CardKB or joystick: ↑ / ↓ change the value, → goes to the next one, Enter saves on the last, ← goes back.
 
 ---
 

@@ -4,9 +4,9 @@ MeshCore firmware built for multi-day off-grid operation. Deep power optimizatio
 **Supported devices:** 
 - Heltec WiFi LoRa 32 V3, WSL3
 - Heltec WiFi LoRa 32 V4.2, V4.3 (with or without OLED display)
-- Heltec Vision Master E213 (2.13" e-ink) — V1.1 only (SSD1680 panel; see note below)
+- Heltec Vision Master E213 (2.13" e-ink) — V1.1 only (SSD1682 controller)
 - Heltec Vision Master E290 (2.9" e-ink) — not yet tested on hardware
-- Heltec Wireless Paper (2.13" e-ink) — V1.1.1 / V1.2 only (SSD1680 panel; see note below)
+- Heltec Wireless Paper (2.13" e-ink) — V1.1.1 / V1.2 only (SSD1682 controller)
 - Heltec Mesh Node T096
 - Seeed Studio XIAO ESP32S3 & Wio-SX1262 Kit (with or without OLED display)
 - RAK4631 WisBlock
@@ -14,6 +14,7 @@ MeshCore firmware built for multi-day off-grid operation. Deep power optimizatio
 - EBYTE EoRa-HUB-xxxTB (dual-band sub-GHz + 2.4 GHz)
 - Heltec HT-CT62 (ESP32-C3 + SX1262 module), and DIY ESP32-C3 + SX1262 boards wired the same way (with or without OLED display)
 - ProMicro nRF52840 on a fakeTec board with a Heltec HT-RA62 or Ai-Thinker Ra-01SH radio module, and DIY ProMicro + SX1262 boards wired the same way (with or without OLED display)
+- Seeed Wio Tracker L1 and L1 Pro (1.3" OLED), L1 Lite (no display) — not yet tested on hardware
 - ...
 
 
@@ -35,6 +36,48 @@ MeshCore firmware built for multi-day off-grid operation. Deep power optimizatio
 - [License](#license)
 
 ## What's New
+
+### v1.18_1114
+
+> **Important fix, update recommended for ESP32 boards on v1.18_1018, v1.18_1025, v1.18_1031 or v1.18_1107:** *(Companion, Repeater, Room Server)* after OTA or a connection mode change, the node could keep drawing high current until the RESET button was pressed. The WiFi / Bluetooth radio is now shut down properly when the node restarts. In those versions, a restart while WiFi or Bluetooth was on, such as the end of OTA, `reboot` during OTA, or a companion's switch from WiFi or BLE to USB, left the radio powered: a Heltec V4 repeater drew about 32 mA instead of 4.4 mA until the RESET button was pressed or the power removed. Updating over OTA from these versions clears it, no RESET needed.
+
+- **New device: Seeed Wio Tracker L1, L1 Pro and L1 Lite.** *(Companion, Repeater, Room Server)*
+
+  One set of `WioTrackerL1_*.uf2` images serves all three: the L1 and L1 Pro with their 1.3" OLED, and the L1 Lite, which has no display and runs without one. The joystick is built in and always on, with the Menu button as Back, and the Grove port takes I2C sensors or a CardKB. Flash like the other nRF52 boards (see [Installation](#installation)).
+
+  **Not yet tested on hardware:** the port is built from the other devices this firmware supports.
+
+- **New: 5-way joystick on Heltec V4, E213, E290 and Waveshare LR1121.** *(Companion)*
+
+  The joystick and on-screen keyboard now work on these boards too. On the E213 and E290, the second button is Back while the joystick is on. See [wiring](Hardware_Wiring_Guide.md#5-way-joystick).
+
+- **New: send emoji from the node.** *(Companion)*
+
+  Turn on **Emoji** in Settings → Input Languages. In the message editor, Tab with the CardKB, or the `EMO` key on the on-screen keyboard, shows a grid of emoji: the top row types at once, the other keys open a row of similar ones. See [Display Guide](Companion_Display_Guide.md#on-screen-keyboard).
+
+- **New: favourites on the Location Radar.** *(Companion)*
+
+  **Source** → **Faves** shows only your favourite contacts, to keep an eye on a group. The top left shows how long ago the selected contact's position was received. See [Display Guide](Companion_Display_Guide.md#location-radar-screen).
+
+- **New: direct messages from the node are retried.** *(Companion)*
+
+  A direct message sent from the display is tried up to 5 times, the last time by flood, as the app does. The screen shows each try and whether it goes direct or by flood, e.g. `Retry 2/5 direct...`.
+
+- **New: OTA over your own WiFi network.** *(Companion, Repeater, Room Server — ESP32 boards)*
+
+  `start ota sta`, or **Start OTA STA** in the companion's Settings, runs the update on the WiFi network set with `wifi.ssid` / `wifi.pwd` instead of the `MeshCore-OTA` hotspot. The repeater's reply, or the companion's screen, gives the address to open. Both OTA modes also answer at a `.local` name: `meshcore.local` on the hotspot, `meshcore-xxxx.local` on your own network. On the companion, any button press leaves OTA. `wifi scan` lists the networks a repeater or room server hears. See [Repeater CLI](Repeater_CLI_Commands.md) and [Display Guide](Companion_Display_Guide.md).
+
+- **Improved: lower idle current with BLE off.** *(Companion — ESP32 boards)*
+
+  Turning **BLE** off in Settings now shuts Bluetooth down completely, so a node used on its own without the app lasts longer on battery. Idle current with BLE off, SX1262 Boosted Gain off and RX Duty Cycle on, previous release → this release: Heltec V4.3 8.06 mA → 4.48 mA, Heltec V3 4.06 mA → 3.83 mA.
+
+- **New: page icons in the header.** *(Companion)*
+
+  Each page shows its icon at the top left instead of its name, leaving more room in the header for status icons. A new icon shows when Bluetooth is off. See [Display Guide](Companion_Display_Guide.md#home-screen-pages).
+
+- **New: set the time zone, date and time on the node.** *(Companion)*
+
+  Settings → General has **Timezone**, **Date** and **Time**, so the clock can be set without the app or GPS. Pick the time zone first, then enter the local date and time. See [Display Guide](Companion_Display_Guide.md#date-and-time-screen).
 
 ### v1.18_1107
 
@@ -131,52 +174,6 @@ MeshCore firmware built for multi-day off-grid operation. Deep power optimizatio
 
   When the node held as many messages as it can keep, replies to TerminalCLI commands from the app, and to commands sent from the app to a repeater or room server, never reached the app.
 
-### v1.18_1025
-
-- **New: conversations read like a chat.** *(Companion)*
-
-  A conversation shows its messages like a chat, oldest at the top: received ones on the left with the sender's name, yours on the right. See [Display Guide](Companion_Display_Guide.md#level-1--group-detail).
-
-- **Changed: a new message raises an alert instead of opening on its own.** *(Companion)*
-
-  An alert shows where new messages are, e.g. `New messages from: Alien, Public`: single click opens the conversation list, double click closes it. The list and the Chats page show unread messages as `*2`. See [Display Guide](Companion_Display_Guide.md#new-message-alert).
-
-- **Changed: stored messages are kept through power off and low battery; Message Persist is removed.** *(Companion)*
-
-  Messages are now kept through **Power off**, the low-battery sleep and an OTA update. This replaces **Message Persist** (the setting and `msg.persist` are removed). On ESP32 boards, a power cut or the RESET button still deletes them, unless you used **Save messages** in the Home menu before. See [Display Guide](Companion_Display_Guide.md#chats-page).
-
-- **New: run TerminalCLI commands on the node with the CardKB keyboard.** *(Companion)*
-
-  With a CardKB attached, the Home menu (long press on the Home page) has **TerminalCLI**: type a command, press Enter, and the reply appears under it. Settings such as `set ch.hops`, `set ch.msgs` or `set tx` can be changed without the app. See [TerminalCLI Commands](Companion_TerminalCLI_Commands.md).
-
-- **New: run commands on a repeater or room server from the node with the CardKB keyboard.** *(Companion)*
-
-  With a CardKB attached, the menu of a repeater or room server has **TerminalCLI**: enter its admin password, then type commands. See [Display Guide](Companion_Display_Guide.md#terminalcli-on-a-repeater-or-room-server) and [Repeater CLI Commands](Repeater_CLI_Commands.md).
-
-- **New: repeaters in the contact list, Trace position, every telemetry reading.** *(Companion)*
-
-  Repeaters now appear in the contact list, marked with a repeater icon. Contacts and DM conversations are marked with a person icon. **Trace position** in a contact's menu shows where the contact is, when it shares its position. **Request telemetry** works on repeaters too and now shows every reading (`VBAT`, `#2`, `#3`...), not only battery and GPS. See [Display Guide](Companion_Display_Guide.md#contact-action-screen).
-
-- **New: compass on the Sensors page.** *(Companion)*
-
-  An HMC5883L compass (tested with GY-271 and GY-273 modules; QMC5883L support is not yet tested on hardware) on the I2C sensor pins shows on the Sensors page as a dial with the heading. Calibrate it in Settings → **Compass Calib.**: hold the device level and turn it slowly through a full circle. The heading is also sent in telemetry, and on the GPS Trace screen an arrow points to the target. See [Display Guide](Companion_Display_Guide.md#compass-calibration) and, for wiring, [Hardware Wiring Guide](Hardware_Wiring_Guide.md#i2c-sensors-and-cardkb).
-
-- **New: startup alert listing what was found.** *(Companion)*
-
-  At startup a **Detected:** alert lists the GPS and the I2C sensors found.
-
-- **Changed: time zones with half-hour and 45-minute offsets.** *(Companion)*
-
-  `set tz.offset` now takes minutes too, e.g. `set tz.offset 5:30` for UTC+5:30 or `set tz.offset 5:45` for UTC+5:45; `set tz.offset 7` works as before. The web portal's timezone field takes the same format. See [TerminalCLI Commands](Companion_TerminalCLI_Commands.md).
-
-- **New: 128×128 SH1107 OLED detected at boot.** *(Companion, Repeater, Room Server — V3, WSL3, V4, RAK4631, ProMicro, HT-CT62, XIAO S3, Waveshare LR1121)*
-
-  Besides the 0.96" SSD1306 and the 1.3" SH1106 (128×64), a 128×128 SH1107 OLED (1.12" or 1.5") at I2C address 0x3C now works too. The firmware tells the three controllers apart at boot, so there is no setting to choose.
-
-  The Heltec V3 and V4, which until now worked only with their own 0.96" SSD1306, can use any of the three. Boards without a display can take an external module on the same OLED bus (SDA **GPIO17**, SCL **GPIO18**), plus 3.3 V and GND:
-  - **WSL3:** header JP3, pin 12 (GPIO17) and pin 9 (GPIO18).
-  - **V4 bought without a display:** header P5.
-
 See [CHANGELOG.md](CHANGELOG.md) for all earlier releases.
 
 ## Installation
@@ -249,9 +246,11 @@ Ways to enter DFU mode:
 | Heltec T096 Repeater, KCT8103L LNA off, SX1262 Boosted Gain off, RX Duty Cycle on | 3.64 | 467.0 | 19.46 | v1.18_1018 |
 | Heltec V4.3 Companion BLE, KCT8103L LNA off, SX1262 Boosted Gain off, RX Duty Cycle on | 11 | 154.5 | 6.4 | v1.18_1018 |
 | Heltec V4.3 Companion BLE, KCT8103L LNA on, SX1262 Boosted Gain off, RX Duty Cycle on | 19.4 | 87.6 | 3.7 | v1.18_1018 |
+| Heltec V4.3 Companion, BLE off, KCT8103L LNA off, SX1262 Boosted Gain off, RX Duty Cycle on | 4.48 | 379.5 | 15.81 | v1.18_1114 |
 | Heltec V4.3 Repeater, KCT8103L LNA off, SX1262 Boosted Gain off, RX Duty Cycle on | 4.52 | 376.1 | 15.7 | v1.18_1018 |
 | Heltec V4.3 Repeater, KCT8103L LNA on, SX1262 Boosted Gain off, RX Duty Cycle on | 12.78 | 133.0 | 5.5 | v1.18_1018 |
 | Heltec V3 Companion BLE, SX1262 Boosted Gain off, RX Duty Cycle on | 6.15 | 276.4 | 11.52 | v1.18_1018 |
+| Heltec V3 Companion, BLE off, SX1262 Boosted Gain off, RX Duty Cycle on | 3.83 | 443.9 | 18.49 | v1.18_1114 |
 | Heltec V3 Repeater, SX1262 Boosted Gain off, RX Duty Cycle on | 3.82 | 445.0 | 18.54 | v1.18_1018 |
 | RAK4631 Companion BLE, SX1262 Boosted Gain off, RX Duty Cycle on | 2.25 | 755.6 | 31.48 | v1.18_1018 |
 | RAK4631 Repeater, SX1262 Boosted Gain off, RX Duty Cycle on | 2.21 | 769.2 | 32.05 | v1.18_1018 |

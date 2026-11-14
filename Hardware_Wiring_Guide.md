@@ -25,12 +25,13 @@ GPIO numbers are ESP32 GPIOs; `P0.xx` / `P1.xx` are nRF52840 port pins.
 | Heltec Wireless Paper | none | none | E-ink |
 | Heltec Mesh Node T096 | P0.07 / P0.08 | onboard UC6580 | Color TFT |
 | XIAO ESP32S3 & Wio-SX1262 | GPIO5 / GPIO6 | none | Optional OLED |
-| RAK4631 (RAK19003) | P0.13 / P0.14 | P0.16 / P0.15 | Optional OLED |
+| RAK4631 | P0.13 / P0.14 | P0.16 / P0.15 | Optional OLED |
 | Waveshare ESP32-S3-LR1121-XF | GPIO8 / GPIO9 | GPIO43 / GPIO44 | Optional OLED |
 | EBYTE EoRa-HUB | GPIO6 / GPIO7 | GPIO47 / GPIO48 | Onboard OLED |
 | Heltec HT-CT62, DIY ESP32-C3 (`Heltec_ct62_*`) | GPIO18 / GPIO19 | none | Optional OLED |
 | Heltec HT-CT62, DIY ESP32-C3 (`Heltec_ct62_*_cdc`) | GPIO20 / GPIO21 | none | Optional OLED |
 | ProMicro nRF52840 (fakeTec, DIY) | D8 (P1.04) / D7 (P0.11) | D3 (P0.20) / D4 (P0.22), EN D5 (P0.24) | Optional OLED |
+| Seeed Wio Tracker L1, L1 Pro, L1 Lite | Grove port: P1.12 / P1.11 | onboard L76K | Onboard OLED (L1, L1 Pro), none (L1 Lite) |
 
 ## I2C sensors and CardKB
 
@@ -80,6 +81,7 @@ Any NMEA GPS module works. Connect it while the node is off, so the firmware fin
 | Heltec T096 | 115200 (onboard UC6580) | Switched off while GPS is off or between fixes. |
 | RAK4631 | 9600 | Stays powered. |
 | ProMicro (fakeTec, DIY) | 9600 or 115200, detected at boot | If the module's enable pin is wired to D5, it is switched off while GPS is off or between fixes; if not, it stays powered. |
+| Seeed Wio Tracker L1 | 9600 (onboard L76K) | Stays powered, in its standby mode while GPS is off or between fixes. |
 
 No GPS on the XIAO ESP32S3 & Wio-SX1262, the Heltec Wireless Paper or the ESP32-C3 boards.
 
@@ -87,7 +89,7 @@ A module that stays powered keeps drawing current while GPS is off. For the lowe
 
 ## Battery reading
 
-Heltec V3, V4, E213, E290, Wireless Paper, T096, RAK4631 and EoRa-HUB have a battery divider on board, and battery reading works out of the box.
+Heltec V3, V4, E213, E290, Wireless Paper, T096, RAK4631, EoRa-HUB and Wio Tracker L1 have a battery divider on board, and battery reading works out of the box.
 
 The XIAO ESP32S3 & Wio-SX1262, the Waveshare ESP32-S3-LR1121-XF, the HT-CT62 / DIY ESP32-C3 and the ProMicro need a voltage divider from the battery to the battery pin below. Battery reading and low-battery protection stay off until you set the divider ratio with `set adc.multiplier <ratio>`: for a divider with R1 from the battery to the pin and R2 from the pin to GND, the ratio is (R1 + R2) / R2.
 
@@ -102,16 +104,16 @@ On the ProMicro, the cutoff defaults to 3400 mV once the ratio is set, and `set 
 
 ## 5-way joystick
 
-Companion only, on a device with a display: the WSL3 and the ProMicro need an [OLED](#optional-oled-display) fitted. Connect each switch between its pin and GND. Four separate push buttons work the same way, with the display's button as Center. To turn the joystick on, see the [Display Guide](Companion_Display_Guide.md#5-way-joystick). For the ProMicro pins, see [DIY ProMicro](#diy-promicro-nrf52840--sx1262).
+Companion only, on a device with a display: the WSL3, the Waveshare, the ProMicro and a Heltec V4 bought without a display need an [OLED](#optional-oled-display) fitted. Connect each switch between its pin and GND. Four separate push buttons work the same way, with the display's button as Center. To turn the joystick on, see the [Display Guide](Companion_Display_Guide.md#5-way-joystick). For the ProMicro pins, see [DIY ProMicro](#diy-promicro-nrf52840--sx1262). The Wio Tracker L1 and L1 Pro have the joystick built in and always on.
 
-| Button | Heltec V3 | Heltec WSL3 | EBYTE EoRa-HUB | Heltec T096 |
-| :--- | :--- | :--- | :--- | :--- |
-| Up | GPIO4 (JP3 pin 15) | GPIO4 (JP3 pin 20) | GPIO2 (J5 pin 13) | P1.03 (P2 pin 13) |
-| Down | GPIO5 (JP3 pin 16) | GPIO5 (JP3 pin 19) | GPIO3 (J5 pin 14) | P1.05 (P2 pin 14) |
-| Left | GPIO6 (JP3 pin 17) | GPIO6 (JP3 pin 18) | GPIO4 (J5 pin 15) | P1.07 (P2 pin 15) |
-| Right | GPIO7 (JP3 pin 18) | GPIO7 (JP3 pin 17) | GPIO5 (J5 pin 16) | P1.06 (P2 pin 16) |
-| Center | GPIO0 (JP2 pin 8), together with the BOOT button | GPIO0 (JP3 pin 6), together with the BOOT button | GPIO0 (J2 pin 8), together with the BOOT button | P1.10 (P3 pin 10), together with the user button |
-| GND | JP3 pin 1 | JP3 pin 3 | J5 pin 1 | P2 pin 1 |
+| Button | Heltec V3 | Heltec V4 | Heltec WSL3 | EBYTE EoRa-HUB | Waveshare ESP32-S3-LR1121-XF | Heltec E213 | Heltec E290 | Heltec T096 |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| Up | GPIO4 (JP3 pin 15) | GPIO48 (JP4 pin 14) | GPIO4 (JP3 pin 20) | GPIO2 (J5 pin 13) | GPIO2 (J5 pin 4) | GPIO48 (P2 pin 11) | GPIO48 (P4 pin 40) | P1.03 (P2 pin 13) |
+| Down | GPIO5 (JP3 pin 16) | GPIO47 (JP4 pin 13) | GPIO5 (JP3 pin 19) | GPIO3 (J5 pin 14) | GPIO3 (J5 pin 5) | GPIO47 (P2 pin 10) | GPIO47 (P4 pin 38) | P1.05 (P2 pin 14) |
+| Left | GPIO6 (JP3 pin 17) | GPIO33 (JP4 pin 12) | GPIO6 (JP3 pin 18) | GPIO4 (J5 pin 15) | GPIO4 (J5 pin 6) | GPIO40 (P2 pin 7) | GPIO40 (P4 pin 27) | P1.07 (P2 pin 15) |
+| Right | GPIO7 (JP3 pin 18) | GPIO44 (JP4 pin 5) | GPIO7 (JP3 pin 17) | GPIO5 (J5 pin 16) | GPIO5 (J5 pin 7) | GPIO41 (P2 pin 6) | GPIO41 (P4 pin 28) | P1.06 (P2 pin 16) |
+| Center | GPIO0 (JP2 pin 8), together with the BOOT button | GPIO0 (JP4 pin 8), together with the BOOT button | GPIO0 (JP3 pin 6), together with the BOOT button | GPIO0 (J2 pin 8), together with the BOOT button | GPIO0 (J5 pin 1), together with the BOOT button | GPIO0 (P2 pin 3), together with the BOOT button | GPIO0 (P4 pin 22), together with the BOOT button | P1.10 (P3 pin 10), together with the user button |
+| GND | JP3 pin 1 | JP4 pin 1 | JP3 pin 3 | J5 pin 1 | J5 pin 3 | P2 pin 2 | P4 pin 20 | P2 pin 1 |
 
 ## DIY ESP32-C3 + SX1262
 

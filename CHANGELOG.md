@@ -1,5 +1,47 @@
 # Changelog
 
+### v1.18_1114
+
+> **Important fix, update recommended for ESP32 boards on v1.18_1018, v1.18_1025, v1.18_1031 or v1.18_1107:** *(Companion, Repeater, Room Server)* after OTA or a connection mode change, the node could keep drawing high current until the RESET button was pressed. The WiFi / Bluetooth radio is now shut down properly when the node restarts. In those versions, a restart while WiFi or Bluetooth was on, such as the end of OTA, `reboot` during OTA, or a companion's switch from WiFi or BLE to USB, left the radio powered: a Heltec V4 repeater drew about 32 mA instead of 4.4 mA until the RESET button was pressed or the power removed. Updating over OTA from these versions clears it, no RESET needed.
+
+- **New device: Seeed Wio Tracker L1, L1 Pro and L1 Lite.** *(Companion, Repeater, Room Server)*
+
+  One set of `WioTrackerL1_*.uf2` images serves all three: the L1 and L1 Pro with their 1.3" OLED, and the L1 Lite, which has no display and runs without one. The joystick is built in and always on, with the Menu button as Back, and the Grove port takes I2C sensors or a CardKB. Flash like the other nRF52 boards (see [Installation](README.md#installation)).
+
+  **Not yet tested on hardware:** the port is built from the other devices this firmware supports.
+
+- **New: 5-way joystick on Heltec V4, E213, E290 and Waveshare LR1121.** *(Companion)*
+
+  The joystick and on-screen keyboard now work on these boards too. On the E213 and E290, the second button is Back while the joystick is on. See [wiring](Hardware_Wiring_Guide.md#5-way-joystick).
+
+- **New: send emoji from the node.** *(Companion)*
+
+  Turn on **Emoji** in Settings → Input Languages. In the message editor, Tab with the CardKB, or the `EMO` key on the on-screen keyboard, shows a grid of emoji: the top row types at once, the other keys open a row of similar ones. See [Display Guide](Companion_Display_Guide.md#on-screen-keyboard).
+
+- **New: favourites on the Location Radar.** *(Companion)*
+
+  **Source** → **Faves** shows only your favourite contacts, to keep an eye on a group. The top left shows how long ago the selected contact's position was received. See [Display Guide](Companion_Display_Guide.md#location-radar-screen).
+
+- **New: direct messages from the node are retried.** *(Companion)*
+
+  A direct message sent from the display is tried up to 5 times, the last time by flood, as the app does. The screen shows each try and whether it goes direct or by flood, e.g. `Retry 2/5 direct...`.
+
+- **New: OTA over your own WiFi network.** *(Companion, Repeater, Room Server — ESP32 boards)*
+
+  `start ota sta`, or **Start OTA STA** in the companion's Settings, runs the update on the WiFi network set with `wifi.ssid` / `wifi.pwd` instead of the `MeshCore-OTA` hotspot. The repeater's reply, or the companion's screen, gives the address to open. Both OTA modes also answer at a `.local` name: `meshcore.local` on the hotspot, `meshcore-xxxx.local` on your own network. On the companion, any button press leaves OTA. `wifi scan` lists the networks a repeater or room server hears. See [Repeater CLI](Repeater_CLI_Commands.md) and [Display Guide](Companion_Display_Guide.md).
+
+- **Improved: lower idle current with BLE off.** *(Companion — ESP32 boards)*
+
+  Turning **BLE** off in Settings now shuts Bluetooth down completely, so a node used on its own without the app lasts longer on battery. Idle current with BLE off, SX1262 Boosted Gain off and RX Duty Cycle on, previous release → this release: Heltec V4.3 8.06 mA → 4.48 mA, Heltec V3 4.06 mA → 3.83 mA.
+
+- **New: page icons in the header.** *(Companion)*
+
+  Each page shows its icon at the top left instead of its name, leaving more room in the header for status icons. A new icon shows when Bluetooth is off. See [Display Guide](Companion_Display_Guide.md#home-screen-pages).
+
+- **New: set the time zone, date and time on the node.** *(Companion)*
+
+  Settings → General has **Timezone**, **Date** and **Time**, so the clock can be set without the app or GPS. Pick the time zone first, then enter the local date and time. See [Display Guide](Companion_Display_Guide.md#date-and-time-screen).
+
 ### v1.18_1107
 
 - **New: 5-way joystick and on-screen keyboard on ProMicro, Heltec V3, WSL3, T096 and EoRa-HUB.** *(Companion)*

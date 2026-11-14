@@ -26,7 +26,7 @@ The same commands also work on the app's **Command Line** screen. That screen sh
   | `set name <text>` | `text`: max 31 chars | Set the node name. The characters `[` `]` `\` `:` `,` `?` `*` are rejected. Saved to flash. |
   | `set pin <n>` | `n`: 6-digit BLE pairing pin, or `0` for the built-in default | Set the BLE pairing pin. Saved to flash; takes effect on the next reboot. `0` restores the compiled-in default, which on a board with a display is a new random pin each session. |
   | `get buzzer` / `set buzzer on\|off` | `on` \| `off` | Boards with a buzzer only. `off` mutes the notification tones. Saved to flash, applies at once. Same as Settings → **Buzzer**. |
-  | `get joystick` / `set joystick on\|off` | `on` \| `off` | ProMicro, Heltec V3, WSL3, T096 and EoRa-HUB only. Turns the [5-way joystick](Companion_Display_Guide.md#5-way-joystick) on or off. Saved to flash, applies at once, without the five-button check of Settings → **Joystick**. Without a display, replies `ERR: no display on this board`. |
+  | `get joystick` / `set joystick on\|off` | `on` \| `off` | ProMicro, Heltec V3, V4, WSL3, E213, E290, T096, EoRa-HUB and Waveshare LR1121 only. Turns the [5-way joystick](Companion_Display_Guide.md#5-way-joystick) on or off. Saved to flash, applies at once, without the five-button check of Settings → **Joystick**. Without a display, replies `ERR: no display on this board`. |
   | `clock` | — | Show the current UTC date and time |
   | `clock sync` | — | Set the clock from the timestamp of the command itself, i.e. the clock of the phone that sent it. Refused if that clock is older than the firmware build date. |
   | `gps` | — | Show GPS status: enabled/disabled, fix status, satellite count |
@@ -38,8 +38,8 @@ The same commands also work on the app's **Command Line** screen. That screen sh
   | `set gps.minsat <n>` | `n`: `4..24` | Set how many satellites GPS needs before reporting a valid fix. Higher = more reliable, but may take longer to get one. Applied immediately and saved. Default: `6`. |
   | `get gps.hdop` | — | Show the accuracy threshold (HDOP ×10 — lower number means stricter/more accurate) GPS requires before reporting a valid fix |
   | `set gps.hdop <n>` | `n`: `5..250` (HDOP×10, e.g. `20` = HDOP 2.0) | Set how accurate a position must be before GPS reports a valid fix. Lower = stricter/more accurate but may take longer; higher = looser/faster but less precise. Applied immediately and saved. Default: `20` (HDOP 2.0). |
-  | `get gps.mode` | — | Show current GNSS constellation selection. *(Heltec V4 / T096 / E213 / V3 / E290 only)* |
-  | `set gps.mode <n>` | **Heltec V4:** `1`=GPS `2`=GPS+BDS `3`=GPS+GLO `4`=GPS+BDS+GLO (default `4`) · **T096:** `1`=GPS-L1 `2`=All-sys-L1 `3`=All-sys+QZSS-dual (default `3`) · **E213 / V3 / E290:** `1`=GPS `2`=GPS+BDS `3`=GPS+BDS+GLO+GAL `4`=GPS+BDS+GLO+GAL+QZSS (default `4`; only takes effect on a confirmed ATGM336H-6N module, tested via M5Stack's Unit GPS v1.1) | Select GNSS constellation preset. Saved to flash; takes effect on next GPS on. |
+  | `get gps.mode` | — | Show current GNSS constellation selection. *(Heltec V4 / T096 / E213 / V3 / E290 / Wio Tracker L1 only)* |
+  | `set gps.mode <n>` | **Heltec V4, Wio Tracker L1:** `1`=GPS `2`=GPS+BDS `3`=GPS+GLO `4`=GPS+BDS+GLO (default `4`) · **T096:** `1`=GPS-L1 `2`=All-sys-L1 `3`=All-sys+QZSS-dual (default `3`) · **E213 / V3 / E290:** `1`=GPS `2`=GPS+BDS `3`=GPS+BDS+GLO+GAL `4`=GPS+BDS+GLO+GAL+QZSS (default `4`; only takes effect on a confirmed ATGM336H-6N module, tested via M5Stack's Unit GPS v1.1) | Select GNSS constellation preset. Saved to flash; takes effect on next GPS on. |
   | `get radio` | — | Show current radio parameters as `freq,bw,sf,cr` — frequency (MHz), bandwidth (kHz), spreading factor, coding rate |
   | `set radio <freq>,<bw>,<sf>,<cr>` | `freq`: MHz `150..2500`; `bw`: kHz, exact chip step only — **SX1262:** `7.8` `10.4` `15.6` `20.8` `31.25` `41.7` `62.5` `125` `250` `500` · **LR1121:** `62.5` `125` `250` `500`, plus `203.125` `406.25` `812.5` above 1 GHz; `sf`: `5..12`; `cr`: `5..8` | Set all four at once, **comma-separated** (no spaces). Saved and applied without a reboot. Example: `set radio 869.525,250,10,5` |
   | `get radio.custom` | — | List your radio presets C1..C5 as `C1: freq,bw,sf,cr name`; an unused slot shows `C1: empty` |
@@ -53,7 +53,8 @@ The same commands also work on the app's **Command Line** screen. That screen sh
   | `get tx` | — | Show current transmit power (dBm) |
   | `set tx <dBm>` | `dBm`: integer | Set transmit power in dBm. Saved and applied immediately. |  
   | `radio on` / `radio off` | — | Turn the LoRa radio on or off, same as **Settings → LoRa Radio**. Off: nothing is sent or received. A restart turns it back on. |
-  | `start ota` | — | Start OTA firmware update. On ESP32: connect to Wi-Fi `MeshCore-OTA`, then go to `192.168.4.1` (opens the config portal). On nRF52: enters BLE DFU mode. |
+  | `start ota` | — | Start OTA firmware update. On ESP32: connect to Wi-Fi `MeshCore-OTA`, then go to `192.168.4.1` or `meshcore.local` (opens the config portal). On nRF52: enters BLE DFU mode. |
+  | `start ota sta` | — | Start OTA on your own WiFi network (set with `wifi.ssid` / `wifi.password`) instead of the `MeshCore-OTA` hotspot. The reply comes before the node joins, e.g. `Starting OTA STA: joining WiFi 'HomeWiFi'. Open http://meshcore-xxxx.local in ~30 s; if it fails, the node restarts.`, where `xxxx` is the first 2 bytes of the node's public key. The screen shows the channel, signal and IP once joined, or why the join failed. ESP32 only. |
   | `get repeat` | — | Show whether repeat mode is `on` or `off`, and the current frequency |
   | `set repeat on` | — | Enable repeat mode |
   | `set repeat off` | — | Disable repeat mode |
@@ -116,10 +117,10 @@ The same commands also work on the app's **Command Line** screen. That screen sh
   | `set conn.mode <mode>` | `ble` \| `usb` \| `wifi` | Switch transport mode. Saves to flash and reboots immediately. In USB mode the node connects via USB serial; BLE is not started. In WiFi mode the node connects as a STA to the configured network and listens for TCP connections on port 5000. The official app's WiFi Settings screen toggles WiFi mode through `wifi.enabled`; turning WiFi off there returns the node to BLE. |
   | `get wifi.status` | — | Show `connected` or `disconnected` for the WiFi network |
   | `get wifi.ip` | — | Show the node's current IP address, or `(not connected)` |
-  | `get wifi.ssid` | — | Show the WiFi SSID configured for WiFi mode |
-  | `set wifi.ssid <ssid>` | `ssid`: network name (max 32 chars) | Set the WiFi SSID for WiFi mode. Saved to flash. |
-  | `get wifi.password` | — | Show the WiFi password configured for WiFi mode. Alias: `get wifi.pwd` |
-  | `set wifi.password <password>` | `password`: max 64 chars | Set the WiFi password for WiFi mode. Saved to flash. Leave blank or omit for open networks. Alias: `set wifi.pwd` |
+  | `get wifi.ssid` | — | Show the WiFi SSID configured for WiFi mode and `start ota sta` |
+  | `set wifi.ssid <ssid>` | `ssid`: network name (max 32 chars) | Set the WiFi SSID for WiFi mode and `start ota sta`. Saved to flash. |
+  | `get wifi.password` | — | Show the WiFi password configured for WiFi mode and `start ota sta`. Alias: `get wifi.pwd` |
+  | `set wifi.password <password>` | `password`: max 64 chars | Set the WiFi password for WiFi mode and `start ota sta`. Saved to flash. Leave blank or omit for open networks. Alias: `set wifi.pwd` |
   | `get wifi.static` | — | Show static IP and subnet configured for WiFi mode, or `DHCP` if none is set |
   | `set wifi.static <ip> [subnet]` | `ip`: e.g. `192.168.1.100`; `subnet`: e.g. `255.255.255.0` (optional, default `255.255.255.0`) | Set a static IP for WiFi mode. Saved to flash; takes effect after next reboot into WiFi mode. If subnet is omitted, the previously saved subnet is kept. Example: `set wifi.static 192.168.1.100` or `set wifi.static 192.168.1.100 255.255.255.0`. Alias: `set wifi.ip` |
   | `clear wifi.static` | — | Remove static IP; the node will use DHCP on next boot in WiFi mode. Alias: `clear wifi.ip` |

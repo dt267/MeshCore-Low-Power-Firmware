@@ -30,8 +30,8 @@ For the full upstream command reference see [docs/cli_commands.md](https://githu
 | `set gps.minsat <n>` | `n`: `4..24` | Set how many satellites GPS needs before reporting a valid fix. Higher = more reliable, but may take longer to get one. Applied immediately and saved. Default: `6`. |
 | `get gps.hdop` | — | Show the accuracy threshold (HDOP ×10 — lower number means stricter/more accurate) GPS requires before reporting a valid fix |
 | `set gps.hdop <n>` | `n`: `5..250` (HDOP×10, e.g. `20` = HDOP 2.0) | Set how accurate a position must be before GPS reports a valid fix. Lower = stricter/more accurate but may take longer; higher = looser/faster but less precise. Applied immediately and saved. Default: `20` (HDOP 2.0). |
-| `get gps.mode` | — | Show current GNSS constellation selection. *(Heltec V4 / T096 / E213 / V3 / E290 only)* |
-| `set gps.mode <n>` | **Heltec V4:** `1`=GPS `2`=GPS+BDS `3`=GPS+GLO `4`=GPS+BDS+GLO (default `4`) · **T096:** `1`=GPS-L1 `2`=All-sys-L1 `3`=All-sys+QZSS-dual (default `3`) · **E213 / V3 / E290:** `1`=GPS `2`=GPS+BDS `3`=GPS+BDS+GLO+GAL `4`=GPS+BDS+GLO+GAL+QZSS (default `4`; only takes effect on a confirmed ATGM336H-6N module, tested via M5Stack's Unit GPS v1.1) | Select GNSS constellation preset. Saved to flash; takes effect on next GPS on. |
+| `get gps.mode` | — | Show current GNSS constellation selection. *(Heltec V4 / T096 / E213 / V3 / E290 / Wio Tracker L1 only)* |
+| `set gps.mode <n>` | **Heltec V4, Wio Tracker L1:** `1`=GPS `2`=GPS+BDS `3`=GPS+GLO `4`=GPS+BDS+GLO (default `4`) · **T096:** `1`=GPS-L1 `2`=All-sys-L1 `3`=All-sys+QZSS-dual (default `3`) · **E213 / V3 / E290:** `1`=GPS `2`=GPS+BDS `3`=GPS+BDS+GLO+GAL `4`=GPS+BDS+GLO+GAL+QZSS (default `4`; only takes effect on a confirmed ATGM336H-6N module, tested via M5Stack's Unit GPS v1.1) | Select GNSS constellation preset. Saved to flash; takes effect on next GPS on. |
 | `get bridge.type` | — | Show which bridge type this build was compiled with. Returns `espnow` on the ESP32 builds in this release. |
 | `get bridge.enabled` | — | Show whether the bridge is currently enabled |
 | `set bridge.enabled <on\|off>` | `on` \| `off` | Enable/disable the bridge. Takes effect immediately — no reboot. |
@@ -46,3 +46,9 @@ For the full upstream command reference see [docs/cli_commands.md](https://githu
 | `set bridge.delay <ms>` | `ms`: `0..10000` | Delay before a bridged packet is handed to the mesh, guarding against collision with the original LoRa packet. Set `0` when the two segments cannot hear each other, which is the usual case. Default: `500`. |
 | `get bridge.source` | — | Show which packets get bridged: `logTx` (transmitted) or `logRx` (received) |
 | `set bridge.source <tx\|rx>` | `tx` \| `rx` | Select which packets get bridged. Default: `tx`. |
+| `start ota sta` | — | Start the OTA update on your own WiFi network (set with `wifi.ssid` / `wifi.pwd`) instead of the `MeshCore-OTA` hotspot. The reply gives the network joined and the address to open, e.g. `Started: WiFi 'HomeWiFi' (ch7, -47 dBm), http://192.168.1.68 or http://meshcore-xxxx.local`, where `xxxx` is the first 2 bytes of the node's public key. If the node cannot join, the reply says why and the node keeps running. `start ota` and `start ota sta` switch between the two at any time. ESP32 only. |
+| `get wifi.ssid` | — | Show the WiFi network used by `start ota sta`. ESP32 only. |
+| `set wifi.ssid <ssid>` | `ssid`: max 32 chars | Set the WiFi network used by `start ota sta`. Saved. ESP32 only. |
+| `get wifi.pwd` | — | Show its password. Alias: `get wifi.password`. ESP32 only. |
+| `set wifi.pwd <password>` | `password`: max 64 chars | Set its password. Saved. Alias: `set wifi.password`. ESP32 only. |
+| `wifi scan` | — | List the WiFi networks the node hears, strongest first, with signal and channel, e.g. `*HomeWiFi -53 ch7, Neighbor -71 ch1`. The network set in `wifi.ssid` comes first, marked `*`, or shows as `not seen`. ESP32 only. |
