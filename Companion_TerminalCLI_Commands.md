@@ -25,6 +25,7 @@ The same commands also work on the app's **Command Line** screen. That screen sh
   | `get name` | — | Show the node name |
   | `set name <text>` | `text`: max 31 chars | Set the node name. The characters `[` `]` `\` `:` `,` `?` `*` are rejected. Saved to flash. |
   | `set pin <n>` | `n`: 6-digit BLE pairing pin, or `0` for the built-in default | Set the BLE pairing pin. Saved to flash; takes effect on the next reboot. `0` restores the compiled-in default, which on a board with a display is a new random pin each session. |
+  | `get ble.name` / `set ble.name [text]` | `text`: max 31 chars, omit for the default | Set the BLE name (default `MeshCore-<node name>`). Takes effect on the next reboot. |
   | `get buzzer` / `set buzzer on\|off` | `on` \| `off` | Boards with a buzzer only. `off` mutes the notification tones. Saved to flash, applies at once. Same as Settings → **Buzzer**. |
   | `get joystick` / `set joystick on\|off` | `on` \| `off` | ProMicro, Heltec V3, V4, WSL3, E213, E290, T096, EoRa-HUB and Waveshare LR1121 only. Turns the [5-way joystick](Companion_Display_Guide.md#5-way-joystick) on or off. Saved to flash, applies at once, without the five-button check of Settings → **Joystick**. Without a display, replies `ERR: no display on this board`. |
   | `clock` | — | Show the current UTC date and time |

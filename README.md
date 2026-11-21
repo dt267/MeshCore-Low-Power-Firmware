@@ -4,9 +4,9 @@ MeshCore firmware built for multi-day off-grid operation. Deep power optimizatio
 **Supported devices:** 
 - Heltec WiFi LoRa 32 V3, WSL3
 - Heltec WiFi LoRa 32 V4.2, V4.3 (with or without OLED display)
-- Heltec Vision Master E213 (2.13" e-ink) — V1.1 only (SSD1682 controller)
-- Heltec Vision Master E290 (2.9" e-ink) — not yet tested on hardware
-- Heltec Wireless Paper (2.13" e-ink) — V1.1.1 / V1.2 only (SSD1682 controller)
+- Heltec Vision Master E213 (2.13" e-ink) — V1.0\*, V1.1
+- Heltec Vision Master E290 (2.9" e-ink)\*
+- Heltec Wireless Paper (2.13" e-ink) — V1.1, V1.1.1, V1.2\*
 - Heltec Mesh Node T096
 - Seeed Studio XIAO ESP32S3 & Wio-SX1262 Kit (with or without OLED display)
 - RAK4631 WisBlock
@@ -14,8 +14,11 @@ MeshCore firmware built for multi-day off-grid operation. Deep power optimizatio
 - EBYTE EoRa-HUB-xxxTB (dual-band sub-GHz + 2.4 GHz)
 - Heltec HT-CT62 (ESP32-C3 + SX1262 module), and DIY ESP32-C3 + SX1262 boards wired the same way (with or without OLED display)
 - ProMicro nRF52840 on a fakeTec board with a Heltec HT-RA62 or Ai-Thinker Ra-01SH radio module, and DIY ProMicro + SX1262 boards wired the same way (with or without OLED display)
-- Seeed Wio Tracker L1 and L1 Pro (1.3" OLED), L1 Lite (no display) — not yet tested on hardware
+- Seeed Wio Tracker L1 and L1 Pro (1.3" OLED), L1 Lite (no display)\*
+- RAK3401 WisBlock with the RAK13302 1 W LoRa module, ported from the RAK4631\*
 - ...
+
+\* The developer has no unit of these devices: they are not tested or power-profiled by the developer.
 
 
 [![GitHub Release](https://img.shields.io/github/v/release/dt267/MeshCore-Low-Power-Firmware-For-Heltec-V3-V4)](https://github.com/dt267/MeshCore-Low-Power-Firmware-For-Heltec-V3-V4/releases/latest) [![GitHub Release Date](https://img.shields.io/github/release-date/dt267/MeshCore-Low-Power-Firmware-For-Heltec-V3-V4)](https://github.com/dt267/MeshCore-Low-Power-Firmware-For-Heltec-V3-V4/releases/latest)
@@ -36,6 +39,38 @@ MeshCore firmware built for multi-day off-grid operation. Deep power optimizatio
 - [License](#license)
 
 ## What's New
+
+### v1.18_1121
+
+- **New device: RAK3401 with the RAK13302 1 W LoRa module.** *(Companion, Repeater, Room Server)*
+
+  `RAK_3401_*.uf2` images for the RAK3401 WisBlock Core with the RAK13302 in the IO slot; a RAK4631 with a RAK13302 runs them too. Flash like the other nRF52 boards (see [Installation](#installation)).
+
+  **Not yet tested on hardware:** the port is built from the RAK4631 support.
+
+- **Changed: RAK4631 user button on AIN1 only.** *(Companion)*
+
+  The user button is AIN1 (P0.31) to GND, header J11 pin 1 on the RAK19007. A button on IO5 (P0.09) no longer works. See [wiring](Hardware_Wiring_Guide.md#optional-oled-display).
+
+- **Changed: three lines of a message on OLED with the large font.** *(Companion)*
+
+  The OLED `Large` message font goes from 13 px to 12 px, so a message shows three lines instead of two.
+
+- **New: Brightness on OLED.** *(Companion)*
+
+  Settings → Display → **Brightness** now works on OLED screens too: `100%`, `75%`, `50%`, `25%`.
+
+- **New: Lock keys.** *(Companion)*
+
+  With the joystick on or a CardKB attached, **Lock keys** at the top of the Home menu locks the keys, and a lock icon shows in the header. Any key then shows `Press Up to unlock`. See [Display Guide](Companion_Display_Guide.md#home-page).
+
+- **New: Mute a contact, room server or channel.** *(Companion)*
+
+  **Mute** in the contact or channel menu, or in the popup while reading a message, silences that conversation: its new messages make no sound or vibration, show no alert and do not turn the screen on. They are still kept and show as unread. **Unmute** turns it back on. See [Display Guide](Companion_Display_Guide.md#new-message-alert).
+
+- **New: display on Vision Master E213 V1.0 and Wireless Paper V1.1.** *(Companion, Repeater, Room Server)*
+
+  These units have an older e-ink panel, and the firmware ran on them without the display. It now detects the panel at boot and drives it.
 
 ### v1.18_1114
 
@@ -113,67 +148,6 @@ MeshCore firmware built for multi-day off-grid operation. Deep power optimizatio
 
   A line break in a message now starts a new line on TFT and e-ink displays and with the OLED large font. Before, the text after it was drawn over by the next line on TFT and e-ink, and ran into the previous sentence on OLED.
 
-### v1.18_1031
-
-- **New: most of what the app sets can now be done on the node.** *(Companion)*
-
-  - **Contacts:** favourites, **Remove contact**, **Reset path**, **Share contact**, and a person's **Permissions** (Telemetry, Location, Environment, Remote CLI). See [Display Guide](Companion_Display_Guide.md#contact-action-screen).
-  - **Channels:** **+ Add channel** at the end of the conversation list (Public, and with the CardKB hashtag and private channels), **Share** and **Invite** in a channel's menu, **Join channel** on a received invite and **Join #sos** on a message naming a hashtag channel. See [Display Guide](Companion_Display_Guide.md#channels).
-  - **Settings:** now in groups, with **Auto-add** and the telemetry settings added. Changes are saved when you leave Settings. See [Display Guide](Companion_Display_Guide.md#settings-page).
-  - **TerminalCLI:** commands for the rest (auto-add, telemetry, position, flood scope, radio tuning, `erase`), and **TerminalCLI** in a person's menu for a node that allows you Remote CLI. See [Companion TerminalCLI Commands](Companion_TerminalCLI_Commands.md).
-
-- **New: warning before messages or contacts run out of room.** *(Companion)*
-
-  The node warns once when 20 places are left, counting places an older entry can give up, and alerts each message or contact lost once it is full.
-
-- **New: radio presets on the node.** *(Companion)*
-
-  Settings → Radio → **Preset** lists the region presets of the MeshCore app, then up to five of your own saved with `set radio.custom.<N>`; the header shows the selected one's frequency, bandwidth, SF and CR, and long press uses it. TX power stays as it is; Settings → Radio → **TX Power** picks it from a list in 3 dB steps. The config portal has the same **Preset** list in its Radio section and a **Custom Radio Presets** section for C1 to C5, which are included in backup/restore. See [Display Guide](Companion_Display_Guide.md#radio-preset-screen).
-
-- **Changed: the Radio page shows the link instead of the settings.** *(Companion)*
-
-  One row for the preset and TX power, then noise floor, RSSI / SNR of the last packet, packets received / sent, airtime and receive errors. Long press opens Preset, TX Power, RxGain and RxDuty. See [Display Guide](Companion_Display_Guide.md#radio-page).
-
-- **New: GPS interval and mode on the node.** *(Companion)*
-
-  Long press on the GPS page opens **GPS** on/off, **Interval** (`Always`, `30s` up to `1h`) and **Mode** (which satellite systems are used). Mode is shown only when the GPS takes it: the built-in GPS of boards such as Heltec V4 and T096, or an ATGM336H on the GPS header. See [Display Guide](Companion_Display_Guide.md#gps-page-optional).
-
-- **Changed: the HT-CT62 keeps up to 250 contacts (was 350).** *(Companion, HT-CT62)*
-
-  This leaves enough memory for Bluetooth. If your node has more than 250 contacts, remove the ones you don't need before updating. Otherwise, on the first start the node keeps your favourites, then the most recently heard contacts, and removes the rest together with their messages. Restoring a backup with more than 250 contacts does the same.
-
-- **New: LoRa radio off.** *(Companion)*
-
-  Settings → **LoRa Radio** or `radio off`; an icon in the Home header shows it, and a restart turns the radio back on.
-
-- **New: repeater and room server tools.** *(Companion)*
-
-  A repeater's menu has **Ping (zero hop)** and **Trace path**, a repeater's or room server's menu **Request status**. A login with no reply over the stored path is retried once by flood. See [Display Guide](Companion_Display_Guide.md#path-trace-screen).
-
-- **New: sensor contacts.** *(Companion)*
-
-  Sensors appear in the contact list with a pulse trace icon; their menu has **Request telemetry** and, with the CardKB, **TerminalCLI**. A sensor answers telemetry only after you have logged in to it once with its admin password.
-
-- **New: Refresh Frequency for e-ink screens.** *(Companion, e-ink)*
-
-  Settings → Display → **Refresh Frequency** sets after how many screen changes a full refresh cleans the screen, done once you stop pressing keys: `1`, `5`, `10` (default), `15` or `30`. Leaving Settings no longer does a full refresh of its own; opening the CardKB message composer does one. Switching pages is also faster.
-
-- **Fix: text on e-ink screens faded.** *(Companion, Repeater, Room Server — E213, E290, Wireless Paper)*
-
-  Text that stays on screen, such as the header and battery icon, no longer turns faint after a while, and new text is no longer darker than the rest.
-
-- **New: type messages in other languages with the CardKB.** *(Companion)*
-
-  Settings → **Input Languages** adds Belarusian, Kazakh, Russian, Ukrainian, US-International (accented letters for French, German, Spanish and other Latin-script languages) and Vietnamese (Telex) to English. In the message editor, Tab switches between them. On an OLED, set **Message Font** to `Large` to see accents and non-Latin letters. See [Display Guide](Companion_Display_Guide.md#typing-in-other-languages).
-
-- **New: Delete all messages.** *(Companion)*
-
-  The Home menu has **Delete all messages**: it deletes every message on the node, in RAM and in flash. Contacts, channels and settings are kept. See [Display Guide](Companion_Display_Guide.md#home-page).
-
-- **Fix: the app got no reply to CLI commands once the node's message store was full.** *(Companion)*
-
-  When the node held as many messages as it can keep, replies to TerminalCLI commands from the app, and to commands sent from the app to a repeater or room server, never reached the app.
-
 See [CHANGELOG.md](CHANGELOG.md) for all earlier releases.
 
 ## Installation
@@ -234,7 +208,7 @@ Double-tap the Reset button → a USB drive appears → copy the `.uf2` file ont
 Enter DFU mode, then use the **nRF Device Firmware Update** app (iOS/Android) to upload the `.zip` DFU package.
 
 Ways to enter DFU mode:
-- **RAK4631:** Type `start ota` via TerminalCLI (Companion) or Command Line (Repeater / Room Server)
+- **RAK4631, RAK3401:** Type `start ota` via TerminalCLI (Companion) or Command Line (Repeater / Room Server)
 - **Heltec T096:** Hold the user button while pressing Reset — or type `start ota` via TerminalCLI / Command Line — or on Companion: **Settings → Start OTA**
 
 

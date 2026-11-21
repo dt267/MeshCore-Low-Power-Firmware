@@ -1,5 +1,37 @@
 # Changelog
 
+### v1.18_1121
+
+- **New device: RAK3401 with the RAK13302 1 W LoRa module.** *(Companion, Repeater, Room Server)*
+
+  `RAK_3401_*.uf2` images for the RAK3401 WisBlock Core with the RAK13302 in the IO slot; a RAK4631 with a RAK13302 runs them too. Flash like the other nRF52 boards (see [Installation](README.md#installation)).
+
+  **Not yet tested on hardware:** the port is built from the RAK4631 support.
+
+- **Changed: RAK4631 user button on AIN1 only.** *(Companion)*
+
+  The user button is AIN1 (P0.31) to GND, header J11 pin 1 on the RAK19007. A button on IO5 (P0.09) no longer works. See [wiring](Hardware_Wiring_Guide.md#optional-oled-display).
+
+- **Changed: three lines of a message on OLED with the large font.** *(Companion)*
+
+  The OLED `Large` message font goes from 13 px to 12 px, so a message shows three lines instead of two.
+
+- **New: Brightness on OLED.** *(Companion)*
+
+  Settings → Display → **Brightness** now works on OLED screens too: `100%`, `75%`, `50%`, `25%`.
+
+- **New: Lock keys.** *(Companion)*
+
+  With the joystick on or a CardKB attached, **Lock keys** at the top of the Home menu locks the keys, and a lock icon shows in the header. Any key then shows `Press Up to unlock`. See [Display Guide](Companion_Display_Guide.md#home-page).
+
+- **New: Mute a contact, room server or channel.** *(Companion)*
+
+  **Mute** in the contact or channel menu, or in the popup while reading a message, silences that conversation: its new messages make no sound or vibration, show no alert and do not turn the screen on. They are still kept and show as unread. **Unmute** turns it back on. See [Display Guide](Companion_Display_Guide.md#new-message-alert).
+
+- **New: display on Vision Master E213 V1.0 and Wireless Paper V1.1.** *(Companion, Repeater, Room Server)*
+
+  These units have an older e-ink panel, and the firmware ran on them without the display. It now detects the panel at boot and drives it.
+
 ### v1.18_1114
 
 > **Important fix, update recommended for ESP32 boards on v1.18_1018, v1.18_1025, v1.18_1031 or v1.18_1107:** *(Companion, Repeater, Room Server)* after OTA or a connection mode change, the node could keep drawing high current until the RESET button was pressed. The WiFi / Bluetooth radio is now shut down properly when the node restarts. In those versions, a restart while WiFi or Bluetooth was on, such as the end of OTA, `reboot` during OTA, or a companion's switch from WiFi or BLE to USB, left the radio powered: a Heltec V4 repeater drew about 32 mA instead of 4.4 mA until the RESET button was pressed or the power removed. Updating over OTA from these versions clears it, no RESET needed.

@@ -25,7 +25,7 @@ GPIO numbers are ESP32 GPIOs; `P0.xx` / `P1.xx` are nRF52840 port pins.
 | Heltec Wireless Paper | none | none | E-ink |
 | Heltec Mesh Node T096 | P0.07 / P0.08 | onboard UC6580 | Color TFT |
 | XIAO ESP32S3 & Wio-SX1262 | GPIO5 / GPIO6 | none | Optional OLED |
-| RAK4631 | P0.13 / P0.14 | P0.16 / P0.15 | Optional OLED |
+| RAK4631, RAK3401 | P0.13 / P0.14 | P0.16 / P0.15 | Optional OLED |
 | Waveshare ESP32-S3-LR1121-XF | GPIO8 / GPIO9 | GPIO43 / GPIO44 | Optional OLED |
 | EBYTE EoRa-HUB | GPIO6 / GPIO7 | GPIO47 / GPIO48 | Onboard OLED |
 | Heltec HT-CT62, DIY ESP32-C3 (`Heltec_ct62_*`) | GPIO18 / GPIO19 | none | Optional OLED |
@@ -62,13 +62,13 @@ Three I2C OLED modules work, at I2C address 0x3C: the 0.96" SSD1306 and the 1.3"
 | Heltec V3, V4 with the onboard display | Nothing to wire. The onboard 0.96" panel can be replaced with any of the three. |
 | Heltec WSL3 | Header JP3: pin 12 (GPIO17) to SDA, pin 9 (GPIO18) to SCL. |
 | Heltec V4 bought without a display | Header P5 (SDA GPIO17, SCL GPIO18). |
-| XIAO ESP32S3 & Wio-SX1262, RAK4631, Waveshare ESP32-S3-LR1121-XF, HT-CT62 / DIY ESP32-C3, ProMicro | The I2C sensor pins in the table above. |
+| XIAO ESP32S3 & Wio-SX1262, RAK4631, RAK3401, Waveshare ESP32-S3-LR1121-XF, HT-CT62 / DIY ESP32-C3, ProMicro | The I2C sensor pins in the table above. |
 
 Power the module from 3.3 V and GND.
 
 With a display, Companion shows the full display UI, and Repeater and Room Server show their status screen. Without a display, Companion's BLE PIN stays at 123456; with one, a new random PIN is shown at every boot. A PIN set with `set pin` is used either way.
 
-The display's button is the board's BOOT button, except on the XIAO ESP32S3 & Wio-SX1262, where it is the user button on the Wio-SX1262 board, on the ProMicro, where it is D6 (P1.00) to GND, and on the RAK4631, where it is IO5 (P0.09) to GND. On the RAK4631 only Companion reads this button; the Repeater and Room Server firmware have no button option there.
+The display's button is the board's BOOT button, except on the XIAO ESP32S3 & Wio-SX1262, where it is the user button on the Wio-SX1262 board, on the ProMicro, where it is D6 (P1.00) to GND, and on the RAK4631 and RAK3401, where it is AIN1 (P0.31) to GND, header J11 pin 1 on the RAK19007. On these two only Companion reads this button; the Repeater and Room Server firmware have no button option there.
 
 ## GPS
 
@@ -79,9 +79,11 @@ Any NMEA GPS module works. Connect it while the node is off, so the firmware fin
 | Heltec V3, E213, E290, Waveshare, EoRa-HUB | Detected automatically | Stays powered. An ATGM336H-6N module is put in its standby mode while GPS is off or between fixes, but still draws current: about 4.4 mA on an M5Stack Unit GPS v1.1. |
 | Heltec V4 | 9600 | Switched off while GPS is off or between fixes. |
 | Heltec T096 | 115200 (onboard UC6580) | Switched off while GPS is off or between fixes. |
-| RAK4631 | 9600 | Stays powered. |
+| RAK4631, RAK3401 | 9600 | Stays powered. A u-blox module such as the RAK12500 is put in its backup mode while GPS is off or between fixes. |
 | ProMicro (fakeTec, DIY) | 9600 or 115200, detected at boot | If the module's enable pin is wired to D5, it is switched off while GPS is off or between fixes; if not, it stays powered. |
 | Seeed Wio Tracker L1 | 9600 (onboard L76K) | Stays powered, in its standby mode while GPS is off or between fixes. |
+
+On the RAK4631 and RAK3401 the GPS is read over UART only: put a WisBlock GPS module in slot A or D of the RAK19007, or in either sensor slot of the RAK19003.
 
 No GPS on the XIAO ESP32S3 & Wio-SX1262, the Heltec Wireless Paper or the ESP32-C3 boards.
 
@@ -89,7 +91,7 @@ A module that stays powered keeps drawing current while GPS is off. For the lowe
 
 ## Battery reading
 
-Heltec V3, V4, E213, E290, Wireless Paper, T096, RAK4631, EoRa-HUB and Wio Tracker L1 have a battery divider on board, and battery reading works out of the box.
+Heltec V3, V4, E213, E290, Wireless Paper, T096, RAK4631, RAK3401, EoRa-HUB and Wio Tracker L1 have a battery divider on board, and battery reading works out of the box.
 
 The XIAO ESP32S3 & Wio-SX1262, the Waveshare ESP32-S3-LR1121-XF, the HT-CT62 / DIY ESP32-C3 and the ProMicro need a voltage divider from the battery to the battery pin below. Battery reading and low-battery protection stay off until you set the divider ratio with `set adc.multiplier <ratio>`: for a divider with R1 from the battery to the pin and R2 from the pin to GND, the ratio is (R1 + R2) / R2.
 

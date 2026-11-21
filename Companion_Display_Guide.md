@@ -96,11 +96,13 @@ On every page but Home, the top left shows the page's icon instead of its name. 
 - **Muted icon**: shown while the buzzer is muted *(ProMicro fakeTec with a buzzer)*
 - **Radio off icon** (an x beside signal bars): shown while the LoRa radio is off
 - **BLE off icon** (an x beside the Bluetooth sign): shown while Bluetooth is off
+- **Lock icon**: shown while the keys are locked (**Lock keys** in the Home menu)
 - Dots below the header: which page you are on
 - **Large clock**: local time once the time is set; before that, time since start-up
 - **OLED / TFT**: date and connection status at the bottom. In WiFi mode the node's network name replaces the date, e.g. `meshcore-d267.local`.
 - **E-ink**: connection status or pairing PIN at the bottom-left, date at the bottom-right. In WiFi mode, before an app connects, the bottom row shows the IP address and the network name, e.g. `192.168.1.83` and `meshcore-d267`.
 - **Long press** → **Home menu**. Single click moves down, long press runs the item, double click leaves.
+  - **Lock keys** *(with the joystick on or a CardKB attached)*: locks the keys, e.g. in a pocket. Any key then shows `Press Up to unlock`; press Up within 3 seconds. Unplugging the CardKB or a restart also unlocks them.
   - **Sync to app**: sends all messages on the node to the connected app again (`Syncing N msgs`), e.g. after reinstalling the app or for a second app over USB or WiFi. Shows `Sync (no app)` when no app is connected.
   - **Save messages**: saves all messages to flash now (`Saved N msgs`), so they survive a power cut or the RESET button.
   - **Delete all messages**: after `Delete all msgs?` → **Yes**, deletes every message on the node, in RAM and in flash. Contacts, channels and settings are kept.
@@ -234,6 +236,7 @@ Long press on a contact opens its menu:
 - **Reset path** — shown when the contact has a stored path
 - **Share contact** — send the contact on to the nodes that hear you directly: **Contact shared**, or **Share failed** when the node has no advert of the contact stored
 - **Permissions** — people only: what this contact may ask of your node (see [Contact permissions](#contact-permissions))
+- **Mute** / **Unmute** — people and room servers: silence their new messages (see [New message alert](#new-message-alert))
 - **Add favourite** / **Remove favourite** — mark the contact as a favourite, or unmark it
 - **Remove contact** — delete the contact and its conversation. It asks first, with **No** selected: single click moves between **No** and **Yes**, long press confirms, double click cancels.
 
@@ -352,6 +355,8 @@ When new messages arrive, an alert shows which conversations they are in:
 
 A new message in the conversation you are reading shows there instead, without an alert (see [Level 1 — Group detail](#level-1--group-detail)).
 
+A muted contact, room server or channel makes no sound or vibration, shows no alert and does not turn the screen on; its messages still show as unread. **Mute** / **Unmute** is in the contact menu, the [channel menu](#channel-menu) and the [popup](#popup-menu-while-reading-a-message).
+
 ### Level 0 — Group list
 
 Long press on the **Chats** page, or a single click on the new message alert, opens the list of all your conversations.
@@ -412,6 +417,7 @@ Long press any message to open the popup:
 - **Delete** — delete this message
 - **Delete all** — delete the whole conversation
 - **Home** — go to the Home page
+- **Mute** / **Unmute** — silence this conversation's new messages (see [New message alert](#new-message-alert))
 - **Share** — show the channel's key (channel messages only, see [Sharing a channel](#sharing-a-channel))
 - **Invite** — send the channel to a contact (channel messages only, see [Inviting to a channel](#inviting-to-a-channel))
 - **Priority** — the channel's [priority](#channel-priority) (channel messages only)
@@ -455,6 +461,7 @@ Long press on a channel with no messages in the conversation list opens its menu
 - **Share** — show the channel's key (see [Sharing a channel](#sharing-a-channel))
 - **Invite** — send the channel to a contact (see [Inviting to a channel](#inviting-to-a-channel))
 - **Priority** — the channel's [priority](#channel-priority)
+- **Mute** / **Unmute** — silence the channel's new messages (see [New message alert](#new-message-alert))
 - **Remove channel** — delete the channel. It asks first, with **No** selected. Not shown while the app is connected.
 
 To remove a channel that has messages, delete them first with **Delete all**.
@@ -659,7 +666,9 @@ A 5-way joystick on a ProMicro, Heltec V3, V4, WSL3, E213, E290, T096, EoRa-HUB,
 | Center or the user button | Open / select |
 | Second button (E213, E290), Menu button (Wio Tracker L1) | Back; in the message editor or on-screen keyboard, cancel |
 
-The user buttons no longer take double or triple clicks, so a press acts at once. Turn **Joystick** off in Settings to get them back.
+The user buttons no longer take double or triple clicks or long presses, so every press is a single click when you let go. Turn **Joystick** off in Settings to get them back.
+
+To keep the joystick from being pressed in a pocket, use **Lock keys** at the top of the [Home menu](#home-page).
 
 ### On-screen keyboard
 
@@ -1024,7 +1033,7 @@ At startup, a **Detected:** alert lists the GPS and the sensors found.
 | Item | Action |
 |---|---|
 | **Screen Off** | Screen timeout; opens a list: `15s`, `3min`, `Never` |
-| **Brightness** | Backlight; opens a list: `100%`, `75%`, `50%`, `25%` *(Heltec T096)* |
+| **Brightness** | Screen brightness; opens a list: `100%`, `75%`, `50%`, `25%` *(OLED and Heltec T096)* |
 | **Theme** | `Dark` / `Light`. Dark is the default. *(Heltec T096)* |
 | **Flip Screen** | Turn the display upside down |
 | **Font Weight** | `Thin` / `Bold` *(e-ink only)* |
